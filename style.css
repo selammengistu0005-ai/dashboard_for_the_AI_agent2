@@ -1,0 +1,90 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+body {
+  display: flex;
+  height: 100vh;
+  background: #0d0d0d;
+  color: #e5e5e5;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 220px;
+  background: #111;
+  padding: 24px;
+  border-right: 1px solid #222;
+}
+
+.sidebar h2 {
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.sidebar p {
+  color: #888;
+  font-size: 14px;
+}
+
+/* Main */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #222;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header h1 {
+  font-size: 20px;
+}
+
+.status {
+  color: #00ff9c;
+  font-size: 14px;
+}
+
+/* Logs */
+.logs {
+  padding: 24px;
+  overflow-y: auto;
+}
+
+/* Log card */
+.log {
+  background: #151515;
+  border: 1px solid #222;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.log small {
+  color: #777;
+  font-size: 12px;
+}
+
+.log p {
+  margin-top: 8px;
+  line-height: 1.5;
+}
+
+.log .user {
+  color: #4da6ff;
+}
+
+.log .ai {
+  color: #00ff9c;
+  margin-top: 6px;
+}
