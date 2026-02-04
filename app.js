@@ -92,5 +92,43 @@ onSnapshot(q, (snapshot) => {
   updateIntentChart(intentCount);
 });
 
+function updateIntentChart(intentCount) {
+  const labels = Object.keys(intentCount);
+  const data = Object.values(intentCount);
+
+  if (intentChart) {
+    intentChart.destroy(); // Reset chart on live update
+  }
+
+  intentChart = new Chart(chartCtx, {
+    type: "doughnut",
+    data: {
+      labels,
+      datasets: [
+        {
+          data,
+          backgroundColor: [
+            "#6366f1",
+            "#22c55e",
+            "#f59e0b",
+            "#ef4444",
+            "#06b6d4",
+            "#a855f7"
+          ]
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          labels: {
+            color: "#e5e7eb"
+          }
+        }
+      }
+    }
+  });
+}
 
 
