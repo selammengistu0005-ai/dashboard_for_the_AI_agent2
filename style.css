@@ -87,4 +87,21 @@ body {
 .log .ai {
   color: #00ff9c;
   margin-top: 6px;
+
+}
+.chart-box {
+  background: #0f172a;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.chart-box h2 {
+  color: #e5e7eb;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+#intentChart {
+  max-width: 100%;
 }
