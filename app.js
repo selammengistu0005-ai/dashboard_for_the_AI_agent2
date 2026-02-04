@@ -60,37 +60,37 @@ const logsRef = collection(
 /* 🔁 LIVE LISTENER */
 const q = query(logsRef, orderBy("timestamp", "desc"));
 
-onSnapshot(
-  q,
-  (snapshot) => {
-    console.log("🔁 onSnapshot fired:", snapshot.size);
+onSnapshot(q, (snapshot) => {
+  logsContainer.innerHTML = "";
 
-    logsContainer.innerHTML = "";
+  const intentCount = {}; // { billing: 3, support: 5 }
 
-    snapshot.forEach((doc) => {
-      const data = doc.data();
+  snapshot.forEach((doc) => {
+    const data = doc.data();
 
-      const div = document.createElement("div");
-      div.className = "log";
+    // Count intents
+    const intent = data.category || "unknown";
+    intentCount[intent] = (intentCount[intent] || 0) + 1;
 
-      const time = data.timestamp?.toDate
-        ? new Date(data.timestamp.toDate()).toLocaleString()
-        : "No timestamp";
+    const div = document.createElement("div");
+    div.className = "log";
 
-      div.innerHTML = `
-        <small>${time}</small>
-        <p class="user"><strong>User:</strong> ${data.question || "—"}</p>
-        <p class="ai"><strong>AI:</strong> ${data.answer || "—"}</p>
-        <p class="intent"><strong>Intent:</strong> ${data.category || "Unknown"}</p>
-      `;
+    const time = data.timestamp?.toDate
+      ? new Date(data.timestamp.toDate()).toLocaleString()
+      : "No timestamp";
 
-      logsContainer.appendChild(div);
-    });
-  },
-  (error) => {
-    console.error("❌ onSnapshot error:", error);
-  }
-);
+    div.innerHTML = `
+      <small>${time}</small>
+      <p class="user"><strong>User:</strong> ${data.question}</p>
+      <p class="ai"><strong>AI:</strong> ${data.answer}</p>
+      <p class="intent"><strong>Intent:</strong> ${intent}</p>
+    `;
+
+    logsContainer.appendChild(div);
+  });
+
+  updateIntentChart(intentCount);
+});
 
 
 
