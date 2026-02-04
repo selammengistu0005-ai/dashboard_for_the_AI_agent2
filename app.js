@@ -77,6 +77,7 @@ onSnapshot(
         <small>${time}</small>
         <p class="user"><strong>User:</strong> ${data.question || "—"}</p>
         <p class="ai"><strong>AI:</strong> ${data.answer || "—"}</p>
+        <p class="intent"><strong>Intent:</strong> ${data.category || "Unknown"}</p>
       `;
 
       logsContainer.appendChild(div);
@@ -86,4 +87,5 @@ onSnapshot(
     console.error("❌ onSnapshot error:", error);
   }
 );
+
 
