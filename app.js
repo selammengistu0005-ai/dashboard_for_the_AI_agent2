@@ -31,6 +31,7 @@ if (!logsContainer) {
 }
 
 const chartCanvas = document.getElementById("intentChart");
+const chartCtx = chartCanvas.getContext("2d");
 let intentChart = null;
 
 if (!chartCanvas) {
@@ -131,6 +132,7 @@ function updateIntentChart(intentCount) {
     }
   });
 }
+
 
 
 
