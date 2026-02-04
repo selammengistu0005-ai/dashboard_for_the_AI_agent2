@@ -30,7 +30,11 @@ if (!logsContainer) {
   console.error("❌ #logs container not found");
 }
 
-/* 🔥 CORRECT COLLECTION PATH */
+const chartCanvas = document.getElementById("intentChart");
+
+if (!chartCanvas) {
+  console.error("❌ #intentChart canvas not found");
+}
 const logsRef = collection(
   db,
   "agents",
@@ -87,5 +91,6 @@ onSnapshot(
     console.error("❌ onSnapshot error:", error);
   }
 );
+
 
 
