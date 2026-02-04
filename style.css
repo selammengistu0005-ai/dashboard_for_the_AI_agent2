@@ -105,3 +105,6 @@ body {
 #intentChart {
   max-width: 100%;
 }
+#intentChart {
+  height: 300px;
+}
