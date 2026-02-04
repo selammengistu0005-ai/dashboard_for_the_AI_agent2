@@ -31,6 +31,7 @@ if (!logsContainer) {
 }
 
 const chartCanvas = document.getElementById("intentChart");
+let intentChart = null;
 
 if (!chartCanvas) {
   console.error("❌ #intentChart canvas not found");
@@ -130,5 +131,6 @@ function updateIntentChart(intentCount) {
     }
   });
 }
+
 
 
