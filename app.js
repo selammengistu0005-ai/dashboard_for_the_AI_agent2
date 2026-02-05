@@ -41,7 +41,7 @@ if (!chartCanvas) {
 const logsRef = collection(
   db,
   "agents",
-  "khil-support",
+  "lumi2-support",
   "logs"
 );
 
@@ -133,6 +133,7 @@ function updateIntentChart(intentCount) {
     }
   });
 }
+
 
 
 
