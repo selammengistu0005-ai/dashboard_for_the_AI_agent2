@@ -2,34 +2,43 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Support Dashboard</title>
+  <title>AI Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 </head>
-<body>
-  <aside class="sidebar">
-    <h2>Support AI</h2>
-    <p>Live Logs</p>
-  </aside>
+<body class="dark-mode"> <nav class="sidebar">
+    <div class="logo">
+      <i class="fa-solid fa-robot"></i>
+      <h2>Lumi <span>AI</span></h2>
+    </div>
+    <div class="menu">
+      <p class="menu-label">Analytics</p>
+      <div class="chart-container">
+        <canvas id="intentChart"></canvas>
+      </div>
+      <div id="stat-summary"></div>
+    </div>
+    <button id="theme-toggle" class="theme-btn">
+      <i class="fa-solid fa-moon"></i> <span>Dark Mode</span>
+    </button>
+  </nav>
 
-  <main class="main">
-    <header class="header">
-      <h1>Customer Support Logs</h1>
-      <span class="status">● Live</span>
+  <main class="content-area">
+    <header class="main-header">
+      <div class="header-left">
+        <h1>Interaction Logs</h1>
+        <p>Live stream of agent conversations</p>
+      </div>
+      <div class="header-right">
+        <span class="status-badge"><span class="dot"></span> Live Sync</span>
+      </div>
     </header>
-    <div class="chart-box">
-  <h2>Intent Distribution</h2>
-  <canvas id="intentChart"></canvas>
-</div>
 
-    <section id="logs" class="logs"></section>
+    <section id="logs" class="logs-grid"></section>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script type="module" src="./app.js"></script>
+  <script type="module" src="./app.js"></script>
 </body>
 </html>
-
-
-
-
