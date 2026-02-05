@@ -36,7 +36,6 @@ let intentChart = null;
 
 if (!chartCanvas) {
   console.error("❌ #intentChart canvas not found");
-  return;
 }
 const logsRef = collection(
   db,
@@ -133,6 +132,7 @@ function updateIntentChart(intentCount) {
     }
   });
 }
+
 
 
 
