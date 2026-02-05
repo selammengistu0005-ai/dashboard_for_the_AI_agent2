@@ -134,8 +134,29 @@ function updateIntentChart(intentCount) {
 }
 
 
+// --- Theme Toggle Logic ---
+const themeBtn = document.getElementById("theme-toggle");
+const body = document.body;
 
+themeBtn.addEventListener("click", () => {
+  body.classList.toggle("light-mode");
+  const isLight = body.classList.contains("light-mode");
+  
+  // Update Button Icon
+  themeBtn.innerHTML = isLight 
+    ? '<i class="fa-solid fa-sun"></i> <span>Light Mode</span>' 
+    : '<i class="fa-solid fa-moon"></i> <span>Dark Mode</span>';
 
+  // Update Chart Text Color
+  if (intentChart) {
+    intentChart.options.plugins.legend.labels.color = isLight ? "#1e293b" : "#e5e7eb";
+    intentChart.update();
+  }
+});
+
+// Update your updateIntentChart function's option to use variables:
+// In your updateIntentChart function, change labels color to:
+// color: body.classList.contains("light-mode") ? "#1e293b" : "#e5e7eb"
 
 
 
