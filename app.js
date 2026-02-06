@@ -26,7 +26,7 @@ let intentChart = null;
 const chartCtx = chartCanvas?.getContext("2d");
 // New DOM elements for agent switcher buttons
 const switchLumiBtn = document.getElementById("switch-lumi");
-const switchMuBtn = document.getElementById("switch-mu");
+const switchMuBtn = document.getElementById("switch-echo");
 // --- 🌗 THEME TOGGLE LOGIC ---
 if (themeBtn) {
   themeBtn.addEventListener("click", () => {
@@ -146,4 +146,5 @@ function updateIntentChart(intentCount) {
     }
   });
 }
+
 
