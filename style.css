@@ -9,7 +9,6 @@
   --user-msg: #38bdf8;
   --ai-msg: #2dd4bf;
 }
-
 body.light-mode {
   --bg-color: #f1f5f9;
   --card-bg: rgba(255, 255, 255, 0.8);
@@ -18,23 +17,18 @@ body.light-mode {
   --text-secondary: #64748b;
   --border: rgba(0, 0, 0, 0.1);
 }
-
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; transition: background 0.3s, color 0.3s; }
-
 body { display: flex; height: 100vh; background: var(--bg-color); color: var(--text-primary); overflow: hidden; }
-
 /* Sidebar & Chart */
 .sidebar { width: 300px; background: var(--sidebar-bg); padding: 30px 20px; display: flex; flex-direction: column; border-right: 1px solid var(--border); }
 .logo { display: flex; align-items: center; gap: 12px; margin-bottom: 40px; }
 .logo h2 span { color: var(--accent); }
 .menu-label { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); margin-bottom: 20px; }
-
 /* Logs Area */
 .content-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 .main-header { padding: 30px 40px; display: flex; justify-content: space-between; align-items: center; }
 .status-badge { background: rgba(34, 197, 94, 0.1); color: #22c55e; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
 .dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; animation: pulse 2s infinite; }
-
 /* Log Cards */
 .logs-grid { padding: 0 40px 40px; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 20px; }
 .log { background: var(--card-bg); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: 16px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
@@ -43,8 +37,28 @@ body { display: flex; height: 100vh; background: var(--bg-color); color: var(--t
 .user strong { color: var(--user-msg); }
 .ai strong { color: var(--ai-msg); }
 .intent-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; background: var(--accent); color: white; font-size: 11px; }
-
 /* Theme Button */
 .theme-btn { margin-top: auto; padding: 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--card-bg); color: var(--text-primary); cursor: pointer; display: flex; align-items: center; gap: 10px; justify-content: center; }
-
 @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+/* New styles for agent switcher buttons */
+.agent-switch {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  padding: 8px 16px;
+  margin-right: 10px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 0.3s;
+}
+.agent-switch.active {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+.agent-switch:hover {
+  background: var(--accent);
+  color: white;
+}
