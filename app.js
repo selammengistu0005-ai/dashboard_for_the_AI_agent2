@@ -103,8 +103,8 @@ if (switchLumiBtn && switchMuBtn) {
   });
   
   switchMuBtn.addEventListener("click", () => {
-    if (currentAgent !== "mu echo-support") {
-      currentAgent = "mu echo-support";
+    if (currentAgent !== "echo-support") {
+      currentAgent = "echo-support";
       switchMuBtn.classList.add("active");
       switchLumiBtn.classList.remove("active");
       loadAgentData(currentAgent);
@@ -146,3 +146,4 @@ function updateIntentChart(intentCount) {
     }
   });
 }
+
