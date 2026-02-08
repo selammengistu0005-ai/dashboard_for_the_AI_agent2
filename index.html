@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>AI Dashboard | ECHO</title>
+  <title>AI Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
@@ -22,13 +22,17 @@
       <div id="stat-summary"></div>
     </div>
 
-    <div class="theme-switch-wrapper">
-      <i class="fa-solid fa-sun"></i>
-      <label class="theme-switch" for="checkbox">
-        <input type="checkbox" id="checkbox" />
-        <div class="slider round"></div>
-      </label>
-      <i class="fa-solid fa-moon"></i>
+    <div class="mode-container">
+      <div class="mode-switch" id="mode-switch">
+        <div class="mode-knob"></div>
+        
+        <div class="mode-option active" data-mode="dark">
+          <i class="fa-solid fa-moon"></i>
+        </div>
+        <div class="mode-option" data-mode="light">
+          <i class="fa-solid fa-sun"></i>
+        </div>
+      </div>
     </div>
   </nav>
 
@@ -41,7 +45,6 @@
       <div class="header-right">
         <button class="agent-switch active" data-agent="lumi2_support">Lumi2 Support</button>
         <button class="agent-switch" data-agent="echo_support">Echo Support</button>
-        
         <span class="status-badge"><span class="dot"></span> Live Sync</span>
       </div>
     </header>
