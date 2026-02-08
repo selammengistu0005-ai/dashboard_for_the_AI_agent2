@@ -164,3 +164,58 @@ body {
 }
 
 .log p { margin-bottom: 12px; font-size: 14px; line-height: 1.6; }
+
+/* --- 📱 MOBILE & TABLET RESPONSIVENESS --- */
+
+@media (max-width: 1024px) {
+  /* For Tablets: We shrink the sidebar slightly */
+  .sidebar { width: 260px; }
+  .logs-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+}
+
+@media (max-width: 768px) {
+  /* For Phones: We stack everything vertically */
+  body { 
+    flex-direction: column; 
+    overflow-y: auto; /* Allow the whole page to scroll */
+  }
+
+  .sidebar { 
+    width: 100%; 
+    height: auto; 
+    border-right: none; 
+    border-bottom: 1px solid var(--border); 
+    padding: 20px;
+  }
+
+  .logo { margin-bottom: 20px; }
+
+  .content-area { 
+    overflow: visible; /* Let the content flow naturally */
+  }
+
+  .main-header { 
+    flex-direction: column; 
+    align-items: flex-start; 
+    gap: 20px; 
+    padding: 20px; 
+  }
+
+  .header-right {
+    display: flex;
+    flex-wrap: wrap; /* Let the agent buttons wrap to a second line */
+    gap: 10px;
+    width: 100%;
+  }
+
+  .agent-switch {
+    margin-left: 0;
+    flex: 1 1 calc(50% - 10px); /* Buttons take half width on small screens */
+    text-align: center;
+  }
+
+  .logs-grid { 
+    grid-template-columns: 1fr; /* One column for logs */
+    padding: 20px; 
+  }
+}
