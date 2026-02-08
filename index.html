@@ -10,9 +10,7 @@
 <body class="dark-mode"> 
   <nav class="sidebar">
     <div class="logo">
-      <button id="sidebar-toggle" class="toggle-btn">
-        <i class="fa-solid fa-bars"></i>
-      </button>
+      <i class="fa-solid fa-robot"></i>
       <h2 id="logo-refresh">Dashboard <span>AI</span></h2>
     </div>
 
@@ -24,9 +22,14 @@
       <div id="stat-summary"></div>
     </div>
 
-    <button id="theme-toggle" class="theme-btn">
-      <i class="fa-solid fa-moon"></i> <span>Dark Mode</span>
-    </button>
+    <div class="theme-switch-wrapper">
+      <i class="fa-solid fa-sun"></i>
+      <label class="theme-switch" for="checkbox">
+        <input type="checkbox" id="checkbox" />
+        <div class="slider round"></div>
+      </label>
+      <i class="fa-solid fa-moon"></i>
+    </div>
   </nav>
 
   <main class="content-area">
@@ -38,6 +41,7 @@
       <div class="header-right">
         <button class="agent-switch active" data-agent="lumi2_support">Lumi2 Support</button>
         <button class="agent-switch" data-agent="echo_support">Echo Support</button>
+        
         <span class="status-badge"><span class="dot"></span> Live Sync</span>
       </div>
     </header>
