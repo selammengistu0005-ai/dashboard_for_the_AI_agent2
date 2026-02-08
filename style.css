@@ -29,7 +29,6 @@ body.light-mode {
   margin: 0; 
   padding: 0; 
   font-family: 'Inter', sans-serif; 
-  transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 body { 
@@ -38,6 +37,7 @@ body {
   background: var(--bg-color); 
   color: var(--text-primary); 
   overflow: hidden; 
+  transition: background 0.3s ease;
 }
 
 /* --- 🏛️ SIDEBAR --- */
@@ -48,19 +48,16 @@ body {
   display: flex; 
   flex-direction: column; 
   border-right: 1px solid var(--border); 
+  flex-shrink: 0;
 }
 
 .logo { display: flex; align-items: center; gap: 12px; margin-bottom: 40px; }
 .logo i { color: var(--accent); font-size: 24px; }
 #logo-refresh { cursor: pointer; transition: transform 0.2s; }
-#logo-refresh:active { transform: scale(0.95); }
 #logo-refresh span { color: var(--accent); font-weight: 800; }
 
-/* --- 🔘 THE MODERN SLIDING KNOB (FIXED) --- */
-.mode-container {
-  margin-top: auto;
-  padding: 20px 0;
-}
+/* --- 🔘 THE MODERN SEGMENTED CONTROL --- */
+.mode-container { margin-top: auto; padding: 20px 0; }
 
 .mode-switch {
   position: relative;
@@ -71,7 +68,7 @@ body {
   width: 100%;
   border: 1px solid var(--border);
   cursor: pointer;
-  height: 48px; /* Fixed height for stability */
+  height: 48px;
 }
 
 .mode-option {
@@ -79,15 +76,13 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 5; /* Above the knob */
+  z-index: 5;
   color: var(--text-secondary);
   font-size: 16px;
   transition: color 0.3s ease;
 }
 
-.mode-option.active {
-  color: var(--accent);
-}
+.mode-option.active { color: var(--accent); }
 
 .mode-knob {
   position: absolute;
@@ -97,32 +92,20 @@ body {
   height: calc(100% - 8px);
   background: var(--sidebar-bg);
   border-radius: 10px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 2;
   border: 1px solid var(--border);
 }
 
-/* Sliding Logic */
-.mode-switch.is-light .mode-knob {
-  transform: translateX(100%);
-}
+.mode-switch.is-light .mode-knob { transform: translateX(100%); }
 
-/* --- 📊 ANALYTICS & GRID --- */
-.menu-label { 
-  font-size: 11px; 
-  text-transform: uppercase; 
-  letter-spacing: 1.5px; 
-  color: var(--text-secondary); 
-  margin-bottom: 20px; 
-  font-weight: 700;
-}
+/* --- 📊 ANALYTICS --- */
+.menu-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-secondary); margin-bottom: 20px; font-weight: 700; }
+.chart-container { height: 220px; margin-bottom: 20px; position: relative; }
 
-.chart-container { height: 220px; margin-bottom: 20px; }
-
+/* --- ✉️ LOGS & CONTENT --- */
 .content-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-
-.main-header { padding: 30px 40px; display: flex; justify-content: space-between; align-items: center; }
+.main-header { padding: 30px 40px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
 
 .agent-switch {
   background: var(--card-bg);
@@ -133,6 +116,7 @@ body {
   border-radius: 30px;
   cursor: pointer;
   font-weight: 600;
+  transition: all 0.2s ease;
 }
 
 .agent-switch.active { background: var(--accent); color: white; border-color: var(--accent); }
@@ -154,29 +138,57 @@ body {
 }
 
 .log small { color: var(--text-secondary); display: block; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px; font-size: 12px; }
+.user strong { color: var(--user-msg); }
+.ai strong { color: var(--ai-msg); }
+.intent-tag { display: inline-block; padding: 4px 10px; border-radius: 8px; background: rgba(88, 80, 236, 0.1); color: var(--accent); font-size: 11px; font-weight: 700; }
 
-.intent-tag { 
-  display: inline-block; 
-  padding: 4px 10px; 
-  border-radius: 8px; 
-  background: rgba(88, 80, 236, 0.1); 
-  color: var(--accent); 
-  font-size: 11px; 
-  font-weight: 700;
-}
-
-/* Status Pulse */
+/* Status Dot */
 .status-badge { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #22c55e; background: rgba(34, 197, 94, 0.1); padding: 8px 15px; border-radius: 20px; }
-.dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 8px #22c55e; animation: pulse 2s infinite; }
+.dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 8px #22c55e; }
 
-@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
-
-/* --- 📱 MOBILE RESPONSIVENESS --- */
+/* --- 📱 MOBILE RESPONSIVENESS (SCROLL FIX) --- */
 @media (max-width: 768px) {
-  body { flex-direction: column; overflow-y: auto; }
-  .sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
-  .logs-grid { grid-template-columns: 1fr; padding: 20px; }
-  .main-header { flex-direction: column; gap: 20px; align-items: flex-start; padding: 20px; }
-  .header-right { width: 100%; display: flex; flex-wrap: wrap; gap: 10px; }
-  .agent-switch { margin-left: 0; flex: 1; text-align: center; }
+  body { 
+    flex-direction: column !important; 
+    overflow-y: auto !important; /* Forces scroll */
+    height: auto !important;    /* Removes viewport lock */
+  }
+
+  .sidebar { 
+    width: 100% !important; 
+    height: auto !important; 
+    border-right: none; 
+    border-bottom: 1px solid var(--border); 
+    padding: 20px;
+    flex-shrink: 0; 
+  }
+
+  .content-area { 
+    flex: none !important; 
+    overflow: visible !important; 
+    width: 100%;
+  }
+
+  .main-header { 
+    padding: 20px; 
+    flex-direction: column; 
+    align-items: flex-start; 
+    gap: 15px; 
+    background: var(--bg-color);
+  }
+
+  .header-right { width: 100%; display: flex; flex-wrap: wrap; gap: 8px; }
+  .agent-switch { margin: 0; flex: 1; text-align: center; font-size: 12px; padding: 10px 5px; }
+
+  .logs-grid { 
+    grid-template-columns: 1fr !important; 
+    padding: 15px; 
+    overflow: visible !important; /* Critical for phone scroll */
+    display: flex;
+    flex-direction: column;
+  }
+
+  .log { margin-bottom: 15px; }
+
+  .mode-container { margin-top: 20px; }
 }
