@@ -20,8 +20,9 @@ const db = getFirestore(app);
 // 🧱 DOM Elements
 const logsContainer = document.getElementById("logs");
 const chartCanvas = document.getElementById("intentChart");
-const themeCheckbox = document.getElementById("checkbox"); // New Toggle Switch
-const logoRefresh = document.getElementById("logo-refresh"); // Clickable Logo
+const logoRefresh = document.getElementById("logo-refresh");
+const modeSwitch = document.getElementById("mode-switch");
+const modeOptions = document.querySelectorAll(".mode-option");
 const agentButtons = document.querySelectorAll(".agent-switch");
 const body = document.body;
 
@@ -30,27 +31,41 @@ let currentAgent = "lumi2_support";
 let unsubscribe = null; 
 const chartCtx = chartCanvas?.getContext("2d");
 
-// --- 🛠️ INTERACTION CONTROLS ---
+// --- 🛠️ THEME & LOGO CONTROLS ---
 
 // 1. Click Logo to Refresh Page
 if (logoRefresh) {
   logoRefresh.addEventListener("click", () => {
-    // Optional: Add a small rotation animation via CSS class before reload if desired
     window.location.reload();
   });
 }
 
-// 2. Professional Theme Switch Logic
-if (themeCheckbox) {
-  themeCheckbox.addEventListener("change", () => {
-    // Toggle the class on the body
-    body.classList.toggle("light-mode");
-    const isLight = body.classList.contains("light-mode");
+// 2. Sliding Knob Theme Logic
+modeOptions.forEach(option => {
+  option.addEventListener("click", () => {
+    const selectedMode = option.getAttribute("data-mode");
     
-    // Update Chart Colors to match theme
-    if (intentChart) updateChartColors(isLight);
+    // Update UI (Move the Knob via CSS class)
+    modeOptions.forEach(opt => opt.classList.remove("active"));
+    option.classList.add("active");
+
+    if (selectedMode === "light") {
+      body.classList.remove("dark-mode");
+      body.classList.add("light-mode");
+      modeSwitch.classList.add("is-light");
+    } else {
+      body.classList.remove("light-mode");
+      body.classList.add("dark-mode");
+      modeSwitch.classList.remove("is-light");
+    }
+
+    // Update chart colors if chart exists
+    if (intentChart) {
+      const isLight = body.classList.contains("light-mode");
+      updateChartColors(isLight);
+    }
   });
-}
+});
 
 function updateChartColors(isLight) {
   const textColor = isLight ? "#1e293b" : "#e5e7eb";
@@ -97,21 +112,15 @@ function loadAgentData(agentId) {
 agentButtons.forEach((btn) => {
   btn.addEventListener("click", () => {
     const selectedAgent = btn.getAttribute("data-agent");
-
     if (currentAgent !== selectedAgent) {
       currentAgent = selectedAgent;
-
-      // Update UI
       agentButtons.forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
-
-      // Load new data
       loadAgentData(currentAgent);
     }
   });
 });
 
-// Initial load
 loadAgentData(currentAgent);
 
 // --- 📊 CHART LOGIC ---
