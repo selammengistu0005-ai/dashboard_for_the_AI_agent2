@@ -31,6 +31,7 @@ body.light-mode {
   font-family: 'Inter', sans-serif; 
 }
 
+/* Base Desktop Styles - Locked Viewport */
 body { 
   display: flex; 
   height: 100vh; 
@@ -148,10 +149,17 @@ body {
 
 /* --- 📱 MOBILE RESPONSIVENESS (SCROLL FIX) --- */
 @media (max-width: 768px) {
+  /* 1. Unlocking the viewport so the whole page scrolls */
+  html, body {
+    height: auto !important;
+    overflow-y: auto !important;
+    overflow-x: hidden;
+    position: static !important;
+  }
+
   body { 
     flex-direction: column !important; 
-    overflow-y: auto !important; /* Forces scroll */
-    height: auto !important;    /* Removes viewport lock */
+    display: block !important; /* Resets flex constraints */
   }
 
   .sidebar { 
@@ -160,13 +168,22 @@ body {
     border-right: none; 
     border-bottom: 1px solid var(--border); 
     padding: 20px;
-    flex-shrink: 0; 
+    position: relative; /* Ensures it moves with scroll */
+  }
+
+  /* 2. Shrink the chart height on mobile to save space */
+  .chart-container {
+    height: 150px !important; /* Reduced from 220px */
+    width: 100%;
+    margin-bottom: 15px;
   }
 
   .content-area { 
     flex: none !important; 
     overflow: visible !important; 
+    height: auto !important;
     width: 100%;
+    display: block !important;
   }
 
   .main-header { 
@@ -183,12 +200,12 @@ body {
   .logs-grid { 
     grid-template-columns: 1fr !important; 
     padding: 15px; 
-    overflow: visible !important; /* Critical for phone scroll */
+    overflow: visible !important; 
+    height: auto !important;
     display: flex;
     flex-direction: column;
   }
 
   .log { margin-bottom: 15px; }
-
   .mode-container { margin-top: 20px; }
 }
