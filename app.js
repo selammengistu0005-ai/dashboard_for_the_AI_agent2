@@ -20,11 +20,9 @@ const db = getFirestore(app);
 // 🧱 DOM Elements
 const logsContainer = document.getElementById("logs");
 const chartCanvas = document.getElementById("intentChart");
-const themeBtn = document.getElementById("theme-toggle");
+const themeCheckbox = document.getElementById("checkbox"); // New Toggle Switch
+const logoRefresh = document.getElementById("logo-refresh"); // Clickable Logo
 const agentButtons = document.querySelectorAll(".agent-switch");
-const sidebar = document.querySelector(".sidebar");
-const sidebarToggle = document.getElementById("sidebar-toggle");
-const logoRefresh = document.getElementById("logo-refresh");
 const body = document.body;
 
 let intentChart = null;
@@ -32,32 +30,24 @@ let currentAgent = "lumi2_support";
 let unsubscribe = null; 
 const chartCtx = chartCanvas?.getContext("2d");
 
-// --- 🛠️ SIDEBAR & LOGO CONTROLS ---
+// --- 🛠️ INTERACTION CONTROLS ---
 
-// 1. Toggle Sidebar Collapse
-if (sidebarToggle && sidebar) {
-  sidebarToggle.addEventListener("click", () => {
-    sidebar.classList.toggle("collapsed");
-  });
-}
-
-// 2. Click Logo to Refresh Page
+// 1. Click Logo to Refresh Page
 if (logoRefresh) {
   logoRefresh.addEventListener("click", () => {
+    // Optional: Add a small rotation animation via CSS class before reload if desired
     window.location.reload();
   });
 }
 
-// --- 🌗 THEME TOGGLE LOGIC ---
-if (themeBtn) {
-  themeBtn.addEventListener("click", () => {
+// 2. Professional Theme Switch Logic
+if (themeCheckbox) {
+  themeCheckbox.addEventListener("change", () => {
+    // Toggle the class on the body
     body.classList.toggle("light-mode");
     const isLight = body.classList.contains("light-mode");
     
-    themeBtn.innerHTML = isLight
-      ? '<i class="fa-solid fa-sun"></i> <span>Light Mode</span>'
-      : '<i class="fa-solid fa-moon"></i> <span>Dark Mode</span>';
-    
+    // Update Chart Colors to match theme
     if (intentChart) updateChartColors(isLight);
   });
 }
@@ -103,19 +93,25 @@ function loadAgentData(agentId) {
   });
 }
 
-// --- 🖱️ THE "PRO" SWITCHER LOOP ---
+// --- 🖱️ AGENT SWITCHER LOOP ---
 agentButtons.forEach((btn) => {
   btn.addEventListener("click", () => {
     const selectedAgent = btn.getAttribute("data-agent");
+
     if (currentAgent !== selectedAgent) {
       currentAgent = selectedAgent;
+
+      // Update UI
       agentButtons.forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
+
+      // Load new data
       loadAgentData(currentAgent);
     }
   });
 });
 
+// Initial load
 loadAgentData(currentAgent);
 
 // --- 📊 CHART LOGIC ---
