@@ -40,40 +40,50 @@ if (logoRefresh) {
   });
 }
 
-// 2. Sliding Knob Theme Logic
+// 2. State Management: Set Theme
+function setTheme(mode) {
+  modeOptions.forEach(opt => opt.classList.remove("active"));
+  
+  if (mode === "light") {
+    body.classList.add("light-mode");
+    body.classList.remove("dark-mode");
+    modeSwitch.classList.add("is-light");
+    document.querySelector('[data-mode="light"]').classList.add("active");
+  } else {
+    body.classList.add("dark-mode");
+    body.classList.remove("light-mode");
+    modeSwitch.classList.remove("is-light");
+    document.querySelector('[data-mode="dark"]').classList.add("active");
+  }
+  
+  // Update chart if it exists
+  if (intentChart) updateChartColors(mode === "light");
+  
+  // Save to memory so it doesn't flicker on refresh
+  localStorage.setItem("dashboard-theme", mode);
+}
+
+// 3. Initialize Theme from Memory
+const savedTheme = localStorage.getItem("dashboard-theme") || "dark";
+setTheme(savedTheme);
+
+// 4. Click Listener for Knob Options
 modeOptions.forEach(option => {
   option.addEventListener("click", () => {
     const selectedMode = option.getAttribute("data-mode");
-    
-    // Update UI (Move the Knob via CSS class)
-    modeOptions.forEach(opt => opt.classList.remove("active"));
-    option.classList.add("active");
-
-    if (selectedMode === "light") {
-      body.classList.remove("dark-mode");
-      body.classList.add("light-mode");
-      modeSwitch.classList.add("is-light");
-    } else {
-      body.classList.remove("light-mode");
-      body.classList.add("dark-mode");
-      modeSwitch.classList.remove("is-light");
-    }
-
-    // Update chart colors if chart exists
-    if (intentChart) {
-      const isLight = body.classList.contains("light-mode");
-      updateChartColors(isLight);
-    }
+    setTheme(selectedMode);
   });
 });
 
 function updateChartColors(isLight) {
   const textColor = isLight ? "#1e293b" : "#e5e7eb";
-  intentChart.options.plugins.legend.labels.color = textColor;
-  intentChart.update();
+  if (intentChart.options.plugins.legend.labels) {
+    intentChart.options.plugins.legend.labels.color = textColor;
+    intentChart.update();
+  }
 }
 
-// --- 🔥 MODULAR FIRESTORE LOGIC ---
+// --- 🔥 FIRESTORE LOGIC ---
 function loadAgentData(agentId) {
   if (unsubscribe) unsubscribe(); 
 
