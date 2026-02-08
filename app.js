@@ -77,7 +77,7 @@ modeOptions.forEach(option => {
 
 function updateChartColors(isLight) {
   const textColor = isLight ? "#1e293b" : "#e5e7eb";
-  if (intentChart.options.plugins.legend.labels) {
+  if (intentChart && intentChart.options.plugins.legend.labels) {
     intentChart.options.plugins.legend.labels.color = textColor;
     intentChart.update();
   }
@@ -139,6 +139,9 @@ function updateIntentChart(intentCount) {
   const labels = Object.keys(intentCount);
   const data = Object.values(intentCount);
   const isLight = body.classList.contains("light-mode");
+  
+  // Check if we are on mobile to hide the legend and save space
+  const isMobile = window.innerWidth <= 768;
 
   if (intentChart) intentChart.destroy();
 
@@ -157,6 +160,7 @@ function updateIntentChart(intentCount) {
       maintainAspectRatio: false,
       plugins: {
         legend: {
+          display: !isMobile, // Hide legend on mobile to stop it from blocking messages
           position: 'bottom',
           labels: {
             color: isLight ? "#1e293b" : "#e5e7eb",
