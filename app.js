@@ -22,12 +22,31 @@ const logsContainer = document.getElementById("logs");
 const chartCanvas = document.getElementById("intentChart");
 const themeBtn = document.getElementById("theme-toggle");
 const agentButtons = document.querySelectorAll(".agent-switch");
+const sidebar = document.querySelector(".sidebar");
+const sidebarToggle = document.getElementById("sidebar-toggle");
+const logoRefresh = document.getElementById("logo-refresh");
 const body = document.body;
 
 let intentChart = null;
 let currentAgent = "lumi2_support"; 
 let unsubscribe = null; 
 const chartCtx = chartCanvas?.getContext("2d");
+
+// --- 🛠️ SIDEBAR & LOGO CONTROLS ---
+
+// 1. Toggle Sidebar Collapse
+if (sidebarToggle && sidebar) {
+  sidebarToggle.addEventListener("click", () => {
+    sidebar.classList.toggle("collapsed");
+  });
+}
+
+// 2. Click Logo to Refresh Page
+if (logoRefresh) {
+  logoRefresh.addEventListener("click", () => {
+    window.location.reload();
+  });
+}
 
 // --- 🌗 THEME TOGGLE LOGIC ---
 if (themeBtn) {
@@ -51,13 +70,11 @@ function updateChartColors(isLight) {
 
 // --- 🔥 MODULAR FIRESTORE LOGIC ---
 function loadAgentData(agentId) {
-  // 1. Clear previous live-sync listener to prevent memory leaks
   if (unsubscribe) unsubscribe(); 
 
   const logsRef = collection(db, "agents", agentId, "logs");
   const q = query(logsRef, orderBy("timestamp", "desc"));
   
-  // 2. Start new live-sync listener
   unsubscribe = onSnapshot(q, (snapshot) => {
     if (!logsContainer) return;
     logsContainer.innerHTML = "";
@@ -90,22 +107,15 @@ function loadAgentData(agentId) {
 agentButtons.forEach((btn) => {
   btn.addEventListener("click", () => {
     const selectedAgent = btn.getAttribute("data-agent");
-
     if (currentAgent !== selectedAgent) {
       currentAgent = selectedAgent;
-
-      // Update UI: Toggle active classes
       agentButtons.forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
-
-      // Load new data
       loadAgentData(currentAgent);
-      console.log(`📡 Dashboard switched to: ${currentAgent}`);
     }
   });
 });
 
-// Initial load
 loadAgentData(currentAgent);
 
 // --- 📊 CHART LOGIC ---
