@@ -29,6 +29,7 @@ const logsContainer = document.getElementById("logs");
 const chartCanvas = document.getElementById("intentChart");
 const modeSwitch = document.getElementById("mode-switch");
 const logoRefresh = document.getElementById("logo-refresh");
+const togglePasswordEye = document.getElementById("toggle-password-eye");
 
 let currentAgent = null;
 let unsubscribe = null;
@@ -58,7 +59,7 @@ async function validateAndUnlock() {
     }
 }
 
-// 4. Load Logs (Requirement 2: Horizontal Stacking)
+// 4. Load Logs
 function loadLogs(agentId) {
     if (unsubscribe) unsubscribe();
     
@@ -91,7 +92,7 @@ function loadLogs(agentId) {
     });
 }
 
-// 5. Chart (Requirement 3: Sidebar Ring)
+// 5. Chart
 function updateChart(counts) {
     if (!chartCanvas) return;
     const isLight = document.body.classList.contains("light-mode");
@@ -142,4 +143,15 @@ modeSwitch.addEventListener("click", () => {
         currentLabels.forEach((l, i) => countObj[l] = currentData[i]);
         updateChart(countObj);
     }
+});
+
+// --- NEW: Toggle Password Visibility Logic ---
+togglePasswordEye.addEventListener("click", () => {
+    // Switch input type
+    const type = keyInput.getAttribute("type") === "password" ? "text" : "password";
+    keyInput.setAttribute("type", type);
+    
+    // Toggle icon appearance
+    togglePasswordEye.classList.toggle("fa-eye");
+    togglePasswordEye.classList.toggle("fa-eye-slash");
 });
