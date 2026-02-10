@@ -120,7 +120,7 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
 .light-mode .sun-icon { display: block; }
 .light-mode .moon-icon { display: none; }
 
-/* --- Updated Professional Logo --- */
+/* --- UPDATED LOGO (Professional & Modern) --- */
 .logo {
     display: flex;
     align-items: center;
@@ -132,19 +132,19 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
 
 .logo-icon {
     background: linear-gradient(135deg, var(--primary-accent), #818cf8);
-    width: 40px;
-    height: 40px;
+    width: 42px;
+    height: 42px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 10px;
+    border-radius: 12px;
     color: white;
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
 }
 
 .logo span {
-    font-size: 1.25rem;
+    font-size: 1.3rem;
     font-weight: 800;
     letter-spacing: -0.5px;
 }
@@ -153,7 +153,7 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
     color: var(--primary-accent);
 }
 
-/* --- Fixed Modern Auth Overlay --- */
+/* --- UPDATED AUTH OVERLAY (Glass & Modern) --- */
 .overlay { 
     position: fixed; 
     inset: 0; 
@@ -185,7 +185,7 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
 .login-box h2 { font-size: 1.75rem; margin-bottom: 0.5rem; font-weight: 700; }
 .login-box p { color: var(--text-dim); margin-bottom: 2rem; font-size: 0.95rem; }
 
-/* --- Fixed Eyeball Inside Field --- */
+/* --- THE EYEBALL FIX (Inside the field) --- */
 .password-wrapper {
     position: relative;
     width: 100%;
@@ -194,7 +194,7 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
 
 #agent-key-input {
     width: 100%;
-    padding: 14px 45px 14px 16px;
+    padding: 14px 45px 14px 16px; /* Extra padding on right for the eye */
     background: var(--bg-dark);
     border: 1px solid var(--border-color);
     border-radius: 12px;
@@ -217,9 +217,12 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
     color: var(--text-dim);
     cursor: pointer;
     transition: var(--transition);
+    z-index: 5;
 }
 
-#toggle-password-eye:hover { color: var(--primary-accent); }
+#toggle-password-eye:hover { 
+    color: var(--primary-accent); 
+}
 
 #unlock-btn {
     width: 100%;
