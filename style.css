@@ -217,7 +217,7 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
     color: var(--text-dim);
     cursor: pointer;
     transition: var(--transition);
-    z-index: 5;
+    z-index: 10;
 }
 
 #toggle-password-eye:hover { 
@@ -244,3 +244,4 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
 }
 
 .error-msg { color: #ef4444; margin-top: 1rem; font-size: 0.85rem; font-weight: 500; }
+
