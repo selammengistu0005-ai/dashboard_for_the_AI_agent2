@@ -120,6 +120,124 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
 .light-mode .sun-icon { display: block; }
 .light-mode .moon-icon { display: none; }
 
-/* --- Auth Overlay (same as before) --- */
-.overlay { position: fixed; inset: 0; background: var(--bg-dark); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-.login-box { background: var(--card-dark); padding: 2.5rem; border-radius: 24px; width: 100%; max-width: 400px; text-align: center; border: 1px solid var(--border-color); }
+/* --- Updated Professional Logo --- */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: var(--transition);
+}
+
+.logo-icon {
+    background: linear-gradient(135deg, var(--primary-accent), #818cf8);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    color: white;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+}
+
+.logo span {
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+.logo span span {
+    color: var(--primary-accent);
+}
+
+/* --- Fixed Modern Auth Overlay --- */
+.overlay { 
+    position: fixed; 
+    inset: 0; 
+    background: radial-gradient(circle at center, var(--card-dark), var(--bg-dark)); 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    z-index: 1000; 
+}
+
+.login-box { 
+    background: var(--card-dark); 
+    padding: 3rem 2.5rem; 
+    border-radius: 28px; 
+    width: 90%; 
+    max-width: 420px; 
+    text-align: center; 
+    border: 1px solid var(--border-color); 
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.lock-shield {
+    font-size: 2.5rem;
+    color: var(--primary-accent);
+    margin-bottom: 1.5rem;
+    filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.3));
+}
+
+.login-box h2 { font-size: 1.75rem; margin-bottom: 0.5rem; font-weight: 700; }
+.login-box p { color: var(--text-dim); margin-bottom: 2rem; font-size: 0.95rem; }
+
+/* --- Fixed Eyeball Inside Field --- */
+.password-wrapper {
+    position: relative;
+    width: 100%;
+    margin-bottom: 1.5rem;
+}
+
+#agent-key-input {
+    width: 100%;
+    padding: 14px 45px 14px 16px;
+    background: var(--bg-dark);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    color: var(--text-main);
+    font-size: 1rem;
+    outline: none;
+    transition: var(--transition);
+}
+
+#agent-key-input:focus {
+    border-color: var(--primary-accent);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+#toggle-password-eye {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+#toggle-password-eye:hover { color: var(--primary-accent); }
+
+#unlock-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--primary-accent);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+#unlock-btn:hover {
+    background: #4f46e5;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.4);
+}
+
+.error-msg { color: #ef4444; margin-top: 1rem; font-size: 0.85rem; font-weight: 500; }
