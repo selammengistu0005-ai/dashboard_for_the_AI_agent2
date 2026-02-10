@@ -2,8 +2,6 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import {
   getFirestore,
   collection,
-  doc,
-  getDoc,
   onSnapshot,
   query,
   orderBy
@@ -29,20 +27,23 @@ const agentButtons = document.querySelectorAll(".agent-switch");
 const body = document.body;
 
 let intentChart = null;
-let currentAgent = null; 
+let currentAgent = "lumi2_support"; 
 let unsubscribe = null; 
 const chartCtx = chartCanvas?.getContext("2d");
 
 // --- 🛠️ THEME & LOGO CONTROLS ---
 
+// 1. Click Logo to Refresh Page
 if (logoRefresh) {
   logoRefresh.addEventListener("click", () => {
     window.location.reload();
   });
 }
 
+// 2. State Management: Set Theme
 function setTheme(mode) {
   modeOptions.forEach(opt => opt.classList.remove("active"));
+  
   if (mode === "light") {
     body.classList.add("light-mode");
     body.classList.remove("dark-mode");
@@ -54,13 +55,19 @@ function setTheme(mode) {
     modeSwitch.classList.remove("is-light");
     document.querySelector('[data-mode="dark"]').classList.add("active");
   }
+  
+  // Update chart if it exists
   if (intentChart) updateChartColors(mode === "light");
+  
+  // Save to memory so it doesn't flicker on refresh
   localStorage.setItem("dashboard-theme", mode);
 }
 
+// 3. Initialize Theme from Memory
 const savedTheme = localStorage.getItem("dashboard-theme") || "dark";
 setTheme(savedTheme);
 
+// 4. Click Listener for Knob Options
 modeOptions.forEach(option => {
   option.addEventListener("click", () => {
     const selectedMode = option.getAttribute("data-mode");
@@ -76,94 +83,64 @@ function updateChartColors(isLight) {
   }
 }
 
-// --- 🔥 FIRESTORE LOGIC (The Professional Path) ---
+// --- 🔥 FIRESTORE LOGIC ---
+function loadAgentData(agentId) {
+  if (unsubscribe) unsubscribe(); 
 
-async function loadAgentData(agentId, enteredPassword) {
-  try {
-    // 🚪 WALKING THE PATH: agents -> {id} -> private -> keys
-    const authDocRef = doc(db, "agents", agentId, "private", "keys"); 
-    const authDoc = await getDoc(authDocRef);
+  const logsRef = collection(db, "agents", agentId, "logs");
+  const q = query(logsRef, orderBy("timestamp", "desc"));
+  
+  unsubscribe = onSnapshot(q, (snapshot) => {
+    if (!logsContainer) return;
+    logsContainer.innerHTML = "";
+    const intentCount = {};
 
-    if (authDoc.exists()) {
-      const data = authDoc.data();
-      const dbPassword = data.password; // Looks for 'password' field
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      const intent = data.category || "unknown";
+      intentCount[intent] = (intentCount[intent] || 0) + 1;
 
-      if (enteredPassword === dbPassword) {
-        console.log("✅ Authenticated: " + agentId);
-        
-        // Stop listening to previous agent logs if switching
-        if (unsubscribe) unsubscribe(); 
+      const time = data.timestamp?.toDate
+        ? new Date(data.timestamp.toDate()).toLocaleString()
+        : "Syncing...";
 
-        // Start listening to the logs sub-collection
-        const logsRef = collection(db, "agents", agentId, "logs");
-        const q = query(logsRef, orderBy("timestamp", "desc"));
-        
-        unsubscribe = onSnapshot(q, (snapshot) => {
-          if (!logsContainer) return;
-          logsContainer.innerHTML = "";
-          const intentCount = {};
-
-          snapshot.forEach((doc) => {
-            const logData = doc.data();
-            const intent = logData.category || "unknown";
-            intentCount[intent] = (intentCount[intent] || 0) + 1;
-
-            const time = logData.timestamp?.toDate
-              ? new Date(logData.timestamp.toDate()).toLocaleString()
-              : "Syncing...";
-
-            const div = document.createElement("div");
-            div.className = "log";
-            div.innerHTML = `
-              <small>${time}</small>
-              <p class="user"><strong>User:</strong> ${logData.question}</p>
-              <p class="ai"><strong>AI:</strong> ${logData.answer}</p>
-              <span class="intent-tag">${intent}</span>
-            `;
-            logsContainer.appendChild(div);
-          });
-          updateIntentChart(intentCount);
-        });
-      } else {
-        alert("❌ Access Denied: Incorrect Password");
-      }
-    } else {
-      console.error("Path missing: " + authDocRef.path);
-      alert("Error: This agent does not have a security profile set up.");
-    }
-  } catch (error) {
-    console.error("🔥 Firebase Error:", error);
-    alert("Connection error. Check console.");
-  }
+      const div = document.createElement("div");
+      div.className = "log";
+      div.innerHTML = `
+        <small>${time}</small>
+        <p class="user"><strong>User:</strong> ${data.question}</p>
+        <p class="ai"><strong>AI:</strong> ${data.answer}</p>
+        <span class="intent-tag">${intent}</span>
+      `;
+      logsContainer.appendChild(div);
+    });
+    updateIntentChart(intentCount);
+  });
 }
 
-// --- 🖱️ AGENT SWITCHER ---
-
+// --- 🖱️ AGENT SWITCHER LOOP ---
 agentButtons.forEach((btn) => {
   btn.addEventListener("click", () => {
     const selectedAgent = btn.getAttribute("data-agent");
-    
-    // Simple prompt for the password
-    const pass = prompt(`Please enter the security key for ${selectedAgent}:`);
-    
-    if (pass) {
+    if (currentAgent !== selectedAgent) {
       currentAgent = selectedAgent;
       agentButtons.forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
-      loadAgentData(currentAgent, pass);
+      loadAgentData(currentAgent);
     }
   });
 });
 
-// NOTE: We removed the auto-load function so the dashboard stays blank until a password is used.
+loadAgentData(currentAgent);
 
 // --- 📊 CHART LOGIC ---
-
 function updateIntentChart(intentCount) {
   if (!chartCtx) return;
   const labels = Object.keys(intentCount);
   const data = Object.values(intentCount);
   const isLight = body.classList.contains("light-mode");
+  
+  // Check if we are on mobile to hide the legend and save space
   const isMobile = window.innerWidth <= 768;
 
   if (intentChart) intentChart.destroy();
@@ -183,7 +160,7 @@ function updateIntentChart(intentCount) {
       maintainAspectRatio: false,
       plugins: {
         legend: {
-          display: !isMobile,
+          display: !isMobile, // Hide legend on mobile to stop it from blocking messages
           position: 'bottom',
           labels: {
             color: isLight ? "#1e293b" : "#e5e7eb",
