@@ -35,56 +35,42 @@ let currentAgent = null;
 let unsubscribe = null;
 let intentChart = null;
 
-// 3. Updated Authentication Logic (Searches for the 'abc123' field)
+// 3. Authentication Logic
 async function validateAndUnlock() {
     const inputKey = keyInput.value.trim();
     if (!inputKey) return;
 
-    unlockBtn.innerText = "Checking...";
+    unlockBtn.innerText = "Authorizing...";
     authError.innerText = "";
 
     try {
-        // SEARCH the 'agents' collection for a document with accessKey == input
         const agentsRef = collection(db, "agents");
         const q = query(agentsRef, where("accessKey", "==", inputKey));
         const querySnapshot = await getDocs(q);
 
         if (!querySnapshot.empty) {
-            // Found it! Get the ID of the document (echo-support)
             const agentDoc = querySnapshot.docs[0];
             currentAgent = agentDoc.id; 
             initDashboard();
         } else {
-            throw new Error("Key not found");
+            throw new Error("Invalid Key");
         }
     } catch (error) {
-        console.error(error);
-        authError.innerText = "Invalid Access Key";
-        unlockBtn.innerText = "Unlock";
+        authError.innerText = "Invalid Access Key. Please try again.";
+        unlockBtn.innerText = "Authorize Dashboard";
     }
 }
 
-// 4. Password Visibility Toggle
-toggleEye.addEventListener("click", () => {
-    const type = keyInput.getAttribute("type") === "password" ? "text" : "password";
-    keyInput.setAttribute("type", type);
-    toggleEye.classList.toggle("fa-eye");
-    toggleEye.classList.toggle("fa-eye-slash");
-});
-
-// 5. Dashboard Initialization
+// 4. Dashboard Initialization
 function initDashboard() {
     if (currentAgent) {
         keyOverlay.style.display = "none";
         mainApp.style.display = "flex";
         loadRealtimeLogs(currentAgent);
-    } else {
-        keyOverlay.style.display = "flex";
-        mainApp.style.display = "none";
     }
 }
 
-// 6. Real-time Data Loading
+// 5. Real-time Data Loading with Professional Frame Structure
 function loadRealtimeLogs(agentId) {
     if (unsubscribe) unsubscribe();
 
@@ -101,15 +87,19 @@ function loadRealtimeLogs(agentId) {
             const intent = data.category || "General";
             counts[intent] = (counts[intent] || 0) + 1;
 
-            const time = data.timestamp?.toDate ? data.timestamp.toDate().toLocaleTimeString() : "Pending...";
-
             const logDiv = document.createElement("div");
-            logDiv.className = "log";
+            logDiv.className = "log-frame";
             logDiv.innerHTML = `
-                <small>${time}</small>
-                <div><strong>User:</strong> ${data.question}</div>
-                <div><strong>AI:</strong> ${data.answer}</div>
-                <div class="intent-tag">${intent}</div>
+                <div class="user-q">
+                    <i class="fa-solid fa-circle-user" style="color: var(--primary-accent)"></i>
+                    <span>${data.question || "No question recorded"}</span>
+                </div>
+                <div class="ai-a">
+                    ${data.answer || "No response generated"}
+                </div>
+                <div class="intent-tag">
+                    <i class="fa-solid fa-bolt-lightning"></i> ${intent}
+                </div>
             `;
             logsContainer.appendChild(logDiv);
         });
@@ -117,10 +107,12 @@ function loadRealtimeLogs(agentId) {
     });
 }
 
-// 7. Chart.js Visualization
+// 6. Chart.js Visualization
 function updateIntentChart(counts) {
     if (!chartCanvas) return;
     const ctx = chartCanvas.getContext("2d");
+    const isLight = document.body.classList.contains("light-mode");
+    
     if (intentChart) intentChart.destroy();
 
     intentChart = new Chart(ctx, {
@@ -130,6 +122,7 @@ function updateIntentChart(counts) {
             datasets: [{
                 data: Object.values(counts),
                 backgroundColor: ["#6366f1", "#10b981", "#f59e0b", "#ef4444", "#a855f7"],
+                hoverOffset: 15,
                 borderWidth: 0
             }]
         },
@@ -137,20 +130,49 @@ function updateIntentChart(counts) {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { position: 'bottom', labels: { color: getComputedStyle(document.body).getPropertyValue('--text') } }
-            }
+                legend: { 
+                    position: 'bottom', 
+                    labels: { 
+                        color: isLight ? '#1e293b' : '#f8fafc',
+                        padding: 20,
+                        font: { family: 'Inter', size: 12 }
+                    } 
+                }
+            },
+            cutout: '75%'
         }
     });
 }
 
-// 8. Event Listeners
+// 7. UI Interactivity
 unlockBtn.addEventListener("click", validateAndUnlock);
 keyInput.addEventListener("keypress", (e) => { if (e.key === "Enter") validateAndUnlock(); });
-logoRefresh.addEventListener("click", () => window.location.reload());
 
-modeSwitch.addEventListener("click", () => {
-    document.body.classList.toggle("light-mode");
-    if (intentChart) intentChart.update();
+// Requirement 1: Logo Refresh
+logoRefresh.addEventListener("click", () => {
+    window.location.reload();
 });
 
-initDashboard();
+// Requirement 2: Advanced Toggle Knob Logic
+modeSwitch.addEventListener("click", () => {
+    document.body.classList.toggle("light-mode");
+    document.body.classList.toggle("dark-mode");
+    
+    // Refresh chart to update font colors
+    if (intentChart && currentAgent) {
+        // Redraw based on current counts
+        const lastCounts = intentChart.data.datasets[0].data;
+        const lastLabels = intentChart.data.labels;
+        const countObj = {};
+        lastLabels.forEach((label, i) => countObj[label] = lastCounts[i]);
+        updateIntentChart(countObj);
+    }
+});
+
+// Toggle Password visibility
+toggleEye.addEventListener("click", () => {
+    const type = keyInput.type === "password" ? "text" : "password";
+    keyInput.type = type;
+    toggleEye.classList.toggle("fa-eye");
+    toggleEye.classList.toggle("fa-eye-slash");
+});
