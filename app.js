@@ -25,7 +25,6 @@ const chartCanvas = document.getElementById("intentChart");
 const logoRefresh = document.getElementById("logo-refresh");
 const modeSwitch = document.getElementById("mode-switch");
 const modeOptions = document.querySelectorAll(".mode-option");
-const agentButtons = document.querySelectorAll(".agent-switch");
 const body = document.body;
 
 // Auth Elements
@@ -35,13 +34,14 @@ const contentArea = document.getElementById("content-main");
 const keyInput = document.getElementById("agent-key-input");
 const unlockBtn = document.getElementById("unlock-btn");
 const authError = document.getElementById("auth-error");
+const toggleEye = document.getElementById("toggle-password-eye");
 
 let intentChart = null;
-let currentAgent = localStorage.getItem("agent_access_key"); 
+let currentAgent = null; // Forces login on refresh
 let unsubscribe = null; 
 const chartCtx = chartCanvas?.getContext("2d");
 
-// --- 🛡️ AUTHENTICATION LOGIC (NEW SEARCH METHOD) ---
+// --- 🛡️ AUTHENTICATION LOGIC ---
 
 async function validateAndUnlock() {
     const inputKey = keyInput.value.trim();
@@ -52,65 +52,61 @@ async function validateAndUnlock() {
     authError.innerText = "";
 
     try {
-        // Search the 'agents' collection for a doc where 'accessKey' field matches input
         const agentsRef = collection(db, "agents");
         const q = query(agentsRef, where("accessKey", "==", inputKey));
         const querySnapshot = await getDocs(q);
 
         if (!querySnapshot.empty) {
-            // Found it! Get the Document ID (e.g. "echo-support")
             const agentDoc = querySnapshot.docs[0];
-            const actualAgentId = agentDoc.id; 
-
-            // Save the ID to memory and initialize
-            localStorage.setItem("agent_access_key", actualAgentId);
-            currentAgent = actualAgentId;
+            currentAgent = agentDoc.id; 
             initDashboard();
         } else {
             throw new Error("Invalid Key");
         }
     } catch (error) {
-        console.error("Auth Error:", error);
         authError.innerText = "Access Denied: Key not found.";
         unlockBtn.disabled = false;
         unlockBtn.innerHTML = `<span>Unlock Dashboard</span> <i class="fa-solid fa-arrow-right"></i>`;
     }
 }
 
+// Password Visibility Toggle
+if (toggleEye) {
+    toggleEye.addEventListener("click", () => {
+        const type = keyInput.getAttribute("type") === "password" ? "text" : "password";
+        keyInput.setAttribute("type", type);
+        toggleEye.classList.toggle("fa-eye");
+        toggleEye.classList.toggle("fa-eye-slash");
+    });
+}
+
 function initDashboard() {
     if (!currentAgent) {
-        if (keyOverlay) keyOverlay.style.display = "flex";
-        if (sidebar) sidebar.style.display = "none";
-        if (contentArea) contentArea.style.display = "none";
+        keyOverlay.style.display = "flex";
+        sidebar.style.display = "none";
+        contentArea.style.display = "none";
     } else {
-        if (keyOverlay) keyOverlay.style.display = "none";
-        if (sidebar) sidebar.style.display = "flex";
-        if (contentArea) contentArea.style.display = "flex";
+        keyOverlay.style.display = "none";
+        sidebar.style.display = "flex";
+        contentArea.style.display = "flex";
         loadAgentData(currentAgent);
     }
 }
 
-// Bind Auth Events
-if (unlockBtn) unlockBtn.addEventListener("click", validateAndUnlock);
-if (keyInput) {
-    keyInput.addEventListener("keypress", (e) => { 
-        if (e.key === "Enter") validateAndUnlock(); 
-    });
-}
+unlockBtn.addEventListener("click", validateAndUnlock);
+keyInput.addEventListener("keypress", (e) => { if (e.key === "Enter") validateAndUnlock(); });
 
-// --- 🛠️ THEME & LOGO CONTROLS ---
+// --- 🛠️ THEME & LOGO ---
 
-// Click Logo to "Logout" and Refresh
 if (logoRefresh) {
   logoRefresh.addEventListener("click", () => {
-    localStorage.removeItem("agent_access_key");
+    currentAgent = null;
     window.location.reload();
   });
 }
 
 function setTheme(mode) {
   modeOptions.forEach(opt => opt.classList.remove("active"));
-  
   if (mode === "light") {
     body.classList.add("light-mode");
     body.classList.remove("dark-mode");
@@ -124,7 +120,6 @@ function setTheme(mode) {
     const darkBtn = document.querySelector('[data-mode="dark"]');
     if (darkBtn) darkBtn.classList.add("active");
   }
-  
   if (intentChart) updateChartColors(mode === "light");
   localStorage.setItem("dashboard-theme", mode);
 }
@@ -133,10 +128,7 @@ const savedTheme = localStorage.getItem("dashboard-theme") || "dark";
 setTheme(savedTheme);
 
 modeOptions.forEach(option => {
-  option.addEventListener("click", () => {
-    const selectedMode = option.getAttribute("data-mode");
-    setTheme(selectedMode);
-  });
+  option.addEventListener("click", () => setTheme(option.getAttribute("data-mode")));
 });
 
 function updateChartColors(isLight) {
@@ -147,13 +139,12 @@ function updateChartColors(isLight) {
   }
 }
 
-// --- 🔥 FIRESTORE LOGIC ---
+// --- 🔥 FIRESTORE DATA ---
 function loadAgentData(agentId) {
   if (unsubscribe) unsubscribe(); 
-
   const logsRef = collection(db, "agents", agentId, "logs");
   const q = query(logsRef, orderBy("timestamp", "desc"));
-  
+
   unsubscribe = onSnapshot(q, (snapshot) => {
     if (!logsContainer) return;
     logsContainer.innerHTML = "";
@@ -164,9 +155,7 @@ function loadAgentData(agentId) {
       const intent = data.category || "unknown";
       intentCount[intent] = (intentCount[intent] || 0) + 1;
 
-      const time = data.timestamp?.toDate
-        ? new Date(data.timestamp.toDate()).toLocaleString()
-        : "Syncing...";
+      const time = data.timestamp?.toDate ? new Date(data.timestamp.toDate()).toLocaleString() : "Syncing...";
 
       const div = document.createElement("div");
       div.className = "log";
@@ -179,12 +168,10 @@ function loadAgentData(agentId) {
       logsContainer.appendChild(div);
     });
     updateIntentChart(intentCount);
-  }, (error) => {
-      console.error("Firestore Error:", error);
   });
 }
 
-// --- 📊 CHART LOGIC ---
+// --- 📊 CHART ---
 function updateIntentChart(intentCount) {
   if (!chartCtx) return;
   const labels = Object.keys(intentCount);
@@ -193,7 +180,6 @@ function updateIntentChart(intentCount) {
   const isMobile = window.innerWidth <= 768;
 
   if (intentChart) intentChart.destroy();
-
   intentChart = new Chart(chartCtx, {
     type: "doughnut",
     data: {
@@ -211,16 +197,11 @@ function updateIntentChart(intentCount) {
         legend: {
           display: !isMobile,
           position: 'bottom',
-          labels: {
-            color: isLight ? "#1e293b" : "#e5e7eb",
-            padding: 20,
-            font: { size: 12 }
-          }
+          labels: { color: isLight ? "#1e293b" : "#e5e7eb", padding: 20, font: { size: 12 } }
         }
       }
     }
   });
 }
 
-// Final Startup
 initDashboard();
