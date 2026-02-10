@@ -5,6 +5,7 @@ import {
   onSnapshot,
   query,
   orderBy,
+  where,
   getDocs
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
@@ -24,6 +25,7 @@ const chartCanvas = document.getElementById("intentChart");
 const logoRefresh = document.getElementById("logo-refresh");
 const modeSwitch = document.getElementById("mode-switch");
 const modeOptions = document.querySelectorAll(".mode-option");
+const agentButtons = document.querySelectorAll(".agent-switch");
 const body = document.body;
 
 // Auth Elements
@@ -39,27 +41,37 @@ let currentAgent = localStorage.getItem("agent_access_key");
 let unsubscribe = null; 
 const chartCtx = chartCanvas?.getContext("2d");
 
-// --- 🛡️ AUTHENTICATION LOGIC ---
+// --- 🛡️ AUTHENTICATION LOGIC (NEW SEARCH METHOD) ---
 
 async function validateAndUnlock() {
     const inputKey = keyInput.value.trim();
     if (!inputKey) return;
 
     unlockBtn.disabled = true;
-    unlockBtn.innerHTML = `<span>Checking...</span>`;
+    unlockBtn.innerHTML = `<span>Searching...</span>`;
+    authError.innerText = "";
 
     try {
-        // Check if the agent collection exists by trying to fetch 1 doc
-        const testRef = collection(db, "agents", inputKey, "logs");
-        const testSnap = await getDocs(query(testRef, orderBy("timestamp", "desc")));
+        // Search the 'agents' collection for a doc where 'accessKey' field matches input
+        const agentsRef = collection(db, "agents");
+        const q = query(agentsRef, where("accessKey", "==", inputKey));
+        const querySnapshot = await getDocs(q);
 
-        // In Firebase, collections aren't "checked" for existence easily, 
-        // so we treat any valid string that returns/allows access as a success.
-        localStorage.setItem("agent_access_key", inputKey);
-        currentAgent = inputKey;
-        initDashboard();
+        if (!querySnapshot.empty) {
+            // Found it! Get the Document ID (e.g. "echo-support")
+            const agentDoc = querySnapshot.docs[0];
+            const actualAgentId = agentDoc.id; 
+
+            // Save the ID to memory and initialize
+            localStorage.setItem("agent_access_key", actualAgentId);
+            currentAgent = actualAgentId;
+            initDashboard();
+        } else {
+            throw new Error("Invalid Key");
+        }
     } catch (error) {
-        authError.innerText = "Access Denied: Invalid Key";
+        console.error("Auth Error:", error);
+        authError.innerText = "Access Denied: Key not found.";
         unlockBtn.disabled = false;
         unlockBtn.innerHTML = `<span>Unlock Dashboard</span> <i class="fa-solid fa-arrow-right"></i>`;
     }
@@ -67,42 +79,52 @@ async function validateAndUnlock() {
 
 function initDashboard() {
     if (!currentAgent) {
-        keyOverlay.style.display = "flex";
-        sidebar.style.display = "none";
-        contentArea.style.display = "none";
+        if (keyOverlay) keyOverlay.style.display = "flex";
+        if (sidebar) sidebar.style.display = "none";
+        if (contentArea) contentArea.style.display = "none";
     } else {
-        keyOverlay.style.display = "none";
-        sidebar.style.display = "flex";
-        contentArea.style.display = "flex";
+        if (keyOverlay) keyOverlay.style.display = "none";
+        if (sidebar) sidebar.style.display = "flex";
+        if (contentArea) contentArea.style.display = "flex";
         loadAgentData(currentAgent);
     }
 }
 
-unlockBtn.addEventListener("click", validateAndUnlock);
-keyInput.addEventListener("keypress", (e) => { if (e.key === "Enter") validateAndUnlock(); });
+// Bind Auth Events
+if (unlockBtn) unlockBtn.addEventListener("click", validateAndUnlock);
+if (keyInput) {
+    keyInput.addEventListener("keypress", (e) => { 
+        if (e.key === "Enter") validateAndUnlock(); 
+    });
+}
 
 // --- 🛠️ THEME & LOGO CONTROLS ---
 
+// Click Logo to "Logout" and Refresh
 if (logoRefresh) {
   logoRefresh.addEventListener("click", () => {
-    localStorage.removeItem("agent_access_key"); // Simple way to "Logout"
+    localStorage.removeItem("agent_access_key");
     window.location.reload();
   });
 }
 
 function setTheme(mode) {
   modeOptions.forEach(opt => opt.classList.remove("active"));
+  
   if (mode === "light") {
     body.classList.add("light-mode");
     body.classList.remove("dark-mode");
-    modeSwitch.classList.add("is-light");
-    document.querySelector('[data-mode="light"]').classList.add("active");
+    if (modeSwitch) modeSwitch.classList.add("is-light");
+    const lightBtn = document.querySelector('[data-mode="light"]');
+    if (lightBtn) lightBtn.classList.add("active");
   } else {
     body.classList.add("dark-mode");
     body.classList.remove("light-mode");
-    modeSwitch.classList.remove("is-light");
-    document.querySelector('[data-mode="dark"]').classList.add("active");
+    if (modeSwitch) modeSwitch.classList.remove("is-light");
+    const darkBtn = document.querySelector('[data-mode="dark"]');
+    if (darkBtn) darkBtn.classList.add("active");
   }
+  
   if (intentChart) updateChartColors(mode === "light");
   localStorage.setItem("dashboard-theme", mode);
 }
@@ -112,7 +134,8 @@ setTheme(savedTheme);
 
 modeOptions.forEach(option => {
   option.addEventListener("click", () => {
-    setTheme(option.getAttribute("data-mode"));
+    const selectedMode = option.getAttribute("data-mode");
+    setTheme(selectedMode);
   });
 });
 
@@ -157,10 +180,7 @@ function loadAgentData(agentId) {
     });
     updateIntentChart(intentCount);
   }, (error) => {
-      console.error("Snapshot error:", error);
-      // If error (like permission denied), kick back to login
-      localStorage.removeItem("agent_access_key");
-      location.reload();
+      console.error("Firestore Error:", error);
   });
 }
 
@@ -202,5 +222,5 @@ function updateIntentChart(intentCount) {
   });
 }
 
-// Initialize on Load
+// Final Startup
 initDashboard();
