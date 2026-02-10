@@ -13,17 +13,13 @@
 
     <div id="key-overlay" class="overlay">
         <div class="login-box">
-            <div class="lock-shield">
-                <i class="fa-solid fa-shield-halved"></i>
-            </div>
+            <div class="lock-shield"><i class="fa-solid fa-shield-halved"></i></div>
             <h2>Secure Access</h2>
-            <p>Enter your agent's unique access key to view live logs.</p>
-            
+            <p>Enter your agent's unique access key.</p>
             <div class="password-wrapper">
                 <input type="password" id="agent-key-input" placeholder="Enter Access Key...">
                 <i id="toggle-password-eye" class="fa-solid fa-eye"></i>
             </div>
-
             <button id="unlock-btn">Authorize Dashboard</button>
             <p id="auth-error" class="error-msg"></p>
         </div>
@@ -33,20 +29,15 @@
         
         <aside class="sidebar">
             <div class="logo" id="logo-refresh" title="Refresh Dashboard">
-                <div class="logo-icon">
-                    <i class="fa-solid fa-robot"></i>
-                </div>
+                <div class="logo-icon"><i class="fa-solid fa-robot"></i></div>
                 <span>Agent<span>Sync</span></span>
             </div>
 
-            <nav class="sidebar-nav">
-                <div class="nav-item active">
-                    <i class="fa-solid fa-house-chimney-window"></i> Overview
+            <div class="sidebar-chart-container">
+                <div class="card chart-card sidebar-card">
+                    <canvas id="intentChart"></canvas>
                 </div>
-                <div class="nav-item">
-                    <i class="fa-solid fa-terminal"></i> Live Console
-                </div>
-            </nav>
+            </div>
 
             <div class="theme-section">
                 <div class="toggle-container" id="mode-switch">
@@ -71,29 +62,9 @@
                 </div>
             </header>
 
-            <div class="dashboard-grid">
-                
-                <div class="analytics-col">
-                    <div class="card chart-card">
-                        <div class="card-header">
-                            <h3>Intent Distribution</h3>
-                            <i class="fa-solid fa-circle-info"></i>
-                        </div>
-                        <div class="chart-wrapper">
-                            <canvas id="intentChart"></canvas>
-                        </div>
+            <div class="logs-wrapper">
+                <div id="logs" class="logs-flex-container">
                     </div>
-                </div>
-
-                <div class="logs-col">
-                    <div class="section-title">
-                        <h3>Interaction History</h3>
-                        <span id="log-count">Live</span>
-                    </div>
-                    <div id="logs" class="logs-feed">
-                        </div>
-                </div>
-
             </div>
         </main>
     </div>
