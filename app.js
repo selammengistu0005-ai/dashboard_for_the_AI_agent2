@@ -33,7 +33,8 @@ let currentAgent = null;
 let unsubscribe = null; 
 const chartCtx = chartCanvas?.getContext("2d");
 
-// --- 🛠️ THEME & LOGO CONTROLS (Unchanged) ---
+// --- 🛠️ THEME & LOGO CONTROLS ---
+
 if (logoRefresh) {
   logoRefresh.addEventListener("click", () => {
     window.location.reload();
@@ -75,73 +76,75 @@ function updateChartColors(isLight) {
   }
 }
 
-// --- 🔥 FIRESTORE LOGIC ---
+// --- 🔥 FIRESTORE LOGIC (The Professional Path) ---
 
 async function loadAgentData(agentId, enteredPassword) {
-  // 🎯 TARGETING THE NEW "password" DOCUMENT
-  // Path: agents/{agentId}/passwords/password (assuming 'passwords' is a sub-collection)
-  // or agents/{agentId}/password if it's a nested doc. 
-  // Based on your text, I'll fetch the document "password" inside the agent's path.
-  const passDocRef = doc(db, "agents", agentId, "config", "password"); 
-  
-  // Note: If you put it directly under the agent, use: doc(db, "agents", agentId)
-  // But based on your specific instruction, we check the 'password' doc:
-  const passDoc = await getDoc(doc(db, "agents", agentId, "private", "keys")); 
+  try {
+    // 🚪 WALKING THE PATH: agents -> {id} -> private -> keys
+    const authDocRef = doc(db, "agents", agentId, "private", "keys"); 
+    const authDoc = await getDoc(authDocRef);
 
-  /* REVISED LOGIC: Since you mentioned a "new document called password", 
-     I will assume the structure is: agents -> {agentId} -> password (document)
-  */
-  const authDocRef = doc(db, "agents", agentId, "auth", "password");
-  const authDoc = await getDoc(authDocRef);
+    if (authDoc.exists()) {
+      const data = authDoc.data();
+      const dbPassword = data.password; // Looks for 'password' field
 
-  if (authDoc.exists()) {
-    const dbPassword = authDoc.data().code; // Adjust 'code' to whatever field name you used
+      if (enteredPassword === dbPassword) {
+        console.log("✅ Authenticated: " + agentId);
+        
+        // Stop listening to previous agent logs if switching
+        if (unsubscribe) unsubscribe(); 
 
-    if (enteredPassword === dbPassword) {
-      if (unsubscribe) unsubscribe(); 
+        // Start listening to the logs sub-collection
+        const logsRef = collection(db, "agents", agentId, "logs");
+        const q = query(logsRef, orderBy("timestamp", "desc"));
+        
+        unsubscribe = onSnapshot(q, (snapshot) => {
+          if (!logsContainer) return;
+          logsContainer.innerHTML = "";
+          const intentCount = {};
 
-      const logsRef = collection(db, "agents", agentId, "logs");
-      const q = query(logsRef, orderBy("timestamp", "desc"));
-      
-      unsubscribe = onSnapshot(q, (snapshot) => {
-        if (!logsContainer) return;
-        logsContainer.innerHTML = "";
-        const intentCount = {};
+          snapshot.forEach((doc) => {
+            const logData = doc.data();
+            const intent = logData.category || "unknown";
+            intentCount[intent] = (intentCount[intent] || 0) + 1;
 
-        snapshot.forEach((doc) => {
-          const data = doc.data();
-          const intent = data.category || "unknown";
-          intentCount[intent] = (intentCount[intent] || 0) + 1;
+            const time = logData.timestamp?.toDate
+              ? new Date(logData.timestamp.toDate()).toLocaleString()
+              : "Syncing...";
 
-          const time = data.timestamp?.toDate
-            ? new Date(data.timestamp.toDate()).toLocaleString()
-            : "Syncing...";
-
-          const div = document.createElement("div");
-          div.className = "log";
-          div.innerHTML = `
-            <small>${time}</small>
-            <p class="user"><strong>User:</strong> ${data.question}</p>
-            <p class="ai"><strong>AI:</strong> ${data.answer}</p>
-            <span class="intent-tag">${intent}</span>
-          `;
-          logsContainer.appendChild(div);
+            const div = document.createElement("div");
+            div.className = "log";
+            div.innerHTML = `
+              <small>${time}</small>
+              <p class="user"><strong>User:</strong> ${logData.question}</p>
+              <p class="ai"><strong>AI:</strong> ${logData.answer}</p>
+              <span class="intent-tag">${intent}</span>
+            `;
+            logsContainer.appendChild(div);
+          });
+          updateIntentChart(intentCount);
         });
-        updateIntentChart(intentCount);
-      });
+      } else {
+        alert("❌ Access Denied: Incorrect Password");
+      }
     } else {
-      alert("Incorrect password!");
+      console.error("Path missing: " + authDocRef.path);
+      alert("Error: This agent does not have a security profile set up.");
     }
-  } else {
-    alert("Security configuration missing for this agent.");
+  } catch (error) {
+    console.error("🔥 Firebase Error:", error);
+    alert("Connection error. Check console.");
   }
 }
 
-// --- 🖱️ AGENT SWITCHER LOOP ---
+// --- 🖱️ AGENT SWITCHER ---
+
 agentButtons.forEach((btn) => {
   btn.addEventListener("click", () => {
     const selectedAgent = btn.getAttribute("data-agent");
-    const pass = prompt(`Enter security code for ${selectedAgent}:`);
+    
+    // Simple prompt for the password
+    const pass = prompt(`Please enter the security key for ${selectedAgent}:`);
     
     if (pass) {
       currentAgent = selectedAgent;
@@ -152,7 +155,10 @@ agentButtons.forEach((btn) => {
   });
 });
 
-// --- 📊 CHART LOGIC (Unchanged) ---
+// NOTE: We removed the auto-load function so the dashboard stays blank until a password is used.
+
+// --- 📊 CHART LOGIC ---
+
 function updateIntentChart(intentCount) {
   if (!chartCtx) return;
   const labels = Object.keys(intentCount);
