@@ -2,13 +2,12 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import { 
     getFirestore, 
     collection, 
-    doc, 
-    getDoc, 
-    onSnapshot, 
     query, 
+    where, 
+    getDocs, 
+    onSnapshot, 
     orderBy 
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
 // 1. Firebase Configuration
 const firebaseConfig = {
     apiKey: "AIzaSyD73Uyrrl8JDP5X_yxT2Zp1fV9oIpAvpXA",
@@ -36,20 +35,24 @@ let unsubscribe = null;
 let intentChart = null;
 
 // 3. Authentication Logic (Key = Document ID)
+// Replace ONLY this function in your app.js
 async function validateAndUnlock() {
     const inputKey = keyInput.value.trim();
     if (!inputKey) return;
 
-    unlockBtn.innerText = "Checking...";
+    unlockBtn.innerText = "Searching...";
     authError.innerText = "";
 
     try {
-        // Direct check: Does a document with this ID exist in 'agents'?
-        const agentRef = doc(db, "agents", inputKey);
-        const docSnap = await getDoc(agentRef);
+        // This version SEARCHES all documents for the 'accessKey' field
+        const agentsRef = collection(db, "agents");
+        const q = query(agentsRef, where("accessKey", "==", inputKey));
+        const querySnapshot = await getDocs(q);
 
-        if (docSnap.exists()) {
-            currentAgent = inputKey;
+        if (!querySnapshot.empty) {
+            // Found a document where accessKey == "abc123"
+            const agentDoc = querySnapshot.docs[0];
+            currentAgent = agentDoc.id; // This will set it to "echo-support" automatically
             initDashboard();
         } else {
             throw new Error("Not found");
@@ -154,3 +157,4 @@ modeSwitch.addEventListener("click", () => {
 
 // Run on Load
 initDashboard();
+
