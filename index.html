@@ -8,7 +8,27 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 </head>
 <body class="dark-mode"> 
-  <nav class="sidebar">
+
+  <div id="key-overlay" class="auth-overlay">
+    <div class="auth-card">
+      <div class="auth-icon">
+        <i class="fa-solid fa-shield-halved"></i>
+      </div>
+      <h2>Agent Access Required</h2>
+      <p>Please enter your unique access key to view logs.</p>
+      
+      <div class="input-group">
+        <input type="password" id="agent-key-input" placeholder="••••••••••••••••">
+        <button id="unlock-btn">
+          <span>Unlock Dashboard</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+      <p id="auth-error" class="error-text"></p>
+    </div>
+  </div>
+
+  <nav class="sidebar" id="sidebar-main" style="display: none;">
     <div class="logo">
       <i class="fa-solid fa-robot"></i>
       <h2 id="logo-refresh">Dashboard <span>AI</span></h2>
@@ -35,7 +55,7 @@
     </div>
   </nav>
 
-  <main class="content-area">
+  <main class="content-area" id="content-main" style="display: none;">
     <header class="main-header">
       <div class="header-left">
         <h1>Interaction Logs</h1>
@@ -56,8 +76,3 @@
   <script type="module" src="./app.js"></script>
 </body>
 </html>
-
-
-
-
-
