@@ -1,18 +1,15 @@
-/* --- Professional Color Palette & Variables --- */
+/* --- Professional Palette --- */
 :root {
-    --primary-accent: #6366f1; /* Indigo */
-    --primary-hover: #4f46e5;
+    --primary-accent: #6366f1;
     --bg-dark: #0f172a;
     --card-dark: #1e293b;
     --text-main: #f8fafc;
     --text-dim: #94a3b8;
     --border-color: rgba(255, 255, 255, 0.1);
     --glass-bg: rgba(255, 255, 255, 0.03);
-    --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* --- Light Mode Overrides --- */
 .light-mode {
     --bg-dark: #f1f5f9;
     --card-dark: #ffffff;
@@ -20,291 +17,109 @@
     --text-dim: #64748b;
     --border-color: rgba(0, 0, 0, 0.08);
     --glass-bg: rgba(0, 0, 0, 0.05);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
-/* --- Global Reset --- */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Inter', sans-serif;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+body { background-color: var(--bg-dark); color: var(--text-main); transition: var(--transition); overflow: hidden; }
 
-body {
-    background-color: var(--bg-dark);
-    color: var(--text-main);
-    overflow: hidden;
-    transition: var(--transition);
-}
+/* --- Sidebar & Requirement 3: Chart Position --- */
+.app-container { display: flex; height: 100vh; }
 
-/* --- Authentication Overlay --- */
-.overlay {
-    position: fixed;
-    inset: 0;
-    background: var(--bg-dark);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-}
-
-.login-box {
-    background: var(--card-dark);
-    padding: 3rem;
-    border-radius: 24px;
-    text-align: center;
-    width: 100%;
-    max-width: 420px;
-    box-shadow: var(--shadow-lg);
-    border: 1px solid var(--border-color);
-}
-
-.lock-shield {
-    font-size: 3.5rem;
-    color: var(--primary-accent);
-    margin-bottom: 1.5rem;
-}
-
-.password-wrapper {
-    position: relative;
-    margin: 2rem 0;
-}
-
-#agent-key-input {
-    width: 100%;
-    padding: 14px 20px;
-    background: var(--bg-dark);
-    border: 2px solid var(--border-color);
-    border-radius: 12px;
-    color: var(--text-main);
-    font-size: 1rem;
-    outline: none;
-    transition: border-color 0.2s;
-}
-
-#agent-key-input:focus {
-    border-color: var(--primary-accent);
-}
-
-#unlock-btn {
-    width: 100%;
-    padding: 14px;
-    background: var(--primary-accent);
-    color: white;
-    border: none;
-    border-radius: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-#unlock-btn:hover {
-    background: var(--primary-hover);
-    transform: translateY(-2px);
-}
-
-/* --- Main Layout --- */
-.app-container {
-    display: flex;
-    height: 100vh;
-}
-
-/* --- Sidebar --- */
 .sidebar {
-    width: 280px;
+    width: 320px; /* Widened slightly to fit the chart nicely */
     background: var(--card-dark);
     border-right: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
-    padding: 2rem 1.5rem;
+    padding: 1.5rem;
 }
 
-.logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-weight: 800;
-    font-size: 1.5rem;
-    cursor: pointer;
-    margin-bottom: 3rem;
-}
-
-.logo span span {
-    color: var(--primary-accent);
-}
-
-.logo-icon {
-    background: var(--primary-accent);
-    color: white;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 10px;
-}
-
-.nav-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 16px;
-    border-radius: 10px;
-    color: var(--text-dim);
-    margin-bottom: 8px;
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.nav-item.active {
-    background: var(--glass-bg);
-    color: var(--primary-accent);
-    font-weight: 600;
-}
-
-/* --- Advanced Toggle Knob --- */
-.theme-section {
-    margin-top: auto;
+.sidebar-chart-container {
+    margin-top: 1rem;
     padding: 1rem 0;
 }
 
-.toggle-track {
-    width: 64px;
-    height: 32px;
-    background: var(--bg-dark);
-    border-radius: 20px;
-    position: relative;
-    cursor: pointer;
-    border: 1px solid var(--border-color);
+.sidebar-card {
+    background: var(--bg-dark); /* Slightly darker to pop against sidebar */
+    padding: 1rem;
+    border-radius: 16px;
+    height: 280px; /* Fixed height for the ring chart */
 }
 
-.toggle-knob {
-    width: 26px;
-    height: 26px;
-    background: var(--primary-accent);
-    border-radius: 50%;
-    position: absolute;
-    top: 2px;
-    left: 3px;
-    transition: var(--transition);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-}
-
-.light-mode .toggle-knob {
-    transform: translateX(30px);
-}
-
-.sun-icon { display: none; }
-.light-mode .sun-icon { display: block; }
-.light-mode .moon-icon { display: none; }
-
-/* --- Dashboard Grid --- */
-.main-content {
-    flex: 1;
-    overflow-y: auto;
-    background: var(--bg-dark);
-}
+/* --- Main Content & Header --- */
+.main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 
 .dashboard-header {
-    padding: 2rem;
+    padding: 1.5rem 2rem;
     border-bottom: 1px solid var(--border-color);
 }
 
-.live-indicator {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.8rem;
-    color: #10b981;
-    margin-top: 4px;
-}
-
-.pulse-dot {
-    width: 8px;
-    height: 8px;
-    background: #10b981;
-    border-radius: 50%;
-    animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-    0% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.4; transform: scale(1.2); }
-    100% { opacity: 1; transform: scale(1); }
-}
-
-.dashboard-grid {
-    display: grid;
-    grid-template-columns: 420px 1fr;
-    gap: 2rem;
+/* --- Requirement 2: Horizontal Stacking Logs --- */
+.logs-wrapper {
+    flex: 1;
+    overflow-y: auto;
     padding: 2rem;
 }
 
-/* --- Cards & Charts --- */
-.analytics-col {
-    position: sticky;
-    top: 2rem;
-    height: fit-content;
+.logs-flex-container {
+    display: flex;
+    flex-wrap: wrap; /* This makes them stack horizontally then wrap down */
+    gap: 1.5rem;
+    align-content: flex-start;
 }
 
-.card {
-    background: var(--card-dark);
-    border-radius: 20px;
-    border: 1px solid var(--border-color);
-    padding: 1.5rem;
-    box-shadow: var(--shadow-lg);
-}
-
-/* --- Log Frames --- */
 .log-frame {
+    flex: 1 1 calc(33.333% - 1rem); /* 3 cards per row, adjustable */
+    min-width: 300px; /* Prevents cards from getting too skinny */
     background: var(--card-dark);
     border: 1px solid var(--border-color);
     border-radius: 18px;
     padding: 1.5rem;
-    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     transition: var(--transition);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 .log-frame:hover {
+    transform: translateY(-5px);
     border-color: var(--primary-accent);
-    transform: translateX(5px);
 }
 
-.user-q {
-    font-weight: 600;
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    color: var(--text-main);
-}
-
-.ai-a {
-    color: var(--text-dim);
-    padding-left: 36px;
-    font-size: 0.95rem;
-    line-height: 1.6;
-    border-left: 2px solid var(--glass-bg);
-}
+.user-q { font-weight: 600; margin-bottom: 1rem; display: flex; gap: 10px; }
+.ai-a { color: var(--text-dim); font-size: 0.9rem; line-height: 1.5; margin-bottom: 1rem; }
 
 /* --- Glassmorphism Intent Tag --- */
 .intent-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: 1.25rem;
-    padding: 6px 14px;
+    align-self: flex-start;
+    padding: 4px 12px;
     background: var(--glass-bg);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     border: 1px solid var(--border-color);
     border-radius: 100px;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 700;
     color: var(--primary-accent);
-    text-transform: uppercase;
 }
+
+/* --- Theme Toggle (Bottom of Sidebar) --- */
+.theme-section { margin-top: auto; padding-top: 1rem; }
+.toggle-track {
+    width: 50px; height: 26px; background: var(--bg-dark); 
+    border-radius: 20px; position: relative; cursor: pointer; border: 1px solid var(--border-color);
+}
+.toggle-knob {
+    width: 20px; height: 20px; background: var(--primary-accent); border-radius: 50%;
+    position: absolute; top: 2px; left: 3px; transition: var(--transition);
+    display: flex; align-items: center; justify-content: center; font-size: 10px; color: white;
+}
+.light-mode .toggle-knob { transform: translateX(23px); }
+.sun-icon { display: none; }
+.light-mode .sun-icon { display: block; }
+.light-mode .moon-icon { display: none; }
+
+/* --- Auth Overlay (same as before) --- */
+.overlay { position: fixed; inset: 0; background: var(--bg-dark); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+.login-box { background: var(--card-dark); padding: 2.5rem; border-radius: 24px; width: 100%; max-width: 400px; text-align: center; border: 1px solid var(--border-color); }
