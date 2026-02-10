@@ -1,78 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agent Analytics Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="dark-mode"> 
+<body class="dark-mode">
 
-  <div id="key-overlay" class="auth-overlay">
-    <div class="auth-card">
-      <div class="auth-icon">
-        <i class="fa-solid fa-shield-halved"></i>
-      </div>
-      <h2>Agent Access Required</h2>
-      <p>Please enter your unique access key to view logs.</p>
-      
-      <div class="input-group">
-        <input type="password" id="agent-key-input" placeholder="••••••••••••••••">
-        <button id="unlock-btn">
-          <span>Unlock Dashboard</span>
-          <i class="fa-solid fa-arrow-right"></i>
-        </button>
-      </div>
-      <p id="auth-error" class="error-text"></p>
-    </div>
-  </div>
-
-  <nav class="sidebar" id="sidebar-main" style="display: none;">
-    <div class="logo">
-      <i class="fa-solid fa-robot"></i>
-      <h2 id="logo-refresh">Dashboard <span>AI</span></h2>
-    </div>
-
-    <div class="menu">
-      <p class="menu-label">Analytics</p>
-      <div class="chart-container">
-        <canvas id="intentChart"></canvas>
-      </div>
-      <div id="stat-summary"></div>
-    </div>
-
-    <div class="mode-container">
-      <div class="mode-switch" id="mode-switch">
-        <div class="mode-knob"></div>
-        <div class="mode-option active" data-mode="dark">
-          <i class="fa-solid fa-moon"></i>
+    <div id="key-overlay" class="overlay">
+        <div class="lock-card">
+            <i class="fa-solid fa-shield-halved lock-icon"></i>
+            <h2>Client Access</h2>
+            <p>Please enter your agent's secret access key to continue.</p>
+            
+            <div class="input-group">
+                <input type="password" id="agent-key-input" placeholder="Enter Access Key...">
+                <i id="toggle-password-eye" class="fa-solid fa-eye eye-toggle"></i>
+            </div>
+            
+            <button id="unlock-btn">
+                <span>Unlock Dashboard</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </button>
+            <p id="auth-error" class="error-msg"></p>
         </div>
-        <div class="mode-option" data-mode="light">
-          <i class="fa-solid fa-sun"></i>
-        </div>
-      </div>
     </div>
-  </nav>
 
-  <main class="content-area" id="content-main" style="display: none;">
-    <header class="main-header">
-      <div class="header-left">
-        <h1>Interaction Logs</h1>
-        <p>Live stream of agent conversations</p>
-      </div>
-      <div class="header-right">
-        <button class="agent-switch active" data-agent="echo-support">Echo Support</button>
-        <button class="agent-switch" data-agent="vilto_support">Vilto Support</button>
-        <button class="agent-switch" data-agent="tres_support">Tres Support</button>
-        <span class="status-badge"><span class="dot"></span> Live Sync</span>
-      </div>
-    </header>
+    <div class="app-container">
+        <aside id="sidebar-main" class="sidebar" style="display: none;">
+            <div class="sidebar-header">
+                <div id="logo-refresh" class="logo">
+                    <i class="fa-solid fa-robot"></i>
+                    <span>Dashboard AI</span>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-item active"><i class="fa-solid fa-chart-line"></i> Analytics</div>
+                <div class="nav-item"><i class="fa-solid fa-history"></i> Log History</div>
+                <div class="nav-item"><i class="fa-solid fa-gear"></i> Settings</div>
+            </nav>
 
-    <section id="logs" class="logs-grid"></section>
-  </main>
+            <div class="theme-controls">
+                <p>Appearance</p>
+                <div id="mode-switch" class="mode-switch">
+                    <div class="mode-option" data-mode="dark"><i class="fa-solid fa-moon"></i></div>
+                    <div class="mode-option" data-mode="light"><i class="fa-solid fa-sun"></i></div>
+                </div>
+            </div>
+        </aside>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script type="module" src="./app.js"></script>
+        <main id="content-main" class="main-content" style="display: none;">
+            <header class="content-header">
+                <h1>Interaction Insights</h1>
+                <div class="status-badge"><span class="dot"></span> Live Data</div>
+            </header>
+
+            <div class="dashboard-grid">
+                <div class="chart-section">
+                    <h3>Intent Distribution</h3>
+                    <div class="canvas-container">
+                        <canvas id="intentChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="logs-section">
+                    <h3>Live Interaction Logs</h3>
+                    <div id="logs" class="logs-container">
+                        </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module" src="app.js"></script>
 </body>
 </html>
