@@ -1,371 +1,134 @@
-/* --- 🎨 THEME VARIABLES --- */
 :root {
-  --bg-color: #0f172a;
-  --card-bg: rgba(30, 41, 59, 0.7);
-  --sidebar-bg: #020617;
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --accent: #5850ec;
-  --border: rgba(255, 255, 255, 0.1);
-  --user-msg: #38bdf8;
-  --ai-msg: #2dd4bf;
-  --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
-  --knob-track: #1e293b;
+    --bg: #0f172a;
+    --card-bg: #1e293b;
+    --text: #f8fafc;
+    --accent: #6366f1;
+    --border: #334155;
 }
 
 body.light-mode {
-  --bg-color: #f1f5f9;
-  --card-bg: rgba(255, 255, 255, 0.9);
-  --sidebar-bg: #ffffff;
-  --text-primary: #1e293b;
-  --text-secondary: #64748b;
-  --border: rgba(0, 0, 0, 0.08);
-  --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-  --knob-track: #e2e8f0;
+    --bg: #f1f5f9;
+    --card-bg: #ffffff;
+    --text: #0f172a;
+    --border: #cbd5e1;
 }
 
-* { 
-  box-sizing: border-box; 
-  margin: 0; 
-  padding: 0; 
-  font-family: 'Inter', sans-serif; 
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow: hidden;
 }
 
-/* Base Desktop Styles - Locked Viewport */
-body { 
-  display: flex; 
-  height: 100vh; 
-  background: var(--bg-color); 
-  color: var(--text-primary); 
-  overflow: hidden; 
-  transition: background 0.3s ease;
-}
-
-/* --- 🏛️ SIDEBAR --- */
-.sidebar { 
-  width: 300px; 
-  background: var(--sidebar-bg); 
-  padding: 30px 20px; 
-  display: flex; 
-  flex-direction: column; 
-  border-right: 1px solid var(--border); 
-  flex-shrink: 0;
-}
-
-.logo { display: flex; align-items: center; gap: 12px; margin-bottom: 40px; }
-.logo i { color: var(--accent); font-size: 24px; }
-#logo-refresh { cursor: pointer; transition: transform 0.2s; }
-#logo-refresh span { color: var(--accent); font-weight: 800; }
-
-/* --- 🔘 THE MODERN SEGMENTED CONTROL --- */
-.mode-container { margin-top: auto; padding: 20px 0; }
-
-.mode-switch {
-  position: relative;
-  display: flex;
-  background: var(--knob-track);
-  border-radius: 12px;
-  padding: 4px;
-  width: 100%;
-  border: 1px solid var(--border);
-  cursor: pointer;
-  height: 48px;
-}
-
-.mode-option {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 5;
-  color: var(--text-secondary);
-  font-size: 16px;
-  transition: color 0.3s ease;
-}
-
-.mode-option.active { color: var(--accent); }
-
-.mode-knob {
-  position: absolute;
-  top: 4px;
-  left: 4px;
-  width: calc(50% - 4px);
-  height: calc(100% - 8px);
-  background: var(--sidebar-bg);
-  border-radius: 10px;
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 2;
-  border: 1px solid var(--border);
-}
-
-.mode-switch.is-light .mode-knob { transform: translateX(100%); }
-
-/* --- 📊 ANALYTICS --- */
-.menu-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-secondary); margin-bottom: 20px; font-weight: 700; }
-.chart-container { height: 220px; margin-bottom: 20px; position: relative; }
-
-/* --- ✉️ LOGS & CONTENT --- */
-.content-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-.main-header { padding: 30px 40px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
-
-.agent-switch {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  color: var(--text-primary);
-  padding: 10px 20px;
-  margin-left: 8px;
-  border-radius: 30px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.2s ease;
-}
-
-.agent-switch.active { background: var(--accent); color: white; border-color: var(--accent); }
-
-.logs-grid { 
-  padding: 0 40px 40px; 
-  overflow-y: auto; 
-  display: grid; 
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); 
-  gap: 24px; 
-}
-
-.log { 
-  background: var(--card-bg); 
-  border: 1px solid var(--border); 
-  border-radius: 20px; 
-  padding: 24px; 
-  box-shadow: var(--shadow);
-}
-
-.log small { color: var(--text-secondary); display: block; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px; font-size: 12px; }
-.user { 
-  margin-bottom: 12px; /* Adds space after the user question */
-  line-height: 1.5; 
-}
-.user strong { color: var(--user-msg); }
-.ai strong { color: var(--ai-msg); }
-.ai { 
-  margin-bottom: 16px; /* Adds space after the AI response before the tag */
-  line-height: 1.5; 
-}
-.intent-tag { display: inline-block; padding: 4px 10px; border-radius: 8px; background: rgba(88, 80, 236, 0.1); color: var(--accent); font-size: 11px; font-weight: 700; }
-
-/* Status Dot */
-.status-badge { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #22c55e; background: rgba(34, 197, 94, 0.1); padding: 8px 15px; border-radius: 20px; }
-.dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 8px #22c55e; }
-
-/* --- 📱 MOBILE RESPONSIVENESS (SCROLL FIX) --- */
-@media (max-width: 768px) {
-  /* 1. Unlocking the viewport so the whole page scrolls */
-  html, body {
-    height: auto !important;
-    overflow-y: auto !important;
-    overflow-x: hidden;
-    position: static !important;
-  }
-
-  body { 
-    flex-direction: column !important; 
-    display: block !important; /* Resets flex constraints */
-  }
-
-  .sidebar { 
-    width: 100% !important; 
-    height: auto !important; 
-    border-right: none; 
-    border-bottom: 1px solid var(--border); 
-    padding: 20px;
-    position: relative; /* Ensures it moves with scroll */
-  }
-
-  /* 2. Shrink the chart height on mobile to save space */
-  .chart-container {
-    height: 150px !important; /* Reduced from 220px */
-    width: 100%;
-    margin-bottom: 15px;
-  }
-
-  .content-area { 
-    flex: none !important; 
-    overflow: visible !important; 
-    height: auto !important;
-    width: 100%;
-    display: block !important;
-  }
-
-  .main-header { 
-    padding: 20px; 
-    flex-direction: column; 
-    align-items: flex-start; 
-    gap: 15px; 
-    background: var(--bg-color);
-  }
-
-  .header-right { width: 100%; display: flex; flex-wrap: wrap; gap: 8px; }
-  .agent-switch { margin: 0; flex: 1; text-align: center; font-size: 12px; padding: 10px 5px; }
-
-  .logs-grid { 
-    grid-template-columns: 1fr !important; 
-    padding: 15px; 
-    overflow: visible !important; 
-    height: auto !important;
+/* 🔐 KEY OVERLAY (The UI you liked) */
+#key-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: var(--bg);
     display: flex;
     flex-direction: column;
-  }
-
-  .log { margin-bottom: 15px; }
-  .mode-container { margin-top: 20px; }
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
 }
 
-/* --- 🛡️ AUTH OVERLAY (KEY ACCESS) --- */
-.auth-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: var(--bg-color);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  padding: 20px;
-  transition: background 0.3s ease;
-}
+#key-overlay h2 { margin-bottom: 10px; font-size: 2rem; }
+#key-overlay p { margin-bottom: 30px; opacity: 0.7; }
 
-.auth-card {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  backdrop-filter: blur(10px);
-  padding: 40px;
-  border-radius: 24px;
-  width: 100%;
-  max-width: 420px;
-  text-align: center;
-  box-shadow: var(--shadow);
-}
-
-.auth-icon {
-  width: 64px;
-  height: 64px;
-  background: rgba(88, 80, 236, 0.1);
-  color: var(--accent);
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 28px;
-  margin: 0 auto 24px;
-}
-
-.auth-card h2 {
-  font-size: 24px;
-  margin-bottom: 8px;
-  color: var(--text-primary);
-}
-
-.auth-card p {
-  color: var(--text-secondary);
-  font-size: 14px;
-  line-height: 1.6;
-  margin-bottom: 30px;
-}
-
-.input-group {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-#agent-key-input {
-  background: var(--sidebar-bg);
-  border: 1px solid var(--border);
-  color: var(--text-primary);
-  padding: 14px 18px;
-  border-radius: 12px;
-  font-size: 16px;
-  outline: none;
-  transition: border-color 0.2s;
-  text-align: center;
-  letter-spacing: 2px;
-}
-
-#agent-key-input:focus {
-  border-color: var(--accent);
-}
-
-#unlock-btn {
-  background: var(--accent);
-  color: white;
-  border: none;
-  padding: 14px;
-  border-radius: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  transition: opacity 0.2s, transform 0.2s;
-}
-
-#unlock-btn:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
-}
-
-#unlock-btn:active {
-  transform: translateY(0);
-}
-
-.error-text {
-  color: #f87171 !important;
-  font-size: 12px !important;
-  margin-top: 15px;
-  min-height: 18px;
-  font-weight: 500;
-}
-/* Eye Toggle Styling */
-.input-group {
+/* Wrapper for Eye Alignment */
+.password-wrapper {
     position: relative;
-    width: 100%;
-    margin-bottom: 1.5rem;
+    width: 300px;
+    margin-bottom: 20px;
 }
 
 #agent-key-input {
     width: 100%;
-    padding: 12px 45px 12px 15px; /* Extra padding on right for the eye */
+    padding: 15px;
+    padding-right: 45px; /* Space for eyeball */
     border-radius: 8px;
-    border: 1px solid #334155;
-    background: #1e293b;
-    color: white;
+    border: 1px solid var(--border);
+    background: var(--card-bg);
+    color: var(--text);
     font-size: 1rem;
+    box-sizing: border-box;
 }
 
-.eye-toggle {
+#toggle-password-eye {
     position: absolute;
     right: 15px;
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
     color: #94a3b8;
-    transition: color 0.3s;
 }
 
-.eye-toggle:hover {
-    color: #6366f1; /* Your primary purple color */
+#unlock-btn {
+    width: 300px;
+    padding: 15px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: opacity 0.2s;
 }
 
-/* Ensure the overlay covers everything */
-.overlay {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    background: rgba(15, 23, 42, 0.95);
+#unlock-btn:hover { opacity: 0.9; }
+.error-msg { color: #ef4444; margin-top: 15px; font-size: 0.9rem; }
+
+/* 📱 DASHBOARD LAYOUT */
+.app-container { display: flex; height: 100vh; }
+
+.sidebar {
+    width: 260px;
+    background: var(--card-bg);
+    border-right: 1px solid var(--border);
     display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
+    flex-direction: column;
+    padding: 20px;
 }
 
+.logo { font-size: 1.25rem; font-weight: bold; cursor: pointer; margin-bottom: 40px; }
+.nav-item { padding: 12px; border-radius: 8px; opacity: 0.7; margin-bottom: 5px; }
+.nav-item.active { background: var(--accent); opacity: 1; color: white; }
+
+main { flex: 1; padding: 40px; overflow-y: auto; }
+header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+.status-badge { color: #10b981; font-weight: bold; }
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 25px;
+    height: calc(100vh - 180px);
+}
+
+.card { background: var(--card-bg); border-radius: 12px; padding: 20px; border: 1px solid var(--border); }
+.chart-container { height: 300px; position: relative; }
+
+/* LOG LIST */
+.logs-list { 
+    height: 100%; 
+    overflow-y: auto; 
+    margin-top: 15px; 
+}
+.log { 
+    padding: 15px 0; 
+    border-bottom: 1px solid var(--border); 
+}
+.log small { opacity: 0.5; display: block; margin-bottom: 5px; }
+.intent-tag { 
+    display: inline-block; 
+    padding: 2px 8px; 
+    background: var(--accent); 
+    border-radius: 4px; 
+    font-size: 0.75rem; 
+    margin-top: 8px;
+    color: white;
+}
+
+.theme-switch { margin-top: auto; cursor: pointer; font-size: 1.5rem; }
