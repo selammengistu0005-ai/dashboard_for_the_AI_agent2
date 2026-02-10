@@ -326,5 +326,46 @@ body {
   min-height: 18px;
   font-weight: 500;
 }
+/* Eye Toggle Styling */
+.input-group {
+    position: relative;
+    width: 100%;
+    margin-bottom: 1.5rem;
+}
 
+#agent-key-input {
+    width: 100%;
+    padding: 12px 45px 12px 15px; /* Extra padding on right for the eye */
+    border-radius: 8px;
+    border: 1px solid #334155;
+    background: #1e293b;
+    color: white;
+    font-size: 1rem;
+}
+
+.eye-toggle {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #94a3b8;
+    transition: color 0.3s;
+}
+
+.eye-toggle:hover {
+    color: #6366f1; /* Your primary purple color */
+}
+
+/* Ensure the overlay covers everything */
+.overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(15, 23, 42, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
 
