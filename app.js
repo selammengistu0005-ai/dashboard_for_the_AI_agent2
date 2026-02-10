@@ -28,13 +28,8 @@ const modeOptions = document.querySelectorAll(".mode-option");
 const agentButtons = document.querySelectorAll(".agent-switch");
 const body = document.body;
 
-// NEW: Login UI Elements (Ensure these IDs exist in your HTML)
-const loginOverlay = document.getElementById("login-overlay");
-const passwordInput = document.getElementById("agent-password");
-const loginBtn = document.getElementById("login-btn");
-
 let intentChart = null;
-let currentAgent = null; // Start null so user must "login"
+let currentAgent = null; 
 let unsubscribe = null; 
 const chartCtx = chartCanvas?.getContext("2d");
 
@@ -82,20 +77,28 @@ function updateChartColors(isLight) {
 
 // --- 🔥 FIRESTORE LOGIC ---
 
-// Edited: Added password parameter to check against Firebase
 async function loadAgentData(agentId, enteredPassword) {
-  const agentDocRef = doc(db, "agents", agentId);
-  const agentDoc = await getDoc(agentDocRef);
+  // 🎯 TARGETING THE NEW "password" DOCUMENT
+  // Path: agents/{agentId}/passwords/password (assuming 'passwords' is a sub-collection)
+  // or agents/{agentId}/password if it's a nested doc. 
+  // Based on your text, I'll fetch the document "password" inside the agent's path.
+  const passDocRef = doc(db, "agents", agentId, "config", "password"); 
+  
+  // Note: If you put it directly under the agent, use: doc(db, "agents", agentId)
+  // But based on your specific instruction, we check the 'password' doc:
+  const passDoc = await getDoc(doc(db, "agents", agentId, "private", "keys")); 
 
-  if (agentDoc.exists()) {
-    const dbPassword = agentDoc.data().password;
+  /* REVISED LOGIC: Since you mentioned a "new document called password", 
+     I will assume the structure is: agents -> {agentId} -> password (document)
+  */
+  const authDocRef = doc(db, "agents", agentId, "auth", "password");
+  const authDoc = await getDoc(authDocRef);
+
+  if (authDoc.exists()) {
+    const dbPassword = authDoc.data().code; // Adjust 'code' to whatever field name you used
 
     if (enteredPassword === dbPassword) {
-      // SUCCESS: Password matches
       if (unsubscribe) unsubscribe(); 
-
-      // Hide login overlay if it exists
-      if (loginOverlay) loginOverlay.style.display = "none";
 
       const logsRef = collection(db, "agents", agentId, "logs");
       const q = query(logsRef, orderBy("timestamp", "desc"));
@@ -127,10 +130,10 @@ async function loadAgentData(agentId, enteredPassword) {
         updateIntentChart(intentCount);
       });
     } else {
-      alert("Incorrect password for " + agentId);
+      alert("Incorrect password!");
     }
   } else {
-    alert("Agent not found!");
+    alert("Security configuration missing for this agent.");
   }
 }
 
@@ -138,9 +141,8 @@ async function loadAgentData(agentId, enteredPassword) {
 agentButtons.forEach((btn) => {
   btn.addEventListener("click", () => {
     const selectedAgent = btn.getAttribute("data-agent");
+    const pass = prompt(`Enter security code for ${selectedAgent}:`);
     
-    // Prompt for password when switching
-    const pass = prompt(`Enter password for ${selectedAgent}:`);
     if (pass) {
       currentAgent = selectedAgent;
       agentButtons.forEach(b => b.classList.remove("active"));
@@ -149,8 +151,6 @@ agentButtons.forEach((btn) => {
     }
   });
 });
-
-// REMOVED: loadAgentData(currentAgent) - We don't load data until a password is provided.
 
 // --- 📊 CHART LOGIC (Unchanged) ---
 function updateIntentChart(intentCount) {
