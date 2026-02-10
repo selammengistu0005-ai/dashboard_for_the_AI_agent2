@@ -8,6 +8,7 @@ import {
     onSnapshot, 
     orderBy 
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
 // 1. Firebase Configuration
 const firebaseConfig = {
     apiKey: "AIzaSyD73Uyrrl8JDP5X_yxT2Zp1fV9oIpAvpXA",
@@ -30,45 +31,43 @@ const chartCanvas = document.getElementById("intentChart");
 const logoRefresh = document.getElementById("logo-refresh");
 const modeSwitch = document.getElementById("mode-switch");
 
-let currentAgent = null; // Forces re-entry of key on every refresh
+let currentAgent = null; 
 let unsubscribe = null;
 let intentChart = null;
 
-// 3. Authentication Logic (Key = Document ID)
-// Replace ONLY this function in your app.js
+// 3. Updated Authentication Logic (Searches for the 'abc123' field)
 async function validateAndUnlock() {
     const inputKey = keyInput.value.trim();
     if (!inputKey) return;
 
-    unlockBtn.innerText = "Searching...";
+    unlockBtn.innerText = "Checking...";
     authError.innerText = "";
 
     try {
-        // This version SEARCHES all documents for the 'accessKey' field
+        // SEARCH the 'agents' collection for a document with accessKey == input
         const agentsRef = collection(db, "agents");
         const q = query(agentsRef, where("accessKey", "==", inputKey));
         const querySnapshot = await getDocs(q);
 
         if (!querySnapshot.empty) {
-            // Found a document where accessKey == "abc123"
+            // Found it! Get the ID of the document (echo-support)
             const agentDoc = querySnapshot.docs[0];
-            currentAgent = agentDoc.id; // This will set it to "echo-support" automatically
+            currentAgent = agentDoc.id; 
             initDashboard();
         } else {
-            throw new Error("Not found");
+            throw new Error("Key not found");
         }
     } catch (error) {
+        console.error(error);
         authError.innerText = "Invalid Access Key";
         unlockBtn.innerText = "Unlock";
     }
 }
 
-// 4. Password Visibility Toggle (Eyeball)
+// 4. Password Visibility Toggle
 toggleEye.addEventListener("click", () => {
     const type = keyInput.getAttribute("type") === "password" ? "text" : "password";
     keyInput.setAttribute("type", type);
-    
-    // Toggle icon classes
     toggleEye.classList.toggle("fa-eye");
     toggleEye.classList.toggle("fa-eye-slash");
 });
@@ -122,7 +121,6 @@ function loadRealtimeLogs(agentId) {
 function updateIntentChart(counts) {
     if (!chartCanvas) return;
     const ctx = chartCanvas.getContext("2d");
-    
     if (intentChart) intentChart.destroy();
 
     intentChart = new Chart(ctx, {
@@ -155,6 +153,4 @@ modeSwitch.addEventListener("click", () => {
     if (intentChart) intentChart.update();
 });
 
-// Run on Load
 initDashboard();
-
