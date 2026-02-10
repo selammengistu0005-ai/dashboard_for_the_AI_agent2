@@ -3,62 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Agent Dashboard</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>AI Agent Analytics | Control Center</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="dark-mode">
 
-    <div id="key-overlay">
-        <h2>Professional Access</h2>
-        <p>Enter your unique agent key to view logs.</p>
-        
-        <div class="password-wrapper">
-            <input type="password" id="agent-key-input" placeholder="Access Key">
-            <i id="toggle-password-eye" class="fa-solid fa-eye"></i>
-        </div>
+    <div id="key-overlay" class="overlay">
+        <div class="login-box">
+            <div class="lock-shield">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <h2>Secure Access</h2>
+            <p>Enter your agent's unique access key to view live logs.</p>
+            
+            <div class="password-wrapper">
+                <input type="password" id="agent-key-input" placeholder="Enter Access Key...">
+                <i id="toggle-password-eye" class="fa-solid fa-eye"></i>
+            </div>
 
-        <button id="unlock-btn">Unlock</button>
-        <p id="auth-error" class="error-msg"></p>
+            <button id="unlock-btn">Authorize Dashboard</button>
+            <p id="auth-error" class="error-msg"></p>
+        </div>
     </div>
 
     <div class="app-container" id="main-app" style="display: none;">
+        
         <aside class="sidebar">
-            <div class="logo" id="logo-refresh">
-                <i class="fa-solid fa-robot"></i> 
-                <span>Dashboard AI</span>
+            <div class="logo" id="logo-refresh" title="Refresh Dashboard">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+                <span>Agent<span>Sync</span></span>
             </div>
-            <nav>
+
+            <nav class="sidebar-nav">
                 <div class="nav-item active">
-                    <i class="fa-solid fa-chart-pie"></i> Overview
+                    <i class="fa-solid fa-house-chimney-window"></i> Overview
+                </div>
+                <div class="nav-item">
+                    <i class="fa-solid fa-terminal"></i> Live Console
                 </div>
             </nav>
-            <div class="theme-switch" id="mode-switch">
-                <span class="mode-option" data-mode="dark">🌙</span>
-                <span class="mode-option" data-mode="light">☀️</span>
+
+            <div class="theme-section">
+                <div class="toggle-container" id="mode-switch">
+                    <div class="toggle-track">
+                        <div class="toggle-knob">
+                            <i class="fa-solid fa-moon moon-icon"></i>
+                            <i class="fa-solid fa-sun sun-icon"></i>
+                        </div>
+                    </div>
+                </div>
             </div>
         </aside>
 
-        <main>
-            <header>
-                <h1>Live Agent Monitor</h1>
-                <div class="status-badge">● Live</div>
+        <main class="main-content">
+            <header class="dashboard-header">
+                <div class="header-text">
+                    <h1>Live Monitor</h1>
+                    <div class="live-indicator">
+                        <span class="pulse-dot"></span>
+                        <span>Connected to Firebase</span>
+                    </div>
+                </div>
             </header>
 
             <div class="dashboard-grid">
-                <div class="card chart-card">
-                    <h3>Intent Analytics</h3>
-                    <div class="chart-container">
-                        <canvas id="intentChart"></canvas>
+                
+                <div class="analytics-col">
+                    <div class="card chart-card">
+                        <div class="card-header">
+                            <h3>Intent Distribution</h3>
+                            <i class="fa-solid fa-circle-info"></i>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="intentChart"></canvas>
+                        </div>
                     </div>
                 </div>
 
-                <div class="card logs-card">
-                    <h3>Interaction History</h3>
-                    <div id="logs" class="logs-list">
+                <div class="logs-col">
+                    <div class="section-title">
+                        <h3>Interaction History</h3>
+                        <span id="log-count">Live</span>
+                    </div>
+                    <div id="logs" class="logs-feed">
                         </div>
                 </div>
+
             </div>
         </main>
     </div>
