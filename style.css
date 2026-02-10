@@ -245,3 +245,39 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
 
 .error-msg { color: #ef4444; margin-top: 1rem; font-size: 0.85rem; font-weight: 500; }
 
+/* --- Mobile Responsiveness --- */
+@media (max-width: 768px) {
+    .app-container {
+        flex-direction: column; /* Stack sidebar on top of main content */
+        overflow-y: auto;       /* Allow the whole page to scroll */
+    }
+
+    .sidebar {
+        width: 100%;            /* Sidebar takes full width */
+        height: auto;           /* Let it height-adjust to the chart */
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        padding: 1rem;
+    }
+
+    .sidebar-card {
+        height: 220px;          /* Slightly smaller chart for mobile screens */
+    }
+
+    .main-content {
+        overflow: visible;      /* Let the logs scroll with the page */
+    }
+
+    .logs-wrapper {
+        padding: 1rem;
+    }
+
+    .log-frame {
+        flex: 1 1 100%;         /* One log per row on mobile */
+        min-width: 0;           /* Allow it to shrink to screen width */
+    }
+    
+    .dashboard-header {
+        padding: 1rem;
+    }
+}
