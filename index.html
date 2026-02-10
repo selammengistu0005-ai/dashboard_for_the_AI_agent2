@@ -3,73 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Agent Analytics Dashboard</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>AI Agent Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="dark-mode">
 
-    <div id="key-overlay" class="overlay">
-        <div class="lock-card">
-            <i class="fa-solid fa-shield-halved lock-icon"></i>
-            <h2>Client Access</h2>
-            <p>Please enter your agent's secret access key to continue.</p>
-            
-            <div class="input-group">
-                <input type="password" id="agent-key-input" placeholder="Enter Access Key...">
-                <i id="toggle-password-eye" class="fa-solid fa-eye eye-toggle"></i>
-            </div>
-            
-            <button id="unlock-btn">
-                <span>Unlock Dashboard</span>
-                <i class="fa-solid fa-arrow-right"></i>
-            </button>
-            <p id="auth-error" class="error-msg"></p>
+    <div id="key-overlay">
+        <h2>Professional Access</h2>
+        <p>Enter your unique agent key to view logs.</p>
+        
+        <div class="password-wrapper">
+            <input type="password" id="agent-key-input" placeholder="Access Key">
+            <i id="toggle-password-eye" class="fa-solid fa-eye"></i>
         </div>
+
+        <button id="unlock-btn">Unlock</button>
+        <p id="auth-error" class="error-msg"></p>
     </div>
 
-    <div class="app-container">
-        <aside id="sidebar-main" class="sidebar" style="display: none;">
-            <div class="sidebar-header">
-                <div id="logo-refresh" class="logo">
-                    <i class="fa-solid fa-robot"></i>
-                    <span>Dashboard AI</span>
-                </div>
+    <div class="app-container" id="main-app" style="display: none;">
+        <aside class="sidebar">
+            <div class="logo" id="logo-refresh">
+                <i class="fa-solid fa-robot"></i> 
+                <span>Dashboard AI</span>
             </div>
-            
-            <nav class="sidebar-nav">
-                <div class="nav-item active"><i class="fa-solid fa-chart-line"></i> Analytics</div>
-                <div class="nav-item"><i class="fa-solid fa-history"></i> Log History</div>
-                <div class="nav-item"><i class="fa-solid fa-gear"></i> Settings</div>
-            </nav>
-
-            <div class="theme-controls">
-                <p>Appearance</p>
-                <div id="mode-switch" class="mode-switch">
-                    <div class="mode-option" data-mode="dark"><i class="fa-solid fa-moon"></i></div>
-                    <div class="mode-option" data-mode="light"><i class="fa-solid fa-sun"></i></div>
+            <nav>
+                <div class="nav-item active">
+                    <i class="fa-solid fa-chart-pie"></i> Overview
                 </div>
+            </nav>
+            <div class="theme-switch" id="mode-switch">
+                <span class="mode-option" data-mode="dark">🌙</span>
+                <span class="mode-option" data-mode="light">☀️</span>
             </div>
         </aside>
 
-        <main id="content-main" class="main-content" style="display: none;">
-            <header class="content-header">
-                <h1>Interaction Insights</h1>
-                <div class="status-badge"><span class="dot"></span> Live Data</div>
+        <main>
+            <header>
+                <h1>Live Agent Monitor</h1>
+                <div class="status-badge">● Live</div>
             </header>
 
             <div class="dashboard-grid">
-                <div class="chart-section">
-                    <h3>Intent Distribution</h3>
-                    <div class="canvas-container">
+                <div class="card chart-card">
+                    <h3>Intent Analytics</h3>
+                    <div class="chart-container">
                         <canvas id="intentChart"></canvas>
                     </div>
                 </div>
 
-                <div class="logs-section">
-                    <h3>Live Interaction Logs</h3>
-                    <div id="logs" class="logs-container">
+                <div class="card logs-card">
+                    <h3>Interaction History</h3>
+                    <div id="logs" class="logs-list">
                         </div>
                 </div>
             </div>
