@@ -4,7 +4,8 @@ import {
   collection,
   onSnapshot,
   query,
-  orderBy
+  orderBy,
+  getDocs
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 /* 🔐 Firebase config */
@@ -23,27 +24,74 @@ const chartCanvas = document.getElementById("intentChart");
 const logoRefresh = document.getElementById("logo-refresh");
 const modeSwitch = document.getElementById("mode-switch");
 const modeOptions = document.querySelectorAll(".mode-option");
-const agentButtons = document.querySelectorAll(".agent-switch");
 const body = document.body;
 
+// Auth Elements
+const keyOverlay = document.getElementById("key-overlay");
+const sidebar = document.getElementById("sidebar-main");
+const contentArea = document.getElementById("content-main");
+const keyInput = document.getElementById("agent-key-input");
+const unlockBtn = document.getElementById("unlock-btn");
+const authError = document.getElementById("auth-error");
+
 let intentChart = null;
-let currentAgent = "lumi2_support"; 
+let currentAgent = localStorage.getItem("agent_access_key"); 
 let unsubscribe = null; 
 const chartCtx = chartCanvas?.getContext("2d");
 
+// --- 🛡️ AUTHENTICATION LOGIC ---
+
+async function validateAndUnlock() {
+    const inputKey = keyInput.value.trim();
+    if (!inputKey) return;
+
+    unlockBtn.disabled = true;
+    unlockBtn.innerHTML = `<span>Checking...</span>`;
+
+    try {
+        // Check if the agent collection exists by trying to fetch 1 doc
+        const testRef = collection(db, "agents", inputKey, "logs");
+        const testSnap = await getDocs(query(testRef, orderBy("timestamp", "desc")));
+
+        // In Firebase, collections aren't "checked" for existence easily, 
+        // so we treat any valid string that returns/allows access as a success.
+        localStorage.setItem("agent_access_key", inputKey);
+        currentAgent = inputKey;
+        initDashboard();
+    } catch (error) {
+        authError.innerText = "Access Denied: Invalid Key";
+        unlockBtn.disabled = false;
+        unlockBtn.innerHTML = `<span>Unlock Dashboard</span> <i class="fa-solid fa-arrow-right"></i>`;
+    }
+}
+
+function initDashboard() {
+    if (!currentAgent) {
+        keyOverlay.style.display = "flex";
+        sidebar.style.display = "none";
+        contentArea.style.display = "none";
+    } else {
+        keyOverlay.style.display = "none";
+        sidebar.style.display = "flex";
+        contentArea.style.display = "flex";
+        loadAgentData(currentAgent);
+    }
+}
+
+unlockBtn.addEventListener("click", validateAndUnlock);
+keyInput.addEventListener("keypress", (e) => { if (e.key === "Enter") validateAndUnlock(); });
+
 // --- 🛠️ THEME & LOGO CONTROLS ---
 
-// 1. Click Logo to Refresh Page
 if (logoRefresh) {
   logoRefresh.addEventListener("click", () => {
+    localStorage.removeItem("agent_access_key"); // Simple way to "Logout"
     window.location.reload();
   });
 }
 
-// 2. State Management: Set Theme
 function setTheme(mode) {
   modeOptions.forEach(opt => opt.classList.remove("active"));
-  
   if (mode === "light") {
     body.classList.add("light-mode");
     body.classList.remove("dark-mode");
@@ -55,23 +103,16 @@ function setTheme(mode) {
     modeSwitch.classList.remove("is-light");
     document.querySelector('[data-mode="dark"]').classList.add("active");
   }
-  
-  // Update chart if it exists
   if (intentChart) updateChartColors(mode === "light");
-  
-  // Save to memory so it doesn't flicker on refresh
   localStorage.setItem("dashboard-theme", mode);
 }
 
-// 3. Initialize Theme from Memory
 const savedTheme = localStorage.getItem("dashboard-theme") || "dark";
 setTheme(savedTheme);
 
-// 4. Click Listener for Knob Options
 modeOptions.forEach(option => {
   option.addEventListener("click", () => {
-    const selectedMode = option.getAttribute("data-mode");
-    setTheme(selectedMode);
+    setTheme(option.getAttribute("data-mode"));
   });
 });
 
@@ -115,23 +156,13 @@ function loadAgentData(agentId) {
       logsContainer.appendChild(div);
     });
     updateIntentChart(intentCount);
+  }, (error) => {
+      console.error("Snapshot error:", error);
+      // If error (like permission denied), kick back to login
+      localStorage.removeItem("agent_access_key");
+      location.reload();
   });
 }
-
-// --- 🖱️ AGENT SWITCHER LOOP ---
-agentButtons.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    const selectedAgent = btn.getAttribute("data-agent");
-    if (currentAgent !== selectedAgent) {
-      currentAgent = selectedAgent;
-      agentButtons.forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      loadAgentData(currentAgent);
-    }
-  });
-});
-
-loadAgentData(currentAgent);
 
 // --- 📊 CHART LOGIC ---
 function updateIntentChart(intentCount) {
@@ -139,8 +170,6 @@ function updateIntentChart(intentCount) {
   const labels = Object.keys(intentCount);
   const data = Object.values(intentCount);
   const isLight = body.classList.contains("light-mode");
-  
-  // Check if we are on mobile to hide the legend and save space
   const isMobile = window.innerWidth <= 768;
 
   if (intentChart) intentChart.destroy();
@@ -160,7 +189,7 @@ function updateIntentChart(intentCount) {
       maintainAspectRatio: false,
       plugins: {
         legend: {
-          display: !isMobile, // Hide legend on mobile to stop it from blocking messages
+          display: !isMobile,
           position: 'bottom',
           labels: {
             color: isLight ? "#1e293b" : "#e5e7eb",
@@ -172,3 +201,6 @@ function updateIntentChart(intentCount) {
     }
   });
 }
+
+// Initialize on Load
+initDashboard();
