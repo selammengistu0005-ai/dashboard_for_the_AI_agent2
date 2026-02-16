@@ -188,7 +188,6 @@ doneBtn.addEventListener("click", async () => {
     doneBtn.disabled = true;
 
     try {
-        // NOTE: Replace the URL below with your actual Render Backend URL
         const response = await fetch('https://selam-backend-1biy.onrender.com/api/train', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -198,20 +197,54 @@ doneBtn.addEventListener("click", async () => {
             })
         });
 
-        const data = await response.json();
-        if (data.success) {
-            previewSection.style.display = "block";
-            cleanPreview.innerText = data.cleaned;
-            doneBtn.innerText = "Updated! ✅";
-            setTimeout(() => {
-                doneBtn.innerText = "Update Agent";
-                doneBtn.disabled = false;
-            }, 3000);
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success) {
+                // ✅ This is the best place for it!
+                addToHistory(text); 
+
+                previewSection.style.display = "block";
+                cleanPreview.innerText = data.cleaned;
+                doneBtn.innerText = "Updated! ✅";
+                
+                setTimeout(() => {
+                    doneBtn.innerText = "Update Agent";
+                    doneBtn.disabled = false;
+                }, 3000);
+            }
+        } else {
+            // Handle cases where response is not 200 OK
+            alert("Server error. Please try again.");
+            doneBtn.innerText = "Update Agent";
+            doneBtn.disabled = false;
         }
     } catch (e) {
         alert("Update failed. Check if your backend is running.");
         doneBtn.innerText = "Update Agent";
         doneBtn.disabled = false;
     }
-});
+}); 
 
+// This function builds the little rectangular frame
+function addToHistory(text) {
+    const historyList = document.getElementById('historyList');
+    
+    // Create the frame
+    const frame = document.createElement('div');
+    frame.className = 'history-item';
+    
+    // Add the text and the bubble button inside the frame
+    frame.innerHTML = `
+        <div class="history-text">${text}</div>
+        <button class="restore-bubble-btn">To the Main 🫧</button>
+    `;
+
+    // Make the "Bubble Button" work when clicked
+    frame.querySelector('.restore-bubble-btn').addEventListener('click', () => {
+        // This puts the text back into your big input box
+        document.getElementById('instructionsInput').value = text;
+    });
+
+    // Put this new frame at the top of the history list
+    historyList.prepend(frame);
+}
