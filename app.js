@@ -52,7 +52,6 @@ async function validateAndUnlock() {
             currentAgent = querySnapshot.docs[0].id;
             keyOverlay.style.display = "none";
             mainApp.style.display = "flex";
-            document.getElementById("reply-area").style.display = "block";
             loadLogs(currentAgent);
         } else {
             throw new Error();
@@ -196,7 +195,7 @@ function showEscalationAlert(docId, question) {
 
 async function resolveRequest(docId, decision) {
     const msg = decision === "accepted" 
-        ? "Connected! A human agent is joining now." 
+        ? "Connected! A human agent is joining now. How can I help you?" 
         : "I'm sorry, agents are busy. Please try later.";
     
     try {
@@ -205,6 +204,19 @@ async function resolveRequest(docId, decision) {
             status: decision
         });
         
+        // --- ADD THIS LOGIC HERE ---
+        if (decision === "accepted") {
+            const replyArea = document.getElementById("reply-area");
+            replyArea.style.display = "block"; // Show the box
+            
+            // Optional: Smoothly scroll to the reply box
+            replyArea.scrollIntoView({ behavior: 'smooth' });
+            
+            // Focus the input so you can start typing immediately
+            document.getElementById("admin-reply-input").focus();
+        }
+        // ---------------------------
+
         const targetAlert = document.getElementById(`alert-frame-${docId}`);
         if (targetAlert) targetAlert.remove();
     } catch (e) {
@@ -253,8 +265,11 @@ tabAll.addEventListener("click", () => {
     tabAll.classList.add("active");
     tabLive.classList.remove("active");
     logsContainer.style.display = "flex";
-    escalationArea.style.display = "block"; // Keep alerts at top of history
+    escalationArea.style.display = "block";
     emptyState.style.display = "none";
+    
+    // Hide the reply box when viewing history
+    document.getElementById("reply-area").style.display = "none"; 
 });
 
 tabLive.addEventListener("click", () => {
@@ -272,3 +287,4 @@ tabLive.addEventListener("click", () => {
         emptyState.style.display = escalationArea.innerHTML === "" ? "block" : "none";
     }
 });
+
