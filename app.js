@@ -32,9 +32,10 @@ const logoRefresh = document.getElementById("logo-refresh");
 const togglePasswordEye = document.getElementById("toggle-password-eye");
 const navMonitor = document.getElementById("nav-monitor");
 const navTrain = document.getElementById("nav-train");
-const logsWrapper = document.querySelector(".logs-wrapper");
+const logsWrapper = document.getElementById("monitor-section"); // Changed from querySelector
 const trainingSection = document.getElementById("training-section");
-const messyInput = document.getElementById("messy-input");
+const messyInput = document.getElementById("instructionsInput"); // Changed to match HTML id
+const viewTitle = document.getElementById("view-title"); // Add this if not already there
 const doneBtn = document.getElementById("done-btn");
 const previewSection = document.getElementById("preview-section");
 const cleanPreview = document.getElementById("clean-preview");
@@ -165,18 +166,29 @@ togglePasswordEye.addEventListener("click", () => {
 });
 
 // Navigation Logic
+// Navigation Logic
 navMonitor.addEventListener("click", () => {
     navMonitor.classList.add("active");
     navTrain.classList.remove("active");
+    
+    // Show Monitor Section, Hide Training Section
     logsWrapper.style.display = "block";
     trainingSection.style.display = "none";
+    
+    // Update the header text
+    if(viewTitle) viewTitle.innerText = "Live Monitor";
 });
 
 navTrain.addEventListener("click", () => {
     navTrain.classList.add("active");
     navMonitor.classList.remove("active");
+    
+    // Show Training Section, Hide Monitor Section
     trainingSection.style.display = "block";
     logsWrapper.style.display = "none";
+    
+    // Update the header text
+    if(viewTitle) viewTitle.innerText = "Train Agent";
 });
 
 // "Done" Button Sync Logic
@@ -248,3 +260,4 @@ function addToHistory(text) {
     // Put this new frame at the top of the history list
     historyList.prepend(frame);
 }
+
