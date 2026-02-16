@@ -52,49 +52,23 @@
         </aside>
 
         <main class="main-content">
-    <header class="dashboard-header">
-        <div class="header-content">
-            <div class="header-text">
-                <h1>Live Monitor</h1>
-                <div class="live-indicator">
-                    <span class="pulse-dot"></span>
-                    <span>Connected to Firebase</span>
+            <header class="dashboard-header">
+                <div class="header-text">
+                    <h1>Live Monitor</h1>
+                    <div class="live-indicator">
+                        <span class="pulse-dot"></span>
+                        <span>Connected to Firebase</span>
+                    </div>
                 </div>
-            </div>
-            <div class="dashboard-tabs">
-                <button id="tab-all" class="tab-btn active">History</button>
-                <button id="tab-live" class="tab-btn">
-                    <i class="fa-solid fa-headset"></i> Live Questions
-                </button>
-            </div>
-        </div>
-    </header>
+            </header>
 
-    <div class="logs-wrapper">
-        <div id="escalation-alerts"></div>
-        
-        <div id="logs" class="logs-flex-container"></div>
-        
-        <div id="empty-state" style="display:none; text-align:center; margin-top:100px; color:var(--text-dim);">
-            <i class="fa-solid fa-circle-check" style="font-size: 3rem; color: #10b981; margin-bottom: 1rem;"></i>
-            <p>No active live requests. All quiet!</p>
-        </div>
-    </div>
-
-    <div id="reply-area" class="admin-reply-box" style="display:none;">
-        <div class="reply-container">
-            <input type="text" id="admin-reply-input" placeholder="Type your message to the user...">
-            <button id="send-reply-btn">
-                <i class="fa-solid fa-paper-plane"></i> Send
-            </button>
-        </div>
-    </div>
-</main>
+            <div class="logs-wrapper">
+                <div id="logs" class="logs-flex-container">
+                    </div>
+            </div>
+        </main>
     </div>
 
     <script type="module" src="app.js"></script>
 </body>
 </html>
-
-
-
