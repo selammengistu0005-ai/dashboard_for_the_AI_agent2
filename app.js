@@ -242,3 +242,33 @@ sendBtn.addEventListener("click", sendAdminMessage);
 replyInput.addEventListener("keypress", (e) => {
     if (e.key === "Enter") sendAdminMessage();
 });
+
+// --- TAB SWITCHING LOGIC ---
+const tabAll = document.getElementById("tab-all");
+const tabLive = document.getElementById("tab-live");
+const escalationArea = document.getElementById("escalation-alerts");
+const emptyState = document.getElementById("empty-state");
+
+tabAll.addEventListener("click", () => {
+    tabAll.classList.add("active");
+    tabLive.classList.remove("active");
+    logsContainer.style.display = "flex";
+    escalationArea.style.display = "block"; // Keep alerts at top of history
+    emptyState.style.display = "none";
+});
+
+tabLive.addEventListener("click", () => {
+    tabLive.classList.add("active");
+    tabAll.classList.remove("active");
+    
+    // Hide history, show ONLY live alerts
+    logsContainer.style.display = "none";
+    
+    // If no active alerts, show empty state
+    if (escalationArea.children.length === 0) {
+        emptyState.style.display = "block";
+    } else {
+        emptyState.style.display = "block"; // Corrected logic: block handled by children check
+        emptyState.style.display = escalationArea.innerHTML === "" ? "block" : "none";
+    }
+});
