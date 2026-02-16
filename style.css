@@ -34,11 +34,6 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
     padding: 1.5rem;
 }
 
-.sidebar-chart-container {
-    margin-top: 1rem;
-    padding: 1rem 0;
-}
-
 .sidebar-card {
     background: var(--bg-dark); /* Slightly darker to pop against sidebar */
     padding: 1rem;
@@ -179,7 +174,6 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
     font-size: 2.5rem;
     color: var(--primary-accent);
     margin-bottom: 1.5rem;
-    filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.3));
 }
 
 .login-box h2 { font-size: 1.75rem; margin-bottom: 0.5rem; font-weight: 700; }
@@ -245,18 +239,38 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
 
 .error-msg { color: #ef4444; margin-top: 1rem; font-size: 0.85rem; font-weight: 500; }
 
-/* PASTE AT THE BOTTOM OF CSS */
+/* Replace your .alert-card with this */
 .alert-card {
-    background: #fef2f2;
-    border: 2px solid #ef4444;
+    background: var(--card-dark); 
+    border: 2px solid #ef4444; /* Keep the red border for danger */
     border-radius: 16px;
     padding: 1.5rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    color: #1e293b;
+    color: var(--text-main); /* Uses your variable instead of hardcoded black */
     animation: alertPulse 2s infinite;
+}
+
+/* Updated Buttons to match your border-radius and fonts */
+.btn-accept { 
+    background: #10b981; 
+    color: white; 
+    border: none; 
+    padding: 10px 22px; 
+    border-radius: 12px; /* Matches your input-field radius */
+    cursor: pointer; 
+    font-weight: 700; 
+}
+
+.btn-decline { 
+    background: transparent; 
+    color: var(--text-dim); 
+    border: 1px solid var(--border-color); 
+    padding: 10px 22px; 
+    border-radius: 12px; 
+    cursor: pointer; 
 }
 
 @keyframes alertPulse {
@@ -266,10 +280,6 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
 }
 
 .alert-btns { display: flex; gap: 10px; }
-.btn-accept { background: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
-.btn-decline { background: #64748b; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
-
-
 /* --- Header Tabs Styling --- */
 .header-content {
     display: flex;
@@ -290,7 +300,7 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
     border: none;
     color: var(--text-dim);
     padding: 8px 16px;
-    border-radius: 8px;
+    border-radius: 12px;
     cursor: pointer;
     font-weight: 600;
     font-size: 0.9rem;
@@ -302,12 +312,14 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
     color: white;
 }
 
-/* --- THE REPLY BOX FIX (Modern & Dark) --- */
+/* Ensure the reply box doesn't look "tacked on" */
 .admin-reply-box {
     background: var(--card-dark);
     padding: 1.5rem 2rem;
     border-top: 1px solid var(--border-color);
-    box-shadow: 0 -10px 20px rgba(0,0,0,0.2);
+    /* This makes it stick to the bottom if the screen is small */
+    position: sticky;
+    bottom: 0; 
 }
 
 .reply-container {
@@ -352,7 +364,21 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
     transform: translateY(-2px);
 }
 
-/* --- Mobile Responsiveness --- */
+#empty-state {
+    display: none; /* Controlled by JS */
+    text-align: center;
+    padding: 5rem 2rem;
+    color: var(--text-dim);
+}
+
+#empty-state i {
+    display: block;
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.2;
+}
+
+
 @media (max-width: 768px) {
     .app-container {
         flex-direction: column; /* Stack sidebar on top of main content */
@@ -388,5 +414,6 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
         padding: 1rem;
     }
 }
+
 
 
