@@ -245,6 +245,30 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
 
 .error-msg { color: #ef4444; margin-top: 1rem; font-size: 0.85rem; font-weight: 500; }
 
+/* PASTE AT THE BOTTOM OF CSS */
+.alert-card {
+    background: #fef2f2;
+    border: 2px solid #ef4444;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #1e293b;
+    animation: alertPulse 2s infinite;
+}
+
+@keyframes alertPulse {
+    0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+    70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+.alert-btns { display: flex; gap: 10px; }
+.btn-accept { background: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+.btn-decline { background: #64748b; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
+
 /* --- Mobile Responsiveness --- */
 @media (max-width: 768px) {
     .app-container {
@@ -281,3 +305,4 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
         padding: 1rem;
     }
 }
+
