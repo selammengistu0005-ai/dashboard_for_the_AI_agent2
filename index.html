@@ -32,10 +32,6 @@
                 <div class="logo-icon"><i class="fa-solid fa-robot"></i></div>
                 <span>Agent<span>Sync</span></span>
             </div>
-            <nav class="sidebar-nav">
-                <div class="nav-item active" id="nav-monitor"><i class="fa-solid fa-desktop"></i> Live Monitor</div>
-                <div class="nav-item" id="nav-train"><i class="fa-solid fa-brain"></i> Train Agent</div>
-            </nav>
 
             <div class="sidebar-chart-container">
                 <div class="card chart-card sidebar-card">
@@ -58,7 +54,7 @@
         <main class="main-content">
             <header class="dashboard-header">
                 <div class="header-text">
-                    <h1 id="view-title">Live Monitor</h1> 
+                    <h1>Live Monitor</h1>
                     <div class="live-indicator">
                         <span class="pulse-dot"></span>
                         <span>Connected to Firebase</span>
@@ -66,36 +62,13 @@
                 </div>
             </header>
 
-            <div id="training-section" style="display: none;">
-                <div class="training-container">
-                    <div class="training-card">
-                        <h2 style="font-size: 2.2rem; margin-bottom: 0.5rem;">🧠 Train Your AI</h2>
-                        <p style="font-size: 1.1rem; color: var(--text-dim); margin-bottom: 1.5rem;">
-                            Write updates, prices, or rules. Our AI will clean it up for you.
-                        </p>
-                        
-                        <textarea id="instructionsInput" placeholder="e.g. We now have 20% off on Fridays..."></textarea>
-
-                        <div class="btn-container" style="margin-bottom: 1.5rem;">
-                            <button id="done-btn" class="primary-btn">Update Agent</button>
-                        </div>
-                        <div id="preview-section" style="display: none; margin-bottom: 2rem;">
-                            <h3 style="font-size: 1rem; color: var(--primary-accent); margin-bottom: 0.5rem;">✨ Cleaned Instructions:</h3>
-                            <div id="clean-preview" class="instruction-box"></div>
-                        </div>
-
-                        <div id="instructionHistory" class="history-section">
-                            <h3 class="history-title">Saved Brain Versions</h3>
-                            <div id="historyList" class="history-list"></div>
-                        </div>
+            <div class="logs-wrapper">
+                <div id="logs" class="logs-flex-container">
                     </div>
-                </div>
-            </div> <div id="monitor-section">
-                <div class="logs-wrapper">
-                    <div id="logs" class="logs-flex-container">
-                        </div>
-                </div>
-            </div> </main>
-    </div> <script type="module" src="app.js"></script>
-</body>
+            </div>
+        </main>
+    </div>
 
+    <script type="module" src="app.js"></script>
+</body>
+</html>
