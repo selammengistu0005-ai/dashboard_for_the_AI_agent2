@@ -268,12 +268,12 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
 .training-card h2 { margin-bottom: 0.5rem; font-size: 2rem; }
 .training-card p { color: var(--text-dim); font-size: 1.2rem; }
 
-#messy-input {
+#instructionsInput {
     width: 100%; height: 180px; background: var(--bg-dark); color: var(--text-main);
     border: 1px solid var(--border-color); border-radius: 12px; padding: 1rem; margin: 1.5rem 0; 
     resize: none; outline: none; transition: var(--transition);
 }
-#messy-input:focus { border-color: var(--primary-accent); }
+#instructionsInput:focus { border-color: var(--primary-accent); }
 
 .btn-container { display: flex; justify-content: flex-end; }
 .primary-btn {
@@ -395,6 +395,7 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
         padding: 1rem;
     }
 }
+
 
 
 
