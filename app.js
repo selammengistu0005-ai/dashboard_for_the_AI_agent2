@@ -223,6 +223,7 @@ async function resolveRequest(docId, decision) {
         if (decision === "accepted") {
             const logSnap = await getDoc(doc(db, "agents", currentAgent, "logs", docId));
             activeChatUserId = logSnap.data().user_id; 
+            sessionStorage.setItem("activeChatUser", activeChatUserId); 
             replyArea.style.display = "block";
             replyArea.scrollIntoView({ behavior: 'smooth' });
             document.getElementById("admin-reply-input").focus();
@@ -245,8 +246,8 @@ const sendBtn = document.getElementById("send-reply-btn");
 
 async function sendAdminMessage() {
     const text = replyInput.value.trim();
-    const activeLogId = localStorage.getItem("currently_chatting_with");
-    if (!text || !currentAgent || !activeChatUserId) return; // Added check
+    const activeChatUserId = sessionStorage.getItem("activeChatUser"); 
+    if (!text || !currentAgent || !activeChatUserId) return;
 
     try {
         await addDoc(collection(db, "agents", currentAgent, "logs"), {
@@ -297,6 +298,7 @@ tabLive.addEventListener("click", () => {
 // IMPORTANT: Call updateEmptyState inside your onSnapshot too!
 // In your loadLogs function, inside the unsubscribe = onSnapshot loop, 
 // add "updateEmptyState();" at the very end of the snapshot loop.
+
 
 
 
