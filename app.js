@@ -199,29 +199,39 @@ function showEscalationAlert(docId, question) {
 }
 
 // Update resolveRequest to refresh the UI state
+// Update resolveRequest to refresh the UI state flawlessly
 async function resolveRequest(docId, decision) {
+    // 1. IMPROVEMENT: Optimistically hide the alert IMMEDIATELY to prevent flickering
+    const targetAlert = document.getElementById(`alert-frame-${docId}`);
+    if (targetAlert) targetAlert.style.opacity = "0.5"; // Dim it while processing
+    
+    // This is the message the CUSTOMER will see in their chat
     const msg = decision === "accepted" 
-        ? "Connected! A human agent is joining now. How can I help you?" 
-        : "I'm sorry, agents are busy. Please try later.";
+        ? "✨ Connected! Selam has joined the chat. How can I help you?" 
+        : "I'm sorry, agents are currently busy. Please try again later.";
     
     try {
+        // 2. Update Firebase
         await updateDoc(doc(db, "agents", currentAgent, "logs", docId), {
             answer: msg,
-            status: decision
+            status: decision // "accepted" or "declined"
         });
         
+        // 3. UI logic for the Dashboard
         if (decision === "accepted") {
             replyArea.style.display = "block";
             replyArea.scrollIntoView({ behavior: 'smooth' });
             document.getElementById("admin-reply-input").focus();
         }
 
-        const targetAlert = document.getElementById(`alert-frame-${docId}`);
+        // Remove the alert card completely after the DB update is successful
         if (targetAlert) targetAlert.remove();
         
-        updateEmptyState(); // <--- CRITICAL: Check if we should show "All Quiet" now
+        updateEmptyState(); 
     } catch (e) {
         console.error("Error updating status:", e);
+        if (targetAlert) targetAlert.style.opacity = "1"; // Bring it back if it failed
+        alert("Action failed. Check your connection.");
     }
 }
 
@@ -284,4 +294,5 @@ tabLive.addEventListener("click", () => {
 // IMPORTANT: Call updateEmptyState inside your onSnapshot too!
 // In your loadLogs function, inside the unsubscribe = onSnapshot loop, 
 // add "updateEmptyState();" at the very end of the snapshot loop.
+
 
