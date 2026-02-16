@@ -189,7 +189,7 @@ doneBtn.addEventListener("click", async () => {
 
     try {
         // NOTE: Replace the URL below with your actual Render Backend URL
-        const response = await fetch('https://your-render-app.com/api/update-agent', {
+        const response = await fetch('https://selam-backend-1biy.onrender.com/api/train', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
@@ -214,3 +214,4 @@ doneBtn.addEventListener("click", async () => {
         doneBtn.disabled = false;
     }
 });
+
