@@ -6,7 +6,9 @@ import {
     where, 
     getDocs, 
     onSnapshot, 
-    orderBy 
+    orderBy,
+    doc,
+    updateDoc
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 // 1. Firebase Config
@@ -155,3 +157,4 @@ togglePasswordEye.addEventListener("click", () => {
     togglePasswordEye.classList.toggle("fa-eye");
     togglePasswordEye.classList.toggle("fa-eye-slash");
 });
+
