@@ -30,6 +30,14 @@ const chartCanvas = document.getElementById("intentChart");
 const modeSwitch = document.getElementById("mode-switch");
 const logoRefresh = document.getElementById("logo-refresh");
 const togglePasswordEye = document.getElementById("toggle-password-eye");
+const navMonitor = document.getElementById("nav-monitor");
+const navTrain = document.getElementById("nav-train");
+const logsWrapper = document.querySelector(".logs-wrapper");
+const trainingSection = document.getElementById("training-section");
+const messyInput = document.getElementById("messy-input");
+const doneBtn = document.getElementById("done-btn");
+const previewSection = document.getElementById("preview-section");
+const cleanPreview = document.getElementById("clean-preview");
 
 let currentAgent = null;
 let unsubscribe = null;
@@ -154,4 +162,55 @@ togglePasswordEye.addEventListener("click", () => {
     // Toggle icon appearance
     togglePasswordEye.classList.toggle("fa-eye");
     togglePasswordEye.classList.toggle("fa-eye-slash");
+});
+
+// Navigation Logic
+navMonitor.addEventListener("click", () => {
+    navMonitor.classList.add("active");
+    navTrain.classList.remove("active");
+    logsWrapper.style.display = "block";
+    trainingSection.style.display = "none";
+});
+
+navTrain.addEventListener("click", () => {
+    navTrain.classList.add("active");
+    navMonitor.classList.remove("active");
+    trainingSection.style.display = "block";
+    logsWrapper.style.display = "none";
+});
+
+// "Done" Button Sync Logic
+doneBtn.addEventListener("click", async () => {
+    const text = messyInput.value.trim();
+    if (!text) return;
+
+    doneBtn.innerText = "Refining...";
+    doneBtn.disabled = true;
+
+    try {
+        // NOTE: Replace the URL below with your actual Render Backend URL
+        const response = await fetch('https://your-render-app.com/api/update-agent', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                instructions: text,
+                agent_id: currentAgent 
+            })
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            previewSection.style.display = "block";
+            cleanPreview.innerText = data.cleaned;
+            doneBtn.innerText = "Updated! ✅";
+            setTimeout(() => {
+                doneBtn.innerText = "Update Agent";
+                doneBtn.disabled = false;
+            }, 3000);
+        }
+    } catch (e) {
+        alert("Update failed. Check if your backend is running.");
+        doneBtn.innerText = "Update Agent";
+        doneBtn.disabled = false;
+    }
 });
