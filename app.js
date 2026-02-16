@@ -33,6 +33,11 @@ const chartCanvas = document.getElementById("intentChart");
 const modeSwitch = document.getElementById("mode-switch");
 const logoRefresh = document.getElementById("logo-refresh");
 const togglePasswordEye = document.getElementById("toggle-password-eye");
+const tabAll = document.getElementById("tab-all");
+const tabLive = document.getElementById("tab-live");
+const escalationArea = document.getElementById("escalation-alerts");
+const emptyState = document.getElementById("empty-state");
+const replyArea = document.getElementById("reply-area");
 
 let currentAgent = null;
 let unsubscribe = null;
@@ -62,7 +67,6 @@ async function validateAndUnlock() {
     }
 }
 
-// 4. Load Logs
 function loadLogs(agentId) {
     if (unsubscribe) unsubscribe();
     
@@ -97,6 +101,7 @@ function loadLogs(agentId) {
             logsContainer.appendChild(frame);
         });
         updateChart(counts);
+        updateEmptyState(); // <--- CRITICAL: Refresh the "All Quiet" message real-time
     });
 }
 
@@ -193,6 +198,7 @@ function showEscalationAlert(docId, question) {
     document.getElementById(`decline-${docId}`).onclick = () => resolveRequest(docId, "declined");
 }
 
+// Update resolveRequest to refresh the UI state
 async function resolveRequest(docId, decision) {
     const msg = decision === "accepted" 
         ? "Connected! A human agent is joining now. How can I help you?" 
@@ -204,21 +210,16 @@ async function resolveRequest(docId, decision) {
             status: decision
         });
         
-        // --- ADD THIS LOGIC HERE ---
         if (decision === "accepted") {
-            const replyArea = document.getElementById("reply-area");
-            replyArea.style.display = "block"; // Show the box
-            
-            // Optional: Smoothly scroll to the reply box
+            replyArea.style.display = "block";
             replyArea.scrollIntoView({ behavior: 'smooth' });
-            
-            // Focus the input so you can start typing immediately
             document.getElementById("admin-reply-input").focus();
         }
-        // ---------------------------
 
         const targetAlert = document.getElementById(`alert-frame-${docId}`);
         if (targetAlert) targetAlert.remove();
+        
+        updateEmptyState(); // <--- CRITICAL: Check if we should show "All Quiet" now
     } catch (e) {
         console.error("Error updating status:", e);
     }
@@ -255,18 +256,10 @@ replyInput.addEventListener("keypress", (e) => {
     if (e.key === "Enter") sendAdminMessage();
 });
 
-// --- TAB SWITCHING LOGIC ---
-const tabAll = document.getElementById("tab-all");
-const tabLive = document.getElementById("tab-live");
-const escalationArea = document.getElementById("escalation-alerts");
-const emptyState = document.getElementById("empty-state");
-const replyArea = document.getElementById("reply-area");
-
 function updateEmptyState() {
-    // Only show empty state if we are on the Live tab AND there are no alerts
     if (tabLive.classList.contains("active")) {
-        const hasAlerts = escalationArea.children.length > 0;
-        emptyState.style.display = hasAlerts ? "none" : "block";
+        // Show empty state ONLY if there are no live escalation cards
+        emptyState.style.display = escalationArea.children.length === 0 ? "block" : "none";
     } else {
         emptyState.style.display = "none";
     }
@@ -291,3 +284,4 @@ tabLive.addEventListener("click", () => {
 // IMPORTANT: Call updateEmptyState inside your onSnapshot too!
 // In your loadLogs function, inside the unsubscribe = onSnapshot loop, 
 // add "updateEmptyState();" at the very end of the snapshot loop.
+
