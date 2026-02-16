@@ -5,12 +5,8 @@ import {
     query, 
     where, 
     getDocs, 
-    getDoc,
     onSnapshot, 
-    orderBy,
-    doc,
-    updateDoc,
-    addDoc
+    orderBy 
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 // 1. Firebase Config
@@ -34,16 +30,10 @@ const chartCanvas = document.getElementById("intentChart");
 const modeSwitch = document.getElementById("mode-switch");
 const logoRefresh = document.getElementById("logo-refresh");
 const togglePasswordEye = document.getElementById("toggle-password-eye");
-const tabAll = document.getElementById("tab-all");
-const tabLive = document.getElementById("tab-live");
-const escalationArea = document.getElementById("escalation-alerts");
-const emptyState = document.getElementById("empty-state");
-const replyArea = document.getElementById("reply-area");
 
 let currentAgent = null;
 let unsubscribe = null;
 let intentChart = null;
-let activeChatUserId = null;
 
 // 3. Auth Logic
 async function validateAndUnlock() {
@@ -69,22 +59,18 @@ async function validateAndUnlock() {
     }
 }
 
+// 4. Load Logs
 function loadLogs(agentId) {
     if (unsubscribe) unsubscribe();
     
     const q = query(collection(db, "agents", agentId, "logs"), orderBy("timestamp", "desc"));
     
     unsubscribe = onSnapshot(q, (snapshot) => {
-        document.getElementById("escalation-alerts").innerHTML = ""; 
         logsContainer.innerHTML = "";
         const counts = {};
 
         snapshot.forEach((doc) => {
             const data = doc.data();
-            if (data.status === "escalation") {
-                showEscalationAlert(doc.id, data.question);
-                return;
-            }
             const intent = data.category || "General";
             counts[intent] = (counts[intent] || 0) + 1;
 
@@ -103,7 +89,6 @@ function loadLogs(agentId) {
             logsContainer.appendChild(frame);
         });
         updateChart(counts);
-        updateEmptyState(); // <--- CRITICAL: Refresh the "All Quiet" message real-time
     });
 }
 
@@ -170,135 +155,3 @@ togglePasswordEye.addEventListener("click", () => {
     togglePasswordEye.classList.toggle("fa-eye");
     togglePasswordEye.classList.toggle("fa-eye-slash");
 });
-
-// --- ESCALATION SYSTEM ---
-
-function showEscalationAlert(docId, question) {
-    const alertArea = document.getElementById("escalation-alerts"); // Added this line
-    
-    // Check if this alert already exists to prevent duplicates
-    if (document.getElementById(`alert-frame-${docId}`)) return;
-
-    const newAlert = document.createElement('div');
-    newAlert.id = `alert-frame-${docId}`; 
-    newAlert.innerHTML = `
-        <div class="alert-card">
-            <div>
-                <p style="font-weight:800; color:#ef4444;">🚨 LIVE AGENT REQUESTED</p>
-                <p style="color: #1e293b;">"${question}"</p>
-            </div>
-            <div class="alert-btns">
-                <button class="btn-accept" id="accept-${docId}">Accept</button>
-                <button class="btn-decline" id="decline-${docId}">Decline</button>
-            </div>
-        </div>
-    `;
-    alertArea.appendChild(newAlert);
-
-    // Attach events
-    document.getElementById(`accept-${docId}`).onclick = () => resolveRequest(docId, "accepted");
-    document.getElementById(`decline-${docId}`).onclick = () => resolveRequest(docId, "declined");
-}
-
-// Update resolveRequest to refresh the UI state
-// Update resolveRequest to refresh the UI state flawlessly
-async function resolveRequest(docId, decision) {
-    // 1. IMPROVEMENT: Optimistically hide the alert IMMEDIATELY to prevent flickering
-    const targetAlert = document.getElementById(`alert-frame-${docId}`);
-    if (targetAlert) targetAlert.style.opacity = "0.5"; // Dim it while processing
-    
-    // This is the message the CUSTOMER will see in their chat
-    const msg = decision === "accepted" 
-        ? "✨ Connected! Selam has joined the chat. How can I help you?" 
-        : "I'm sorry, agents are currently busy. Please try again later.";
-    
-    try {
-        // 2. Update Firebase
-        await updateDoc(doc(db, "agents", currentAgent, "logs", docId), {
-            answer: msg,
-            status: decision // "accepted" or "declined"
-        });
-        
-        // 3. UI logic for the Dashboard
-        if (decision === "accepted") {
-            const logSnap = await getDoc(doc(db, "agents", currentAgent, "logs", docId));
-            activeChatUserId = logSnap.data().user_id; 
-            sessionStorage.setItem("activeChatUser", activeChatUserId); 
-            replyArea.style.display = "block";
-            replyArea.scrollIntoView({ behavior: 'smooth' });
-            document.getElementById("admin-reply-input").focus();
-        }
-
-        // Remove the alert card completely after the DB update is successful
-        if (targetAlert) targetAlert.remove();
-        
-        updateEmptyState(); 
-    } catch (e) {
-        console.error("Error updating status:", e);
-        if (targetAlert) targetAlert.style.opacity = "1"; // Bring it back if it failed
-        alert("Action failed. Check your connection.");
-    }
-}
-
-// --- ADMIN REPLY LOGIC ---
-const replyInput = document.getElementById("admin-reply-input");
-const sendBtn = document.getElementById("send-reply-btn");
-
-async function sendAdminMessage() {
-    const text = replyInput.value.trim();
-    const activeChatUserId = sessionStorage.getItem("activeChatUser"); 
-    if (!text || !currentAgent || !activeChatUserId) return;
-
-    try {
-        await addDoc(collection(db, "agents", currentAgent, "logs"), {
-            question: "Admin Reply",
-            answer: text,
-            status: "accepted",
-            user_id: activeChatUserId, // CRITICAL: This is how the user finds the message
-            timestamp: new Date(), 
-            category: "human_reply"
-        });
-        replyInput.value = "";
-    } catch (e) { console.error(e); }
-}
-
-// Trigger on click
-sendBtn.addEventListener("click", sendAdminMessage);
-
-// Trigger on Enter key
-replyInput.addEventListener("keypress", (e) => {
-    if (e.key === "Enter") sendAdminMessage();
-});
-
-function updateEmptyState() {
-    if (tabLive.classList.contains("active")) {
-        // Show empty state ONLY if there are no live escalation cards
-        emptyState.style.display = escalationArea.children.length === 0 ? "block" : "none";
-    } else {
-        emptyState.style.display = "none";
-    }
-}
-
-tabAll.addEventListener("click", () => {
-    tabAll.classList.add("active");
-    tabLive.classList.remove("active");
-    logsContainer.style.display = "flex";
-    escalationArea.style.display = "block"; // Show alerts at the top of history
-    emptyState.style.display = "none";
-    replyArea.style.display = "none"; 
-});
-
-tabLive.addEventListener("click", () => {
-    tabLive.classList.add("active");
-    tabAll.classList.remove("active");
-    logsContainer.style.display = "none";
-    updateEmptyState();
-});
-
-// IMPORTANT: Call updateEmptyState inside your onSnapshot too!
-// In your loadLogs function, inside the unsubscribe = onSnapshot loop, 
-// add "updateEmptyState();" at the very end of the snapshot loop.
-
-
-
-
