@@ -60,7 +60,6 @@ async function validateAndUnlock() {
             currentAgent = querySnapshot.docs[0].id;
             keyOverlay.style.display = "none";
             mainApp.style.display = "flex";
-            loadLogs(currentAgent);
             loadLogs(currentAgent);    // Loads the chat logs
             loadHistory(currentAgent);
         } else {
@@ -286,4 +285,5 @@ function loadHistory(agentId) {
         });
     });
 }
+
 
