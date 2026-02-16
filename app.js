@@ -8,7 +8,8 @@ import {
     onSnapshot, 
     orderBy,
     doc,
-    updateDoc
+    updateDoc,
+    addDoc
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 // 1. Firebase Config
@@ -51,6 +52,7 @@ async function validateAndUnlock() {
             currentAgent = querySnapshot.docs[0].id;
             keyOverlay.style.display = "none";
             mainApp.style.display = "flex";
+            document.getElementById("reply-area").style.display = "block";
             loadLogs(currentAgent);
         } else {
             throw new Error();
@@ -69,7 +71,6 @@ function loadLogs(agentId) {
     
     unsubscribe = onSnapshot(q, (snapshot) => {
         document.getElementById("escalation-alerts").innerHTML = ""; 
-        logsContainer.innerHTML = "";
         logsContainer.innerHTML = "";
         const counts = {};
 
@@ -210,3 +211,34 @@ async function resolveRequest(docId, decision) {
         console.error("Error updating status:", e);
     }
 }
+
+// --- ADMIN REPLY LOGIC ---
+const replyInput = document.getElementById("admin-reply-input");
+const sendBtn = document.getElementById("send-reply-btn");
+
+async function sendAdminMessage() {
+    const text = replyInput.value.trim();
+    if (!text || !currentAgent) return;
+
+    try {
+        // Adding a document here creates a new "frame" in your dashboard instantly
+        await addDoc(collection(db, "agents", currentAgent, "logs"), {
+            question: "Admin Reply",
+            answer: text,
+            status: "accepted", // Keeps AI muzzled
+            timestamp: new Date(), 
+            category: "human_reply"
+        });
+        replyInput.value = ""; // Clear the box
+    } catch (e) {
+        console.error("Failed to send message:", e);
+    }
+}
+
+// Trigger on click
+sendBtn.addEventListener("click", sendAdminMessage);
+
+// Trigger on Enter key
+replyInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") sendAdminMessage();
+});
