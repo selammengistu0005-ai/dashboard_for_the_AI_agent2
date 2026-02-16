@@ -66,14 +66,27 @@
             </header>
 
             <div id="training-section" style="display: none;">
-                <div class="training-container">
-                    <div class="training-card">
-                        <h2 style="font-size: 2.2rem; margin-bottom: 0.5rem;">🧠 Train Your AI</h2>
-                        <p style="font-size: 1.1rem; color: var(--text-dim); margin-bottom: 1.5rem;">Write updates, prices, or rules. Our AI will clean it up for you.</p>
-                        
-                        <div class="btn-container" style="margin-bottom: 1.5rem;">
-                            <button id="done-btn" class="primary-btn">Update Agent</button>
-                        </div>
+    <div class="training-container">
+        <div class="training-card">
+            <h2 style="font-size: 2.2rem; margin-bottom: 0.5rem;">🧠 Train Your AI</h2>
+            <p style="font-size: 1.1rem; color: var(--text-dim); margin-bottom: 1.5rem;">
+                Write updates, prices, or rules. Our AI will clean it up for you.
+            </p>
+            
+            <textarea id="instructionsInput" placeholder="e.g. We now have 20% off on Fridays..."></textarea>
+
+            <div class="btn-container" style="margin-bottom: 1.5rem;">
+                <button id="done-btn" class="primary-btn">Update Agent</button>
+            </div>
+
+            <div id="instructionHistory" class="history-section">
+                <h3 class="history-title">Saved Brain Versions</h3>
+                <div id="historyList" class="history-list">
+                    </div>
+            </div>
+        </div>
+    </div>
+</div>
 
                         <textarea id="messy-input" placeholder="Ex: We are offering a 20% discount on all suites this weekend..."></textarea>
                     </div>
@@ -95,6 +108,7 @@
     <script type="module" src="app.js"></script>
 </body>
 </html>
+
 
 
 
