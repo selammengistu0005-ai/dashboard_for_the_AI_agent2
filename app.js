@@ -5,6 +5,7 @@ import {
     query, 
     where, 
     getDocs, 
+    getDoc,
     onSnapshot, 
     orderBy,
     doc,
@@ -42,6 +43,7 @@ const replyArea = document.getElementById("reply-area");
 let currentAgent = null;
 let unsubscribe = null;
 let intentChart = null;
+let activeChatUserId = null;
 
 // 3. Auth Logic
 async function validateAndUnlock() {
@@ -219,6 +221,8 @@ async function resolveRequest(docId, decision) {
         
         // 3. UI logic for the Dashboard
         if (decision === "accepted") {
+            const logSnap = await getDoc(doc(db, "agents", currentAgent, "logs", docId));
+            activeChatUserId = logSnap.data().user_id; 
             replyArea.style.display = "block";
             replyArea.scrollIntoView({ behavior: 'smooth' });
             document.getElementById("admin-reply-input").focus();
@@ -241,21 +245,20 @@ const sendBtn = document.getElementById("send-reply-btn");
 
 async function sendAdminMessage() {
     const text = replyInput.value.trim();
-    if (!text || !currentAgent) return;
+    const activeLogId = localStorage.getItem("currently_chatting_with");
+    if (!text || !currentAgent || !activeChatUserId) return; // Added check
 
     try {
-        // Adding a document here creates a new "frame" in your dashboard instantly
         await addDoc(collection(db, "agents", currentAgent, "logs"), {
             question: "Admin Reply",
             answer: text,
-            status: "accepted", // Keeps AI muzzled
+            status: "accepted",
+            user_id: activeChatUserId, // CRITICAL: This is how the user finds the message
             timestamp: new Date(), 
             category: "human_reply"
         });
-        replyInput.value = ""; // Clear the box
-    } catch (e) {
-        console.error("Failed to send message:", e);
-    }
+        replyInput.value = "";
+    } catch (e) { console.error(e); }
 }
 
 // Trigger on click
@@ -294,5 +297,6 @@ tabLive.addEventListener("click", () => {
 // IMPORTANT: Call updateEmptyState inside your onSnapshot too!
 // In your loadLogs function, inside the unsubscribe = onSnapshot loop, 
 // add "updateEmptyState();" at the very end of the snapshot loop.
+
 
 
