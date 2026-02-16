@@ -260,31 +260,34 @@ const tabAll = document.getElementById("tab-all");
 const tabLive = document.getElementById("tab-live");
 const escalationArea = document.getElementById("escalation-alerts");
 const emptyState = document.getElementById("empty-state");
+const replyArea = document.getElementById("reply-area");
+
+function updateEmptyState() {
+    // Only show empty state if we are on the Live tab AND there are no alerts
+    if (tabLive.classList.contains("active")) {
+        const hasAlerts = escalationArea.children.length > 0;
+        emptyState.style.display = hasAlerts ? "none" : "block";
+    } else {
+        emptyState.style.display = "none";
+    }
+}
 
 tabAll.addEventListener("click", () => {
     tabAll.classList.add("active");
     tabLive.classList.remove("active");
     logsContainer.style.display = "flex";
-    escalationArea.style.display = "block";
+    escalationArea.style.display = "block"; // Show alerts at the top of history
     emptyState.style.display = "none";
-    
-    // Hide the reply box when viewing history
-    document.getElementById("reply-area").style.display = "none"; 
+    replyArea.style.display = "none"; 
 });
 
 tabLive.addEventListener("click", () => {
     tabLive.classList.add("active");
     tabAll.classList.remove("active");
-    
-    // Hide history, show ONLY live alerts
     logsContainer.style.display = "none";
-    
-    // If no active alerts, show empty state
-    if (escalationArea.children.length === 0) {
-        emptyState.style.display = "block";
-    } else {
-        emptyState.style.display = "block"; // Corrected logic: block handled by children check
-        emptyState.style.display = escalationArea.innerHTML === "" ? "block" : "none";
-    }
+    updateEmptyState();
 });
 
+// IMPORTANT: Call updateEmptyState inside your onSnapshot too!
+// In your loadLogs function, inside the unsubscribe = onSnapshot loop, 
+// add "updateEmptyState();" at the very end of the snapshot loop.
