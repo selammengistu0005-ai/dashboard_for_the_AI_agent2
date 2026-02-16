@@ -6,7 +6,9 @@ import {
     where, 
     getDocs, 
     onSnapshot, 
-    orderBy 
+    orderBy,
+    addDoc,
+    serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 // 1. Firebase Config
@@ -59,6 +61,8 @@ async function validateAndUnlock() {
             keyOverlay.style.display = "none";
             mainApp.style.display = "flex";
             loadLogs(currentAgent);
+            loadLogs(currentAgent);    // Loads the chat logs
+            loadHistory(currentAgent);
         } else {
             throw new Error();
         }
@@ -212,9 +216,13 @@ doneBtn.addEventListener("click", async () => {
         if (response.ok) {
             const data = await response.json();
             if (data.success) {
-                // ✅ This is the best place for it!
-                addToHistory(text); 
+                // 1. Save to Firebase (Fixed the closing brackets here)
+                await addDoc(collection(db, "agents", currentAgent, "trainingHistory"), {
+                    text: text,
+                    timestamp: serverTimestamp()
+                }); 
 
+                // 2. Update UI
                 previewSection.style.display = "block";
                 cleanPreview.innerText = data.cleaned;
                 doneBtn.innerText = "Updated! ✅";
@@ -259,5 +267,23 @@ function addToHistory(text) {
 
     // Put this new frame at the top of the history list
     historyList.prepend(frame);
+}
+
+// This function fetches all previous updates from Firebase
+function loadHistory(agentId) {
+    const q = query(
+        collection(db, "agents", agentId, "trainingHistory"), 
+        orderBy("timestamp", "desc")
+    );
+
+    // This listens to Firebase. If a new update is added, it pops up automatically!
+    onSnapshot(q, (snapshot) => {
+        const historyList = document.getElementById('historyList');
+        historyList.innerHTML = ""; // Clear the list so we don't get duplicates
+        
+        snapshot.forEach((doc) => {
+            addToHistory(doc.data().text);
+        });
+    });
 }
 
