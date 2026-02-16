@@ -58,7 +58,8 @@
         <main class="main-content">
             <header class="dashboard-header">
                 <div class="header-text">
-                    <h1 id="view-title">Live Monitor</h1> <div class="live-indicator">
+                    <h1 id="view-title">Live Monitor</h1> 
+                    <div class="live-indicator">
                         <span class="pulse-dot"></span>
                         <span>Connected to Firebase</span>
                     </div>
@@ -66,49 +67,30 @@
             </header>
 
             <div id="training-section" style="display: none;">
-    <div class="training-container">
-        <div class="training-card">
-            <h2 style="font-size: 2.2rem; margin-bottom: 0.5rem;">🧠 Train Your AI</h2>
-            <p style="font-size: 1.1rem; color: var(--text-dim); margin-bottom: 1.5rem;">
-                Write updates, prices, or rules. Our AI will clean it up for you.
-            </p>
-            
-            <textarea id="instructionsInput" placeholder="e.g. We now have 20% off on Fridays..."></textarea>
+                <div class="training-container">
+                    <div class="training-card">
+                        <h2 style="font-size: 2.2rem; margin-bottom: 0.5rem;">🧠 Train Your AI</h2>
+                        <p style="font-size: 1.1rem; color: var(--text-dim); margin-bottom: 1.5rem;">
+                            Write updates, prices, or rules. Our AI will clean it up for you.
+                        </p>
+                        
+                        <textarea id="instructionsInput" placeholder="e.g. We now have 20% off on Fridays..."></textarea>
 
-            <div class="btn-container" style="margin-bottom: 1.5rem;">
-                <button id="done-btn" class="primary-btn">Update Agent</button>
-            </div>
+                        <div class="btn-container" style="margin-bottom: 1.5rem;">
+                            <button id="done-btn" class="primary-btn">Update Agent</button>
+                        </div>
 
-            <div id="instructionHistory" class="history-section">
-                <h3 class="history-title">Saved Brain Versions</h3>
-                <div id="historyList" class="history-list">
-                    </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-                        <textarea id="messy-input" placeholder="Ex: We are offering a 20% discount on all suites this weekend..."></textarea>
-                    </div>
-
-                    <div id="preview-section" class="training-card" style="display: none; border-top: 3px solid var(--primary-accent);">
-                        <h3>✨ AI Refined Logic</h3>
-                        <div id="clean-preview" class="instruction-box"></div>
+                        <div id="instructionHistory" class="history-section">
+                            <h3 class="history-title">Saved Brain Versions</h3>
+                            <div id="historyList" class="history-list"></div>
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="logs-wrapper">
-                <div id="logs" class="logs-flex-container">
-                    </div>
-            </div>
-        </main>
-    </div>
-
-    <script type="module" src="app.js"></script>
+            </div> <div id="monitor-section">
+                <div class="logs-wrapper">
+                    <div id="logs" class="logs-flex-container">
+                        </div>
+                </div>
+            </div> </main>
+    </div> <script type="module" src="app.js"></script>
 </body>
-</html>
-
-
-
-
