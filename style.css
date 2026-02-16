@@ -34,6 +34,11 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
     padding: 1.5rem;
 }
 
+.sidebar-chart-container {
+    margin-top: 1rem;
+    padding: 1rem 0;
+}
+
 .sidebar-card {
     background: var(--bg-dark); /* Slightly darker to pop against sidebar */
     padding: 1rem;
@@ -174,6 +179,7 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
     font-size: 2.5rem;
     color: var(--primary-accent);
     margin-bottom: 1.5rem;
+    filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.3));
 }
 
 .login-box h2 { font-size: 1.75rem; margin-bottom: 0.5rem; font-weight: 700; }
@@ -239,146 +245,7 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
 
 .error-msg { color: #ef4444; margin-top: 1rem; font-size: 0.85rem; font-weight: 500; }
 
-/* Replace your .alert-card with this */
-.alert-card {
-    background: var(--card-dark); 
-    border: 2px solid #ef4444; /* Keep the red border for danger */
-    border-radius: 16px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: var(--text-main); /* Uses your variable instead of hardcoded black */
-    animation: alertPulse 2s infinite;
-}
-
-/* Updated Buttons to match your border-radius and fonts */
-.btn-accept { 
-    background: #10b981; 
-    color: white; 
-    border: none; 
-    padding: 10px 22px; 
-    border-radius: 12px; /* Matches your input-field radius */
-    cursor: pointer; 
-    font-weight: 700; 
-}
-
-.btn-decline { 
-    background: transparent; 
-    color: var(--text-dim); 
-    border: 1px solid var(--border-color); 
-    padding: 10px 22px; 
-    border-radius: 12px; 
-    cursor: pointer; 
-}
-
-@keyframes alertPulse {
-    0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
-    70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-}
-
-.alert-btns { display: flex; gap: 10px; }
-/* --- Header Tabs Styling --- */
-.header-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.dashboard-tabs {
-    display: flex;
-    background: var(--bg-dark);
-    padding: 4px;
-    border-radius: 12px;
-    border: 1px solid var(--border-color);
-}
-
-.tab-btn {
-    background: transparent;
-    border: none;
-    color: var(--text-dim);
-    padding: 8px 16px;
-    border-radius: 12px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 0.9rem;
-    transition: var(--transition);
-}
-
-.tab-btn.active {
-    background: var(--primary-accent);
-    color: white;
-}
-
-/* Ensure the reply box doesn't look "tacked on" */
-.admin-reply-box {
-    background: var(--card-dark);
-    padding: 1.5rem 2rem;
-    border-top: 1px solid var(--border-color);
-    /* This makes it stick to the bottom if the screen is small */
-    position: sticky;
-    bottom: 0; 
-}
-
-.reply-container {
-    display: flex;
-    gap: 15px;
-    max-width: 1000px;
-    margin: 0 auto;
-}
-
-#admin-reply-input {
-    flex: 1;
-    background: var(--bg-dark);
-    border: 1px solid var(--border-color);
-    padding: 14px 20px;
-    border-radius: 14px;
-    color: var(--text-main);
-    font-size: 1rem;
-    outline: none;
-    transition: var(--transition);
-}
-
-#admin-reply-input:focus {
-    border-color: var(--primary-accent);
-}
-
-#send-reply-btn {
-    background: var(--primary-accent);
-    color: white;
-    border: none;
-    padding: 0 25px;
-    border-radius: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    transition: var(--transition);
-}
-
-#send-reply-btn:hover {
-    filter: brightness(1.1);
-    transform: translateY(-2px);
-}
-
-#empty-state {
-    display: none; /* Controlled by JS */
-    text-align: center;
-    padding: 5rem 2rem;
-    color: var(--text-dim);
-}
-
-#empty-state i {
-    display: block;
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    opacity: 0.2;
-}
-
-
+/* --- Mobile Responsiveness --- */
 @media (max-width: 768px) {
     .app-container {
         flex-direction: column; /* Stack sidebar on top of main content */
@@ -414,6 +281,3 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
         padding: 1rem;
     }
 }
-
-
-
