@@ -265,8 +265,8 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
 
 .training-container { padding: 2rem; max-width: 800px; margin: 0 auto; width: 100%; }
 .training-card { background: var(--card-dark); border: 1px solid var(--border-color); border-radius: 18px; padding: 2rem; margin-bottom: 2rem; }
-.training-card h2 { margin-bottom: 0.5rem; }
-.training-card p { color: var(--text-dim); font-size: 0.9rem; }
+.training-card h2 { margin-bottom: 0.5rem; font-size: 2rem; }
+.training-card p { color: var(--text-dim); font-size: 1.2rem; }
 
 #messy-input {
     width: 100%; height: 180px; background: var(--bg-dark); color: var(--text-main);
@@ -324,4 +324,5 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
         padding: 1rem;
     }
 }
+
 
