@@ -68,11 +68,17 @@ function loadLogs(agentId) {
     const q = query(collection(db, "agents", agentId, "logs"), orderBy("timestamp", "desc"));
     
     unsubscribe = onSnapshot(q, (snapshot) => {
+        document.getElementById("escalation-alerts").innerHTML = ""; 
+        logsContainer.innerHTML = "";
         logsContainer.innerHTML = "";
         const counts = {};
 
         snapshot.forEach((doc) => {
             const data = doc.data();
+            if (data.status === "escalation") {
+                showEscalationAlert(doc.id, data.question);
+                return;
+            }
             const intent = data.category || "General";
             counts[intent] = (counts[intent] || 0) + 1;
 
@@ -158,3 +164,49 @@ togglePasswordEye.addEventListener("click", () => {
     togglePasswordEye.classList.toggle("fa-eye-slash");
 });
 
+// --- ESCALATION SYSTEM ---
+
+function showEscalationAlert(docId, question) {
+    const alertArea = document.getElementById("escalation-alerts"); // Added this line
+    
+    // Check if this alert already exists to prevent duplicates
+    if (document.getElementById(`alert-frame-${docId}`)) return;
+
+    const newAlert = document.createElement('div');
+    newAlert.id = `alert-frame-${docId}`; 
+    newAlert.innerHTML = `
+        <div class="alert-card">
+            <div>
+                <p style="font-weight:800; color:#ef4444;">🚨 LIVE AGENT REQUESTED</p>
+                <p style="color: #1e293b;">"${question}"</p>
+            </div>
+            <div class="alert-btns">
+                <button class="btn-accept" id="accept-${docId}">Accept</button>
+                <button class="btn-decline" id="decline-${docId}">Decline</button>
+            </div>
+        </div>
+    `;
+    alertArea.appendChild(newAlert);
+
+    // Attach events
+    document.getElementById(`accept-${docId}`).onclick = () => resolveRequest(docId, "accepted");
+    document.getElementById(`decline-${docId}`).onclick = () => resolveRequest(docId, "declined");
+}
+
+async function resolveRequest(docId, decision) {
+    const msg = decision === "accepted" 
+        ? "Connected! A human agent is joining now." 
+        : "I'm sorry, agents are busy. Please try later.";
+    
+    try {
+        await updateDoc(doc(db, "agents", currentAgent, "logs", docId), {
+            answer: msg,
+            status: decision
+        });
+        
+        const targetAlert = document.getElementById(`alert-frame-${docId}`);
+        if (targetAlert) targetAlert.remove();
+    } catch (e) {
+        console.error("Error updating status:", e);
+    }
+}
