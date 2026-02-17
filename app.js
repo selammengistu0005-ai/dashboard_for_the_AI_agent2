@@ -139,17 +139,6 @@ unlockBtn.addEventListener("click", validateAndUnlock);
 keyInput.addEventListener("keypress", (e) => e.key === "Enter" && validateAndUnlock());
 logoRefresh.addEventListener("click", () => window.location.reload());
 
-// Add the KB item when button is clicked
-document.getElementById("add-kb-item").addEventListener("click", saveKnowledge);
-
-// Smooth Scroll to Knowledge Base
-document.getElementById("scroll-to-kb").addEventListener("click", () => {
-    const kbSection = document.getElementById("knowledge-base-section");
-    if (kbSection) {
-        kbSection.scrollIntoView({ behavior: "smooth" });
-    }
-});
-
 // Theme Switcher
 modeSwitch.addEventListener("click", () => {
     document.body.classList.toggle("light-mode");
@@ -201,6 +190,8 @@ async function saveKnowledge() {
     }
 }
 
+// --- UPDATED LOAD KNOWLEDGE WITH VIEW TOGGLE ---
+
 function loadKnowledge(agentId) {
     const q = query(collection(db, "agents", agentId, "knowledge"), orderBy("timestamp", "desc"));
     
@@ -227,13 +218,24 @@ function loadKnowledge(agentId) {
         });
     });
 
-    // NOW ATTACH THE BUTTON EVENTS ONLY AFTER APP IS UNLOCKED
-    document.getElementById("add-kb-item").onclick = saveKnowledge;
+    // --- THE TOGGLE LOGIC ---
+    const editBtn = document.getElementById("scroll-to-kb");
     
-    // Setup the Scroll Button
-    document.getElementById("scroll-to-kb").onclick = () => {
-        document.getElementById("knowledge-base-section").scrollIntoView({ behavior: "smooth" });
+    editBtn.onclick = () => {
+        // Toggle the class on the body
+        const isEditing = document.body.classList.toggle("editing-mode");
+
+        if (isEditing) {
+            // Update button to show how to go back
+            editBtn.innerHTML = `<i class="fa-solid fa-chart-line"></i> View Live Monitor`;
+        } else {
+            // Restore original text
+            editBtn.innerHTML = `<i class="fa-solid fa-pen-to-square"></i> Edit Agent Knowledge`;
+        }
     };
+
+    // Attach Save Button
+    document.getElementById("add-kb-item").onclick = saveKnowledge;
 }
 
 // Global functions for table buttons
@@ -243,3 +245,4 @@ window.deleteKBItem = (id) => {
         deleteDoc(doc(db, "agents", currentAgent, "knowledge", id));
     }
 };
+
