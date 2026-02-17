@@ -55,6 +55,7 @@ async function validateAndUnlock() {
             mainApp.style.display = "flex";
             loadLogs(currentAgent);
             loadKnowledge(currentAgent);
+            listenToSettings(currentAgent);
         } else {
             throw new Error();
         }
@@ -163,16 +164,33 @@ togglePasswordEye.addEventListener("click", () => {
 // --- KNOWLEDGE BASE ENGINE ---
 
 async function saveKnowledge() {
-    const branches = document.querySelectorAll(".kb-branch-row");
     const saveBtn = document.getElementById("add-kb-item");
+    const aiName = document.getElementById("ai-name-input").value.trim();
+    const fallbackMsg = document.getElementById("fallback-missing").value.trim();
+    const forbiddenList = document.getElementById("forbidden-list").value.trim();
+    
+    // Capture selected personas from the matrix
+    const activePersonas = Array.from(document.querySelectorAll(".persona-btn.active"))
+                                .map(btn => btn.dataset.style);
+
+    const branches = document.querySelectorAll(".kb-branch-row");
     
     if (!currentAgent) return;
 
-    saveBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Committing...`;
+    saveBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Syncing Brain...`;
     saveBtn.disabled = true;
 
     try {
-        // Loop through every branch row in the UI
+        // 1. Update the Main Agent Settings (Identity & Logic)
+        await updateDoc(doc(db, "agents", currentAgent), {
+            aiDisplayName: aiName,
+            personas: activePersonas,
+            fallbackMessage: fallbackMsg,
+            forbiddenPhrases: forbiddenList.split(",").map(s => s.trim()).filter(s => s !== ""), // This removes empty entries so the AI stays smart
+            lastConfigUpdate: new Date()
+        });
+
+        // 2. Save Inventory Branches
         for (let branch of branches) {
             const name = branch.querySelector(".kb-name").value.trim();
             const price = branch.querySelector(".kb-price").value;
@@ -189,9 +207,10 @@ async function saveKnowledge() {
             }
         }
 
-        // Reset the UI: Clear all extra branches and empty the first one
-        const container = document.getElementById("kb-branches-container");
-        container.innerHTML = `
+        alert("Agent Identity & Memory Synchronized!");
+        
+        // UI Reset for branches
+        document.getElementById("kb-branches-container").innerHTML = `
             <div class="kb-branch-row">
                 <input type="text" class="kb-name" placeholder="Item Name">
                 <input type="number" class="kb-price" placeholder="Price (ETB)">
@@ -199,10 +218,9 @@ async function saveKnowledge() {
                 <button class="remove-branch-btn" onclick="this.parentElement.remove()"><i class="fa-solid fa-xmark"></i></button>
             </div>
         `;
-        alert("Knowledge Memory Updated!");
     } catch (error) {
-        console.error("Error saving branches:", error);
-        alert("Error saving items.");
+        console.error("Save Error:", error);
+        alert("Sync Failed. Check console.");
     } finally {
         saveBtn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Commit All to Memory`;
         saveBtn.disabled = false;
@@ -231,15 +249,13 @@ function loadKnowledge(agentId) {
                     </button>
                     <i class="fa-solid fa-trash" style="margin-left:15px; cursor:pointer; color:#ef4444" 
                         onclick="deleteKBItem('${snap.id}')"></i>
-                </td>
-            `;
+                </td>`;
             list.appendChild(row);
         });
     });
 
-// --- THE TOGGLE LOGIC ---
+    // View Switching Logic (Moved out of loops)
     const editBtn = document.getElementById("scroll-to-kb");
-    
     editBtn.onclick = () => {
         const isEditing = document.body.classList.toggle("editing-mode");
         editBtn.innerHTML = isEditing 
@@ -247,7 +263,6 @@ function loadKnowledge(agentId) {
             : `<i class="fa-solid fa-pen-to-square"></i> Edit Agent Knowledge`;
     };
 
-    // --- BRANCH SPAWNER (Keep this OUTSIDE the onclick above) ---
     const addBranchBtn = document.getElementById("add-branch-btn");
     addBranchBtn.onclick = () => {
         const container = document.getElementById("kb-branches-container");
@@ -257,16 +272,28 @@ function loadKnowledge(agentId) {
             <input type="text" class="kb-name" placeholder="Item Name">
             <input type="number" class="kb-price" placeholder="Price (ETB)">
             <input type="text" class="kb-desc" placeholder="Details/Description">
-            <button class="remove-branch-btn" onclick="this.parentElement.remove()">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-        `;
+            <button class="remove-branch-btn" onclick="this.parentElement.remove()"><i class="fa-solid fa-xmark"></i></button>`;
         container.appendChild(newBranch);
     };
 
-    // Final Attach for Save Button
     document.getElementById("add-kb-item").onclick = saveKnowledge;
 } // This closing bracket ends loadKnowledge
+
+function listenToSettings(agentId) {
+    onSnapshot(doc(db, "agents", agentId), (docSnap) => {
+        if (docSnap.exists()) {
+            const settings = docSnap.data();
+            document.getElementById("ai-name-input").value = settings.aiDisplayName || "";
+            document.getElementById("fallback-missing").value = settings.fallbackMessage || "";
+            document.getElementById("forbidden-list").value = settings.forbiddenPhrases?.join(", ") || "";
+            
+            const savedStyles = settings.personas || [];
+            document.querySelectorAll(".persona-btn").forEach(btn => {
+                btn.classList.toggle("active", savedStyles.includes(btn.dataset.style));
+            });
+        }
+    });
+}
 
 // Global functions for table buttons
 window.toggleStock = (id, status) => updateDoc(doc(db, "agents", currentAgent, "knowledge", id), { inStock: !status });
@@ -275,5 +302,11 @@ window.deleteKBItem = (id) => {
         deleteDoc(doc(db, "agents", currentAgent, "knowledge", id));
     }
 };
+// Add this at the very end to make the buttons clickable
+document.querySelectorAll(".persona-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+        btn.classList.toggle("active");
+    });
+});
 
 
