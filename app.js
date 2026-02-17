@@ -163,30 +163,49 @@ togglePasswordEye.addEventListener("click", () => {
 // --- KNOWLEDGE BASE ENGINE ---
 
 async function saveKnowledge() {
-    const name = document.getElementById("kb-name").value;
-    const price = document.getElementById("kb-price").value;
-    const desc = document.getElementById("kb-desc").value;
+    const branches = document.querySelectorAll(".kb-branch-row");
+    const saveBtn = document.getElementById("add-kb-item");
+    
+    if (!currentAgent) return;
 
-    if (!name || !price || !currentAgent) {
-        alert("Please fill in Name and Price!");
-        return;
-    }
+    saveBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Committing...`;
+    saveBtn.disabled = true;
 
     try {
-        await addDoc(collection(db, "agents", currentAgent, "knowledge"), {
-            name: name,
-            price: Number(price),
-            description: desc,
-            inStock: true,
-            timestamp: new Date()
-        });
+        // Loop through every branch row in the UI
+        for (let branch of branches) {
+            const name = branch.querySelector(".kb-name").value.trim();
+            const price = branch.querySelector(".kb-price").value;
+            const desc = branch.querySelector(".kb-desc").value.trim();
 
-        // Clear inputs after success
-        document.getElementById("kb-name").value = "";
-        document.getElementById("kb-price").value = "";
-        document.getElementById("kb-desc").value = "";
+            if (name && price) {
+                await addDoc(collection(db, "agents", currentAgent, "knowledge"), {
+                    name: name,
+                    price: Number(price),
+                    description: desc,
+                    inStock: true,
+                    timestamp: new Date()
+                });
+            }
+        }
+
+        // Reset the UI: Clear all extra branches and empty the first one
+        const container = document.getElementById("kb-branches-container");
+        container.innerHTML = `
+            <div class="kb-branch-row">
+                <input type="text" class="kb-name" placeholder="Item Name">
+                <input type="number" class="kb-price" placeholder="Price (ETB)">
+                <input type="text" class="kb-desc" placeholder="Details/Description">
+                <button class="remove-branch-btn" onclick="this.parentElement.remove()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+        `;
+        alert("Knowledge Memory Updated!");
     } catch (error) {
-        console.error("Error adding item:", error);
+        console.error("Error saving branches:", error);
+        alert("Error saving items.");
+    } finally {
+        saveBtn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Commit All to Memory`;
+        saveBtn.disabled = false;
     }
 }
 
@@ -218,25 +237,36 @@ function loadKnowledge(agentId) {
         });
     });
 
-    // --- THE TOGGLE LOGIC ---
+// --- THE TOGGLE LOGIC ---
     const editBtn = document.getElementById("scroll-to-kb");
     
     editBtn.onclick = () => {
-        // Toggle the class on the body
         const isEditing = document.body.classList.toggle("editing-mode");
-
-        if (isEditing) {
-            // Update button to show how to go back
-            editBtn.innerHTML = `<i class="fa-solid fa-chart-line"></i> View Live Monitor`;
-        } else {
-            // Restore original text
-            editBtn.innerHTML = `<i class="fa-solid fa-pen-to-square"></i> Edit Agent Knowledge`;
-        }
+        editBtn.innerHTML = isEditing 
+            ? `<i class="fa-solid fa-chart-line"></i> View Live Monitor` 
+            : `<i class="fa-solid fa-pen-to-square"></i> Edit Agent Knowledge`;
     };
 
-    // Attach Save Button
+    // --- BRANCH SPAWNER (Keep this OUTSIDE the onclick above) ---
+    const addBranchBtn = document.getElementById("add-branch-btn");
+    addBranchBtn.onclick = () => {
+        const container = document.getElementById("kb-branches-container");
+        const newBranch = document.createElement("div");
+        newBranch.className = "kb-branch-row";
+        newBranch.innerHTML = `
+            <input type="text" class="kb-name" placeholder="Item Name">
+            <input type="number" class="kb-price" placeholder="Price (ETB)">
+            <input type="text" class="kb-desc" placeholder="Details/Description">
+            <button class="remove-branch-btn" onclick="this.parentElement.remove()">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        `;
+        container.appendChild(newBranch);
+    };
+
+    // Final Attach for Save Button
     document.getElementById("add-kb-item").onclick = saveKnowledge;
-}
+} // This closing bracket ends loadKnowledge
 
 // Global functions for table buttons
 window.toggleStock = (id, status) => updateDoc(doc(db, "agents", currentAgent, "knowledge", id), { inStock: !status });
@@ -245,4 +275,5 @@ window.deleteKBItem = (id) => {
         deleteDoc(doc(db, "agents", currentAgent, "knowledge", id));
     }
 };
+
 
