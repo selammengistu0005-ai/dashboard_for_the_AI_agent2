@@ -270,6 +270,28 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
 .status-in { background: rgba(16, 185, 129, 0.1); color: #10b981; }
 .status-out { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
 
+.sidebar-action-btn {
+    width: 100%;
+    margin-top: 1rem;
+    padding: 12px;
+    background: var(--glass-bg);
+    color: var(--primary-accent);
+    border: 1px solid var(--primary-accent);
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.sidebar-action-btn:hover {
+    background: var(--primary-accent);
+    color: white;
+}
+
 /* --- Mobile Responsiveness --- */
 @media (max-width: 768px) {
     .app-container {
@@ -306,4 +328,5 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
         padding: 1rem;
     }
 }
+
 
