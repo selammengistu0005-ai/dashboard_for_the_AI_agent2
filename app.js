@@ -133,14 +133,28 @@ function updateChart(counts) {
 }
 
 // 6. Events
+// 6. Events (Add these at the bottom of your script)
+
 unlockBtn.addEventListener("click", validateAndUnlock);
 keyInput.addEventListener("keypress", (e) => e.key === "Enter" && validateAndUnlock());
-
 logoRefresh.addEventListener("click", () => window.location.reload());
 
+// Add the KB item when button is clicked
+document.getElementById("add-kb-item").addEventListener("click", saveKnowledge);
+
+// Smooth Scroll to Knowledge Base
+document.getElementById("scroll-to-kb").addEventListener("click", () => {
+    const kbSection = document.getElementById("knowledge-base-section");
+    if (kbSection) {
+        kbSection.scrollIntoView({ behavior: "smooth" });
+    }
+});
+
+// Theme Switcher
 modeSwitch.addEventListener("click", () => {
     document.body.classList.toggle("light-mode");
     document.body.classList.toggle("dark-mode");
+    // Redraw chart to update font colors
     if (intentChart) {
         const currentData = intentChart.data.datasets[0].data;
         const currentLabels = intentChart.data.labels;
@@ -150,17 +164,12 @@ modeSwitch.addEventListener("click", () => {
     }
 });
 
-// --- NEW: Toggle Password Visibility Logic ---
 togglePasswordEye.addEventListener("click", () => {
-    // Switch input type
     const type = keyInput.getAttribute("type") === "password" ? "text" : "password";
     keyInput.setAttribute("type", type);
-    
-    // Toggle icon appearance
     togglePasswordEye.classList.toggle("fa-eye");
     togglePasswordEye.classList.toggle("fa-eye-slash");
 });
-
 
 // --- KNOWLEDGE BASE ENGINE ---
 
@@ -169,17 +178,27 @@ async function saveKnowledge() {
     const price = document.getElementById("kb-price").value;
     const desc = document.getElementById("kb-desc").value;
 
-    if (!name || !price || !currentAgent) return;
+    if (!name || !price || !currentAgent) {
+        alert("Please fill in Name and Price!");
+        return;
+    }
 
-    await addDoc(collection(db, "agents", currentAgent, "knowledge"), {
-        name: name,
-        price: Number(price),
-        description: desc,
-        inStock: true,
-        timestamp: new Date()
-    });
+    try {
+        await addDoc(collection(db, "agents", currentAgent, "knowledge"), {
+            name: name,
+            price: Number(price),
+            description: desc,
+            inStock: true,
+            timestamp: new Date()
+        });
 
-    document.querySelectorAll('.kb-form input').forEach(i => i.value = "");
+        // Clear inputs after success
+        document.getElementById("kb-name").value = "";
+        document.getElementById("kb-price").value = "";
+        document.getElementById("kb-desc").value = "";
+    } catch (error) {
+        console.error("Error adding item:", error);
+    }
 }
 
 function loadKnowledge(agentId) {
@@ -207,11 +226,20 @@ function loadKnowledge(agentId) {
             list.appendChild(row);
         });
     });
+
+    // NOW ATTACH THE BUTTON EVENTS ONLY AFTER APP IS UNLOCKED
+    document.getElementById("add-kb-item").onclick = saveKnowledge;
+    
+    // Setup the Scroll Button
+    document.getElementById("scroll-to-kb").onclick = () => {
+        document.getElementById("knowledge-base-section").scrollIntoView({ behavior: "smooth" });
+    };
 }
 
-// Global functions for the buttons inside the table
+// Global functions for table buttons
 window.toggleStock = (id, status) => updateDoc(doc(db, "agents", currentAgent, "knowledge", id), { inStock: !status });
-window.deleteKBItem = (id) => deleteDoc(doc(db, "agents", currentAgent, "knowledge", id));
-
-// Add Event Listener for the "Add Item" button
-document.getElementById("add-kb-item").addEventListener("click", saveKnowledge);
+window.deleteKBItem = (id) => {
+    if(confirm("Delete this item?")) {
+        deleteDoc(doc(db, "agents", currentAgent, "knowledge", id));
+    }
+};
