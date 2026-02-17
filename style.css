@@ -382,6 +382,120 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
     color: white;
 }
 
+/* --- NEW COMMAND CENTER LAYOUT --- */
+.kb-split-wrapper {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    padding-top: 10px;
+}
+
+.kb-side-panel {
+    flex: 0 0 320px; /* Fixed width for the "Brain" sidebar */
+    position: sticky;
+    top: 20px;
+}
+
+.kb-main-panel {
+    flex: 1; /* Inventory takes the remaining 70% space */
+}
+
+/* --- PERSONA MATRIX (The 10 Style Buttons) --- */
+.field-label {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--primary-accent);
+    margin: 1.5rem 0 0.6rem;
+    letter-spacing: 1.2px;
+}
+
+.persona-matrix {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 buttons per row */
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.persona-btn {
+    background: var(--bg-dark);
+    border: 1px solid var(--border-color);
+    padding: 12px 8px;
+    border-radius: 12px;
+    color: var(--text-dim);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    text-align: center;
+}
+
+.persona-btn:hover {
+    border-color: var(--primary-accent);
+    color: var(--text-main);
+    background: var(--glass-bg);
+}
+
+.persona-btn.active {
+    background: rgba(99, 102, 241, 0.15);
+    border-color: var(--primary-accent);
+    color: white;
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
+    position: relative;
+}
+
+/* --- FALLBACK & INPUT STYLING --- */
+textarea {
+    width: 100%;
+    background: var(--bg-dark);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 12px;
+    color: var(--text-main);
+    font-family: inherit;
+    font-size: 0.85rem;
+    resize: none;
+    height: 90px;
+    outline: none;
+    transition: var(--transition);
+}
+
+textarea:focus, .persona-input:focus {
+    border-color: var(--primary-accent);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.persona-input {
+    width: 100%;
+    padding: 12px;
+    background: var(--bg-dark);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    color: var(--text-main);
+    outline: none;
+    font-size: 0.9rem;
+}
+
+/* --- ADJUSTMENT TO PREVIOUS KB STYLES --- */
+.kb-container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Responsive fix for smaller desktops */
+@media (max-width: 1200px) {
+    .kb-split-wrapper {
+        flex-direction: column;
+    }
+    .kb-side-panel {
+        flex: 1 1 100%;
+        width: 100%;
+        position: static;
+        margin-bottom: 20px;
+    }
+}
+
 /* --- Mobile Responsiveness --- */
 @media (max-width: 768px) {
     .app-container {
@@ -418,6 +532,7 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
         padding: 1rem;
     }
 }
+
 
 
 
