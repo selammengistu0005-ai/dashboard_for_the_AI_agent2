@@ -37,6 +37,9 @@
                 <div class="card chart-card sidebar-card">
                     <canvas id="intentChart"></canvas>
                 </div>
+                <button id="scroll-to-kb" class="sidebar-action-btn">
+                    <i class="fa-solid fa-pen-to-square"></i> Edit Agent Knowledge
+                </button>
             </div>
 
             <div class="theme-section">
@@ -61,6 +64,10 @@
             </div>
         </div>
     </header>
+
+    <div class="logs-wrapper">
+        <div id="logs" class="logs-flex-container"></div>
+    </div>
 
     <section id="knowledge-base-section" class="kb-container" style="padding: 2rem; margin-bottom: 0;">
         <div class="kb-card">
@@ -91,14 +98,7 @@
             </div>
         </div>
     </section>
-
-    <div class="logs-wrapper">
-        <div id="logs" class="logs-flex-container"></div>
-    </div>
-</main>
-    </div>
-
-    <script type="module" src="app.js"></script>
+    </main>
+</div> <script type="module" src="app.js"></script>
 </body>
 </html>
-
