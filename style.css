@@ -249,7 +249,74 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
 .kb-header h3 { font-size: 1.2rem; display: flex; gap: 10px; align-items: center; }
 .kb-header p { color: var(--text-dim); font-size: 0.85rem; margin: 5px 0 1.5rem; }
 
-.kb-form { display: grid; grid-template-columns: 1fr 120px 2fr auto; gap: 12px; margin-bottom: 2rem; }
+/* --- Multi-Branch Architecture --- */
+
+#kb-branches-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.kb-branch-row {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 2fr 45px; /* Aligns with table columns */
+    gap: 12px;
+    background: var(--glass-bg);
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.kb-form-actions {
+    display: flex;
+    gap: 15px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--border-color);
+}
+
+/* --- Action Buttons --- */
+
+#add-branch-btn {
+    background: transparent;
+    border: 1px dashed var(--primary-accent);
+    color: var(--primary-accent);
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+#add-branch-btn:hover {
+    background: rgba(99, 102, 241, 0.05);
+}
+
+.save-all-btn {
+    background: var(--primary-accent) !important;
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+}
+
+.remove-branch-btn {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.remove-branch-btn:hover {
+    background: #ef4444;
+    color: white;
+}
+
 .kb-form input { 
     background: var(--bg-dark); border: 1px solid var(--border-color); 
     padding: 10px 15px; border-radius: 10px; color: var(--text-main); outline: none; 
@@ -351,6 +418,7 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
         padding: 1rem;
     }
 }
+
 
 
 
