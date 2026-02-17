@@ -69,45 +69,91 @@
         <div id="logs" class="logs-flex-container"></div>
     </div>
 
-    <section id="knowledge-base-section" class="kb-container" style="padding: 2rem; margin-bottom: 0;">
-        <div class="kb-card">
-            <div class="kb-header">
-                <h3><i class="fa-solid fa-book-open"></i> Knowledge Memory</h3>
-                <p>Update your inventory or prices. Changes apply to the AI instantly.</p>
-            </div>
+   <section id="knowledge-base-section" class="kb-container">
+        <div class="kb-split-wrapper">
             
-            <div class="kb-form">
-                <div id="kb-branches-container">
-                    <div class="kb-branch-row">
-                        <input type="text" class="kb-name" placeholder="Item Name">
-                        <input type="number" class="kb-price" placeholder="Price (ETB)">
-                        <input type="text" class="kb-desc" placeholder="Details/Description">
-                        <button class="remove-branch-btn" onclick="this.parentElement.remove()"><i class="fa-solid fa-xmark"></i></button>
+            <div class="kb-side-panel">
+                <div class="kb-card">
+                    <div class="kb-header">
+                        <h3><i class="fa-solid fa-brain"></i> AI Persona</h3>
+                        <p>Define who the AI is and how it speaks.</p>
                     </div>
-                </div>
-                <div class="kb-form-actions">
-                    <button id="add-branch-btn"><i class="fa-solid fa-plus"></i> Add Another Branch</button>
-                    <button id="add-kb-item" class="save-all-btn"><i class="fa-solid fa-cloud-arrow-up"></i> Commit All to Memory</button>
+
+                    <div class="persona-config">
+                        <label class="field-label">Agent Display Name</label>
+                        <input type="text" id="ai-name-input" placeholder="e.g., Lumi, Sarah, Alex..." class="persona-input">
+
+                        <label class="field-label">Behavior Matrix (Select Styles)</label>
+                        <div class="persona-matrix" id="persona-matrix">
+                            <button class="persona-btn active" data-style="Professional">Professional</button>
+                            <button class="persona-btn" data-style="Helpful">Helpful</button>
+                            <button class="persona-btn" data-style="Concise">Concise</button>
+                            <button class="persona-btn" data-style="Enthusiastic">Enthusiastic</button>
+                            <button class="persona-btn" data-style="Empathetic">Empathetic</button>
+                            <button class="persona-btn" data-style="Direct">Direct</button>
+                            <button class="persona-btn" data-style="Humorous">Humorous</button>
+                            <button class="persona-btn" data-style="Technical">Technical</button>
+                            <button class="persona-btn" data-style="Supportive">Supportive</button>
+                            <button class="persona-btn" data-style="Curious">Curious</button>
+                        </div>
+                    </div>
+
+                    <div class="safety-config">
+                        <div class="kb-header" style="margin-top: 2rem;">
+                            <h3><i class="fa-solid fa-shield-heart"></i> Fallback Logic</h3>
+                        </div>
+                        <label class="field-label">If item is not found say:</label>
+                        <textarea id="fallback-missing" placeholder="e.g., I'm sorry, we don't have that in stock..."></textarea>
+                        
+                        <label class="field-label">The "Never Say" List (Comma separated)</label>
+                        <textarea id="forbidden-list" placeholder="e.g., Discounts, Free, Competitor Name..."></textarea>
+                    </div>
                 </div>
             </div>
 
-            <div class="kb-list-wrapper">
-                <table class="kb-table">
-                    <thead>
-                        <tr>
-                            <th>Item</th>
-                            <th>Price</th>
-                            <th>Details</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="kb-items-list"></tbody>
-                </table>
+            <div class="kb-main-panel">
+                <div class="kb-card">
+                    <div class="kb-header">
+                        <h3><i class="fa-solid fa-boxes-stacked"></i> Inventory Memory</h3>
+                        <p>Update your items. Changes apply instantly.</p>
+                    </div>
+                    
+                    <div class="kb-form">
+                        <div id="kb-branches-container">
+                            <div class="kb-branch-row">
+                                <input type="text" class="kb-name" placeholder="Item Name">
+                                <input type="number" class="kb-price" placeholder="Price (ETB)">
+                                <input type="text" class="kb-desc" placeholder="Details/Description">
+                                <button class="remove-branch-btn" onclick="this.parentElement.remove()"><i class="fa-solid fa-xmark"></i></button>
+                            </div>
+                        </div>
+                        <div class="kb-form-actions">
+                            <button id="add-branch-btn"><i class="fa-solid fa-plus"></i> Add Branch</button>
+                            <button id="add-kb-item" class="save-all-btn"><i class="fa-solid fa-cloud-arrow-up"></i> Commit All to Memory</button>
+                        </div>
+                    </div>
+
+                    <div class="kb-list-wrapper">
+                        <table class="kb-table">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Price</th>
+                                    <th>Details</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="kb-items-list"></tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
+
         </div>
     </section>
     </main>
 </div> <script type="module" src="app.js"></script>
 </body>
 </html>
+
 
