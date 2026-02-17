@@ -292,6 +292,29 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
     color: white;
 }
 
+/* --- VIEW SWITCHING LOGIC --- */
+
+/* Hide Knowledge Base by default */
+#knowledge-base-section {
+    display: none; 
+}
+
+/* When .editing-mode is added to the body: */
+.editing-mode .dashboard-header,
+.editing-mode .logs-wrapper {
+    display: none; /* Hide Logs and Header */
+}
+
+.editing-mode #knowledge-base-section {
+    display: block; /* Show Knowledge Memory */
+}
+
+/* Optional: change sidebar button color when active */
+.editing-mode .sidebar-action-btn {
+    background: var(--primary-accent);
+    color: white;
+}
+
 /* --- Mobile Responsiveness --- */
 @media (max-width: 768px) {
     .app-container {
@@ -328,5 +351,6 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
         padding: 1rem;
     }
 }
+
 
 
