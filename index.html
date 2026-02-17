@@ -77,10 +77,18 @@
             </div>
             
             <div class="kb-form">
-                <input type="text" id="kb-name" placeholder="Item Name">
-                <input type="number" id="kb-price" placeholder="Price (ETB)">
-                <input type="text" id="kb-desc" placeholder="Details/Description">
-                <button id="add-kb-item"><i class="fa-solid fa-plus"></i> Add Item</button>
+                <div id="kb-branches-container">
+                    <div class="kb-branch-row">
+                        <input type="text" class="kb-name" placeholder="Item Name">
+                        <input type="number" class="kb-price" placeholder="Price (ETB)">
+                        <input type="text" class="kb-desc" placeholder="Details/Description">
+                        <button class="remove-branch-btn" onclick="this.parentElement.remove()"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                </div>
+                <div class="kb-form-actions">
+                    <button id="add-branch-btn"><i class="fa-solid fa-plus"></i> Add Another Branch</button>
+                    <button id="add-kb-item" class="save-all-btn"><i class="fa-solid fa-cloud-arrow-up"></i> Commit All to Memory</button>
+                </div>
             </div>
 
             <div class="kb-list-wrapper">
@@ -102,3 +110,4 @@
 </div> <script type="module" src="app.js"></script>
 </body>
 </html>
+
