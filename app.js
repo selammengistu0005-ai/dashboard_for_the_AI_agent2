@@ -6,7 +6,11 @@ import {
     where, 
     getDocs, 
     onSnapshot, 
-    orderBy 
+    orderBy,
+    doc, 
+    addDoc,   
+    updateDoc,
+    deleteDoc
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 // 1. Firebase Config
@@ -50,6 +54,7 @@ async function validateAndUnlock() {
             keyOverlay.style.display = "none";
             mainApp.style.display = "flex";
             loadLogs(currentAgent);
+            loadKnowledge(currentAgent);
         } else {
             throw new Error();
         }
@@ -155,3 +160,58 @@ togglePasswordEye.addEventListener("click", () => {
     togglePasswordEye.classList.toggle("fa-eye");
     togglePasswordEye.classList.toggle("fa-eye-slash");
 });
+
+
+// --- KNOWLEDGE BASE ENGINE ---
+
+async function saveKnowledge() {
+    const name = document.getElementById("kb-name").value;
+    const price = document.getElementById("kb-price").value;
+    const desc = document.getElementById("kb-desc").value;
+
+    if (!name || !price || !currentAgent) return;
+
+    await addDoc(collection(db, "agents", currentAgent, "knowledge"), {
+        name: name,
+        price: Number(price),
+        description: desc,
+        inStock: true,
+        timestamp: new Date()
+    });
+
+    document.querySelectorAll('.kb-form input').forEach(i => i.value = "");
+}
+
+function loadKnowledge(agentId) {
+    const q = query(collection(db, "agents", agentId, "knowledge"), orderBy("timestamp", "desc"));
+    
+    onSnapshot(q, (snapshot) => {
+        const list = document.getElementById("kb-items-list");
+        list.innerHTML = "";
+        snapshot.forEach((snap) => {
+            const data = snap.data();
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td><strong>${data.name}</strong></td>
+                <td>${data.price} ETB</td>
+                <td style="color: var(--text-dim)">${data.description}</td>
+                <td>
+                    <button class="status-toggle ${data.inStock ? 'status-in' : 'status-out'}" 
+                        onclick="toggleStock('${snap.id}', ${data.inStock})">
+                        ${data.inStock ? 'In Stock' : 'Out of Stock'}
+                    </button>
+                    <i class="fa-solid fa-trash" style="margin-left:15px; cursor:pointer; color:#ef4444" 
+                        onclick="deleteKBItem('${snap.id}')"></i>
+                </td>
+            `;
+            list.appendChild(row);
+        });
+    });
+}
+
+// Global functions for the buttons inside the table
+window.toggleStock = (id, status) => updateDoc(doc(db, "agents", currentAgent, "knowledge", id), { inStock: !status });
+window.deleteKBItem = (id) => deleteDoc(doc(db, "agents", currentAgent, "knowledge", id));
+
+// Add Event Listener for the "Add Item" button
+document.getElementById("add-kb-item").addEventListener("click", saveKnowledge);
