@@ -245,6 +245,31 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
 
 .error-msg { color: #ef4444; margin-top: 1rem; font-size: 0.85rem; font-weight: 500; }
 
+.kb-card { background: var(--card-dark); border: 1px solid var(--border-color); border-radius: 20px; padding: 1.5rem; }
+.kb-header h3 { font-size: 1.2rem; display: flex; gap: 10px; align-items: center; }
+.kb-header p { color: var(--text-dim); font-size: 0.85rem; margin: 5px 0 1.5rem; }
+
+.kb-form { display: grid; grid-template-columns: 1fr 120px 2fr auto; gap: 12px; margin-bottom: 2rem; }
+.kb-form input { 
+    background: var(--bg-dark); border: 1px solid var(--border-color); 
+    padding: 10px 15px; border-radius: 10px; color: var(--text-main); outline: none; 
+}
+.kb-form button { 
+    background: var(--primary-accent); color: white; border: none; 
+    padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: 600; 
+}
+
+.kb-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+.kb-table th { text-align: left; padding: 10px; color: var(--text-dim); border-bottom: 1px solid var(--border-color); }
+.kb-table td { padding: 12px 10px; border-bottom: 1px solid var(--border-color); }
+
+.status-toggle { 
+    padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; 
+    cursor: pointer; border: none; font-weight: 700;
+}
+.status-in { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+.status-out { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+
 /* --- Mobile Responsiveness --- */
 @media (max-width: 768px) {
     .app-container {
@@ -281,3 +306,4 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
         padding: 1rem;
     }
 }
+
