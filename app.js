@@ -139,6 +139,7 @@ function updateChart(counts) {
 unlockBtn.addEventListener("click", validateAndUnlock);
 keyInput.addEventListener("keypress", (e) => e.key === "Enter" && validateAndUnlock());
 logoRefresh.addEventListener("click", () => window.location.reload());
+document.getElementById("add-kb-item").onclick = saveKnowledge;
 
 // Theme Switcher
 modeSwitch.addEventListener("click", () => {
@@ -166,12 +167,9 @@ togglePasswordEye.addEventListener("click", () => {
 async function saveKnowledge() {
     const saveBtn = document.getElementById("add-kb-item");
     const aiName = document.getElementById("ai-name-input").value.trim();
-    const fallbackMsg = document.getElementById("fallback-missing").value.trim();
-    const forbiddenList = document.getElementById("forbidden-list").value.trim();
-    
+    const systemInstructions = document.getElementById("ai-instructions").value.trim();
     // Capture selected personas from the matrix
-    const activePersonas = Array.from(document.querySelectorAll(".persona-btn.active"))
-                                .map(btn => btn.dataset.style);
+    const activePersonas = Array.from(document.querySelectorAll(".persona-btn.active")).map(btn => btn.dataset.style);
 
     const branches = document.querySelectorAll(".kb-branch-row");
     
@@ -185,8 +183,7 @@ async function saveKnowledge() {
         await updateDoc(doc(db, "agents", currentAgent), {
             aiDisplayName: aiName,
             personas: activePersonas,
-            fallbackMessage: fallbackMsg,
-            forbiddenPhrases: forbiddenList.split(",").map(s => s.trim()).filter(s => s !== ""), // This removes empty entries so the AI stays smart
+            systemInstructions: systemInstructions,
             lastConfigUpdate: new Date()
         });
 
@@ -275,8 +272,6 @@ function loadKnowledge(agentId) {
             <button class="remove-branch-btn" onclick="this.parentElement.remove()"><i class="fa-solid fa-xmark"></i></button>`;
         container.appendChild(newBranch);
     };
-
-    document.getElementById("add-kb-item").onclick = saveKnowledge;
 } // This closing bracket ends loadKnowledge
 
 function listenToSettings(agentId) {
@@ -284,8 +279,7 @@ function listenToSettings(agentId) {
         if (docSnap.exists()) {
             const settings = docSnap.data();
             document.getElementById("ai-name-input").value = settings.aiDisplayName || "";
-            document.getElementById("fallback-missing").value = settings.fallbackMessage || "";
-            document.getElementById("forbidden-list").value = settings.forbiddenPhrases?.join(", ") || "";
+            document.getElementById("ai-instructions").value = settings.systemInstructions || "";
             
             const savedStyles = settings.personas || [];
             document.querySelectorAll(".persona-btn").forEach(btn => {
@@ -308,5 +302,6 @@ document.querySelectorAll(".persona-btn").forEach(btn => {
         btn.classList.toggle("active");
     });
 });
+
 
 
