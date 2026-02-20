@@ -98,8 +98,11 @@
                     </div>
 
                     <div class="safety-config">
-                        <div class="kb-header" style="margin-top: 2rem;">
+                        <div class="kb-header" style="margin-top: 2rem; display: flex; justify-content: space-between; align-items: center;">
                             <h3><i class="fa-solid fa-gears"></i> Agent Instructions</h3>
+                            <button id="open-history-btn" class="history-trigger" title="View Version History">
+                                <i class="fa-solid fa-clock-rotate-left"></i> History
+                            </button>
                         </div>
                         <label class="field-label">System Directives & Constraints</label>
                         <textarea id="ai-instructions" placeholder="e.g., If an item is missing, suggest a gift card. Never mention discounts..."></textarea>
@@ -148,9 +151,23 @@
 </section>
     </main>
 </div> 
+    <div id="history-drawer" class="history-drawer">
+    <div class="drawer-header">
+        <h3><i class="fa-solid fa-clock-rotate-left"></i> Instruction History</h3>
+        <button id="close-history-btn"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="drawer-content">
+        <p class="drawer-hint">Select a previous version to restore it to the live agent.</p>
+        <div id="history-list" class="history-list">
+            <div class="history-empty">Loading history...</div>
+        </div>
+    </div>
+</div>
+<div id="drawer-overlay" class="drawer-overlay"></div>
 
 <script type="module" src="app.js"></script>
     <div id="toast-container" class="toast-container"></div>
 </body>
 </html>
+
 
