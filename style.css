@@ -451,14 +451,23 @@ textarea {
     background: var(--bg-dark);
     border: 1px solid var(--border-color);
     border-radius: 12px;
-    padding: 12px;
+    padding: 14px;
     color: var(--text-main);
     font-family: inherit;
-    font-size: 0.85rem;
-    resize: none;
-    height: 90px;
+    font-size: 0.9rem;
+    resize: vertical; /* Allows you to pull the box down if instructions get long */
+    min-height: 180px; /* Doubled height for the new Master Instructions */
     outline: none;
     transition: var(--transition);
+    line-height: 1.5;
+}
+
+.field-hint {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    margin-top: 8px;
+    font-style: italic;
+    opacity: 0.8;
 }
 
 textarea:focus, .persona-input:focus {
@@ -532,6 +541,7 @@ textarea:focus, .persona-input:focus {
         padding: 1rem;
     }
 }
+
 
 
 
