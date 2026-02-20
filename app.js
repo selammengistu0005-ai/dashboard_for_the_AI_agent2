@@ -382,6 +382,7 @@ function notify(title, message, type = "success") {
 
 
 // Fetch and Display History
+// Fetch and Display History
 async function loadHistory(agentId) {
     const historyList = document.getElementById("history-list");
     const hQuery = query(collection(db, "agents", agentId, "history"), orderBy("timestamp", "desc"));
@@ -397,16 +398,24 @@ async function loadHistory(agentId) {
             const data = snap.data();
             const date = data.timestamp?.toDate().toLocaleString() || "Recent";
             
+            // Clean the text to prevent it from breaking the HTML attribute
+            const safeText = data.text.replace(/`/g, '\\`').replace(/\$/g, '\\$');
+
             const card = document.createElement("div");
             card.className = "history-card";
             card.innerHTML = `
                 <span class="history-time">${date}</span>
                 <p class="history-snippet">${data.text}</p>
-                <button class="restore-btn" onclick="restoreInstruction('${snap.id}', \`${data.text.replace(/`/g, '\\`')}\`)">
+                <button class="restore-btn" id="btn-${snap.id}">
                     <i class="fa-solid fa-rotate-left"></i> Set as Main
                 </button>
             `;
             historyList.appendChild(card);
+
+            // Safer way to attach the event than 'onclick' in HTML
+            document.getElementById(`btn-${snap.id}`).addEventListener('click', () => {
+                window.restoreInstruction(snap.id, data.text);
+            });
         });
     });
 }
@@ -422,3 +431,4 @@ window.restoreInstruction = async (id, text) => {
         document.getElementById("ai-instructions").scrollIntoView({ behavior: 'smooth' });
     }
 };
+
