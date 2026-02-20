@@ -68,8 +68,7 @@
     <div class="logs-wrapper">
         <div id="logs" class="logs-flex-container"></div>
     </div>
-
-   <section id="knowledge-base-section" class="kb-container">
+<section id="knowledge-base-section" class="kb-container">
         <div class="kb-split-wrapper">
             
             <div class="kb-side-panel">
@@ -100,22 +99,19 @@
 
                     <div class="safety-config">
                         <div class="kb-header" style="margin-top: 2rem;">
-                            <h3><i class="fa-solid fa-shield-heart"></i> Fallback Logic</h3>
+                            <h3><i class="fa-solid fa-gears"></i> Agent Instructions</h3>
                         </div>
-                        <label class="field-label">If item is not found say:</label>
-                        <textarea id="fallback-missing" placeholder="e.g., I'm sorry, we don't have that in stock..."></textarea>
-                        
-                        <label class="field-label">The "Never Say" List (Comma separated)</label>
-                        <textarea id="forbidden-list" placeholder="e.g., Discounts, Free, Competitor Name..."></textarea>
+                        <label class="field-label">System Directives & Constraints</label>
+                        <textarea id="ai-instructions" placeholder="e.g., If an item is missing, suggest a gift card. Never mention discounts..."></textarea>
+                        <p class="field-hint" style="font-size: 0.75rem; color: var(--text-dim); margin-top: 8px; font-style: italic;">
+                            These instructions define the AI's logic and boundaries.
+                        </p>
                     </div>
-                </div>
-            </div>
-
-            <div class="kb-main-panel">
+                </div> </div> <div class="kb-main-panel">
                 <div class="kb-card">
                     <div class="kb-header">
-                        <h3><i class="fa-solid fa-boxes-stacked"></i>Memory</h3>
-                        <p>Update your items. Changes apply instantly.</p>
+                        <h3><i class="fa-solid fa-database"></i> Product Knowledge</h3>
+                        <p>Add specific data the AI should remember. Changes apply instantly.</p>
                     </div>
                     
                     <div class="kb-form">
@@ -146,16 +142,13 @@
                             <tbody id="kb-items-list"></tbody>
                         </table>
                     </div>
-                </div>
-            </div>
-
+                </div> 
+                </div> 
         </div>
-    </section>
+</section>
     </main>
-</div> <script type="module" src="app.js"></script>
+</div> 
+
+<script type="module" src="app.js"></script>
 </body>
 </html>
-
-
-
-
