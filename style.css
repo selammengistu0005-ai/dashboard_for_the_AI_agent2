@@ -595,6 +595,166 @@ textarea:focus, .persona-input:focus {
     transform: translateX(120%);
 }
 
+/* --- 🕒 HISTORY TIME MACHINE STYLES --- */
+
+/* 1. History Trigger Button (Header) */
+.history-trigger {
+    background: var(--glass-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-dim);
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.history-trigger:hover {
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--primary-accent);
+    border-color: var(--primary-accent);
+    transform: translateY(-1px);
+}
+
+/* 2. Slide-out Drawer Panel */
+.history-drawer {
+    position: fixed;
+    top: 0;
+    right: -420px; /* Hidden state */
+    width: 400px;
+    height: 100vh;
+    background: var(--card-dark);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border-left: 1px solid var(--border-color);
+    z-index: 2000;
+    transition: right 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    box-shadow: -20px 0 50px rgba(0, 0, 0, 0.5);
+}
+
+.history-drawer.open {
+    right: 0; /* Visible state */
+}
+
+/* 3. Drawer Header & Overlay */
+.drawer-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#close-history-btn {
+    background: var(--glass-bg);
+    border: none;
+    color: var(--text-dim);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+#close-history-btn:hover { background: #ef4444; color: white; }
+
+.drawer-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    z-index: 1999;
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.drawer-overlay.active { display: block; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* 4. History List & Cards */
+.drawer-content {
+    padding: 1.5rem;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.drawer-hint {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    margin-bottom: 1.5rem;
+    line-height: 1.4;
+}
+
+.history-card {
+    background: var(--bg-dark);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+    transition: var(--transition);
+    position: relative;
+}
+
+.history-card:hover {
+    border-color: var(--primary-accent);
+    transform: scale(1.02);
+}
+
+.history-time {
+    font-size: 0.7rem;
+    color: var(--primary-accent);
+    font-weight: 800;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.history-snippet {
+    font-size: 0.85rem;
+    color: var(--text-main);
+    line-height: 1.5;
+    margin-bottom: 1rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.restore-btn {
+    width: 100%;
+    padding: 10px;
+    background: var(--glass-bg);
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.restore-btn:hover {
+    background: var(--primary-accent);
+    border-color: var(--primary-accent);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.history-empty {
+    text-align: center;
+    color: var(--text-dim);
+    margin-top: 3rem;
+    font-size: 0.9rem;
+}
+
 /* --- Mobile Responsiveness --- */
 @media (max-width: 768px) {
     .app-container {
@@ -631,6 +791,7 @@ textarea:focus, .persona-input:focus {
         padding: 1rem;
     }
 }
+
 
 
 
