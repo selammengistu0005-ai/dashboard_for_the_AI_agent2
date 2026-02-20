@@ -505,6 +505,96 @@ textarea:focus, .persona-input:focus {
     }
 }
 
+/* --- Modern Toast Notifications --- */
+.toast-container {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.toast {
+    background: var(--card-dark);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: var(--text-main);
+    padding: 16px 20px;
+    border-radius: 14px;
+    border: 1px solid var(--border-color);
+    min-width: 320px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    overflow: hidden; /* Needed for progress bar */
+    animation: toastSlideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: all 0.4s ease;
+    position: relative;
+}
+
+.toast.success { border-left: 4px solid #10b981; }
+.toast.error { border-left: 4px solid #ef4444; }
+
+.toast-icon {
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.toast.success .toast-icon { color: #10b981; }
+.toast.error .toast-icon { color: #ef4444; }
+
+.toast-content {
+    flex: 1;
+}
+
+.toast-title {
+    display: block;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+}
+
+.toast-msg {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+}
+
+/* The Progress Bar */
+.toast-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    width: 100%;
+    background: rgba(255,255,255,0.1);
+}
+
+.toast-progress-fill {
+    height: 100%;
+    width: 100%;
+    background: var(--primary-accent);
+    transition: width linear;
+}
+
+.toast.success .toast-progress-fill { background: #10b981; }
+.toast.error .toast-progress-fill { background: #ef4444; }
+
+@keyframes toastSlideIn {
+    from { transform: translateX(120%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+.toast.fade-out {
+    opacity: 0;
+    transform: translateX(120%);
+}
+
 /* --- Mobile Responsiveness --- */
 @media (max-width: 768px) {
     .app-container {
@@ -541,6 +631,7 @@ textarea:focus, .persona-input:focus {
         padding: 1rem;
     }
 }
+
 
 
 
