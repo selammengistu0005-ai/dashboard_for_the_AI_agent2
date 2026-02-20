@@ -204,7 +204,7 @@ async function saveKnowledge() {
             }
         }
 
-        alert("Agent Identity & Memory Synchronized!");
+        notify("Sync Complete", "Agent updated and live.", "success");
         
         // UI Reset for branches
         document.getElementById("kb-branches-container").innerHTML = `
@@ -217,7 +217,7 @@ async function saveKnowledge() {
         `;
     } catch (error) {
         console.error("Save Error:", error);
-        alert("Sync Failed. Check console.");
+        notify("Sync Failed", "Connection interrupted. Please try again.", "error");
     } finally {
         saveBtn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Commit All to Memory`;
         saveBtn.disabled = false;
@@ -290,18 +290,63 @@ function listenToSettings(agentId) {
 }
 
 // Global functions for table buttons
-window.toggleStock = (id, status) => updateDoc(doc(db, "agents", currentAgent, "knowledge", id), { inStock: !status });
-window.deleteKBItem = (id) => {
-    if(confirm("Delete this item?")) {
-        deleteDoc(doc(db, "agents", currentAgent, "knowledge", id));
+// Replace your existing global function block with this cleaner version:
+
+// Bridge for HTML onclick events (Required for type="module")
+window.toggleStock = async (id, currentStatus) => {
+    try {
+        const itemRef = doc(db, "agents", currentAgent, "knowledge", id);
+        await updateDoc(itemRef, { inStock: !currentStatus });
+        notify("Inventory Updated", "Stock status synced.", "success");
+    } catch (e) {
+        notify("Error", "Could not update stock.", "error");
     }
 };
-// Add this at the very end to make the buttons clickable
-document.querySelectorAll(".persona-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-        btn.classList.toggle("active");
-    });
-});
 
+window.deleteKBItem = async (id) => {
+    if (confirm("Permanently delete this item from AI memory?")) {
+        try {
+            await deleteDoc(doc(db, "agents", currentAgent, "knowledge", id));
+            notify("Deleted", "Item removed from memory.", "success");
+        } catch (e) {
+            notify("Error", "Failed to delete.", "error");
+        }
+    }
+};
+
+function notify(title, message, type = "success") {
+    const container = document.getElementById("toast-container");
+    const toast = document.createElement("div");
+    toast.className = `toast ${type}`;
+    
+    const icon = type === "success" ? "fa-circle-check" : "fa-triangle-exclamation";
+    const duration = 4000; // 4 seconds
+
+    toast.innerHTML = `
+        <div class="toast-icon"><i class="fa-solid ${icon}"></i></div>
+        <div class="toast-content">
+            <span class="toast-title">${title.toUpperCase()}</span>
+            <span class="toast-msg">${message}</span>
+        </div>
+        <div class="toast-progress">
+            <div class="toast-progress-fill" style="width: 100%;"></div>
+        </div>
+    `;
+    
+    container.appendChild(toast);
+
+    // Animate progress bar
+    const fill = toast.querySelector(".toast-progress-fill");
+    setTimeout(() => {
+        fill.style.transition = `width ${duration}ms linear`;
+        fill.style.width = "0%";
+    }, 10);
+    
+    // Remove toast
+    setTimeout(() => {
+        toast.classList.add("fade-out");
+        setTimeout(() => toast.remove(), 400);
+    }, duration);
+}
 
 
