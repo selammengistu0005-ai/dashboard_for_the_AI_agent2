@@ -34,7 +34,25 @@ const chartCanvas = document.getElementById("intentChart");
 const modeSwitch = document.getElementById("mode-switch");
 const logoRefresh = document.getElementById("logo-refresh");
 const togglePasswordEye = document.getElementById("toggle-password-eye");
+// History Drawer Controls
+const historyDrawer = document.getElementById("history-drawer");
+const drawerOverlay = document.getElementById("drawer-overlay");
+const openHistoryBtn = document.getElementById("open-history-btn");
+const closeHistoryBtn = document.getElementById("close-history-btn");
 
+openHistoryBtn.addEventListener("click", () => {
+    historyDrawer.classList.add("open");
+    drawerOverlay.classList.add("active");
+    loadHistory(currentAgent); // Fetch history when opened
+});
+
+const closeHistory = () => {
+    historyDrawer.classList.remove("open");
+    drawerOverlay.classList.remove("active");
+};
+
+closeHistoryBtn.addEventListener("click", closeHistory);
+drawerOverlay.addEventListener("click", closeHistory);
 let currentAgent = null;
 let unsubscribe = null;
 let intentChart = null;
@@ -179,13 +197,25 @@ async function saveKnowledge() {
     saveBtn.disabled = true;
 
     try {
-        // 1. Update the Main Agent Settings (Identity & Logic)
+        // 1. Update the Main Agent Settings
         await updateDoc(doc(db, "agents", currentAgent), {
             aiDisplayName: aiName,
             personas: activePersonas,
             systemInstructions: systemInstructions,
             lastConfigUpdate: new Date()
         });
+
+        // --- NEW: ARCHIVE TO HISTORY ---
+        if (systemInstructions) {
+            await addDoc(collection(db, "agents", currentAgent, "history"), {
+                text: systemInstructions,
+                timestamp: new Date(),
+                author: "Admin" 
+            });
+        }
+        // --- END ARCHIVE LOGIC ---
+
+        // 2. Save Inventory Branches (Keep your existing loop here...)
 
         // 2. Save Inventory Branches
         for (let branch of branches) {
@@ -350,3 +380,45 @@ function notify(title, message, type = "success") {
 }
 
 
+
+// Fetch and Display History
+async function loadHistory(agentId) {
+    const historyList = document.getElementById("history-list");
+    const hQuery = query(collection(db, "agents", agentId, "history"), orderBy("timestamp", "desc"));
+    
+    onSnapshot(hQuery, (snapshot) => {
+        historyList.innerHTML = "";
+        if (snapshot.empty) {
+            historyList.innerHTML = '<div class="history-empty">No snapshots found.</div>';
+            return;
+        }
+
+        snapshot.forEach((snap) => {
+            const data = snap.data();
+            const date = data.timestamp?.toDate().toLocaleString() || "Recent";
+            
+            const card = document.createElement("div");
+            card.className = "history-card";
+            card.innerHTML = `
+                <span class="history-time">${date}</span>
+                <p class="history-snippet">${data.text}</p>
+                <button class="restore-btn" onclick="restoreInstruction('${snap.id}', \`${data.text.replace(/`/g, '\\`')}\`)">
+                    <i class="fa-solid fa-rotate-left"></i> Set as Main
+                </button>
+            `;
+            historyList.appendChild(card);
+        });
+    });
+}
+
+// Restore Function (Bridge to window for module support)
+window.restoreInstruction = async (id, text) => {
+    if (confirm("Restore this version to the live editor?")) {
+        document.getElementById("ai-instructions").value = text;
+        closeHistory();
+        notify("Version Restored", "Instruction moved to editor. Click 'Commit' to go live.", "success");
+        
+        // Auto-scroll to textarea so user sees it
+        document.getElementById("ai-instructions").scrollIntoView({ behavior: 'smooth' });
+    }
+};
