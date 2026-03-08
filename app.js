@@ -5,11 +5,13 @@ import {
     query, 
     where, 
     getDocs, 
+    getDoc,
     onSnapshot, 
     orderBy,
     doc, 
     addDoc,   
     updateDoc,
+    writeBatch,
     deleteDoc
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
@@ -56,33 +58,48 @@ drawerOverlay.addEventListener("click", closeHistory);
 let currentAgent = null;
 let unsubscribe = null;
 let intentChart = null;
+let knowledgeUnsubscribe = null; // Add this at the top with your other lets
 
 // 3. Auth Logic
+// 3. Auth Logic (Access Key Only Version)
 async function validateAndUnlock() {
     const inputKey = keyInput.value.trim();
-    if (!inputKey) return;
+
+    if (!inputKey) {
+        notify("Required", "Please enter your Access Key", "error");
+        return;
+    }
 
     unlockBtn.innerText = "Verifying...";
     try {
+        // We SEARCH the 'agents' collection for any document where 'accessKey' matches
         const q = query(collection(db, "agents"), where("accessKey", "==", inputKey));
         const querySnapshot = await getDocs(q);
 
         if (!querySnapshot.empty) {
-            currentAgent = querySnapshot.docs[0].id;
+            // We found the agent!
+            const docSnap = querySnapshot.docs[0]; 
+            const data = docSnap.data();
+            
+            currentAgent = docSnap.id; // This sets the ID for the rest of the app
             keyOverlay.style.display = "none";
             mainApp.style.display = "flex";
+            
+            // Initialize the dashboard
             loadLogs(currentAgent);
             loadKnowledge(currentAgent);
             listenToSettings(currentAgent);
+            
+            notify("Welcome Back", `Authorized as ${data.aiDisplayName || 'Agent'}`, "success");
         } else {
-            throw new Error();
+            throw new Error("Invalid Key");
         }
     } catch (e) {
-        authError.innerText = "Invalid Key";
+        console.error(e);
+        authError.innerText = "Invalid Access Key";
         unlockBtn.innerText = "Authorize Dashboard";
     }
 }
-
 // 4. Load Logs
 function loadLogs(agentId) {
     if (unsubscribe) unsubscribe();
@@ -186,9 +203,7 @@ async function saveKnowledge() {
     const saveBtn = document.getElementById("add-kb-item");
     const aiName = document.getElementById("ai-name-input").value.trim();
     const systemInstructions = document.getElementById("ai-instructions").value.trim();
-    // Capture selected personas from the matrix
     const activePersonas = Array.from(document.querySelectorAll(".persona-btn.active")).map(btn => btn.dataset.style);
-
     const branches = document.querySelectorAll(".kb-branch-row");
     
     if (!currentAgent) return;
@@ -197,34 +212,36 @@ async function saveKnowledge() {
     saveBtn.disabled = true;
 
     try {
-        // 1. Update the Main Agent Settings
-        await updateDoc(doc(db, "agents", currentAgent), {
+        const batch = writeBatch(db);
+
+        // 1. Update Main Settings
+        const agentRef = doc(db, "agents", currentAgent);
+        batch.update(agentRef, {
             aiDisplayName: aiName,
             personas: activePersonas,
             systemInstructions: systemInstructions,
             lastConfigUpdate: new Date()
         });
 
-        // --- NEW: ARCHIVE TO HISTORY ---
+        // 2. Archive to History
         if (systemInstructions) {
-            await addDoc(collection(db, "agents", currentAgent, "history"), {
+            const historyRef = doc(collection(db, "agents", currentAgent, "history"));
+            batch.set(historyRef, {
                 text: systemInstructions,
                 timestamp: new Date(),
                 author: "Admin" 
             });
         }
-        // --- END ARCHIVE LOGIC ---
 
-        // 2. Save Inventory Branches (Keep your existing loop here...)
-
-        // 2. Save Inventory Branches
-        for (let branch of branches) {
+        // 3. Save New Inventory Items
+        branches.forEach((branch) => {
             const name = branch.querySelector(".kb-name").value.trim();
             const price = branch.querySelector(".kb-price").value;
             const desc = branch.querySelector(".kb-desc").value.trim();
 
             if (name && price) {
-                await addDoc(collection(db, "agents", currentAgent, "knowledge"), {
+                const newKbRef = doc(collection(db, "agents", currentAgent, "knowledge"));
+                batch.set(newKbRef, {
                     name: name,
                     price: Number(price),
                     description: desc,
@@ -232,11 +249,13 @@ async function saveKnowledge() {
                     timestamp: new Date()
                 });
             }
-        }
+        });
+
+        await batch.commit(); // Sends EVERYTHING in one shot!
 
         notify("Sync Complete", "Agent updated and live.", "success");
         
-        // UI Reset for branches
+        // Reset branches UI
         document.getElementById("kb-branches-container").innerHTML = `
             <div class="kb-branch-row">
                 <input type="text" class="kb-name" placeholder="Item Name">
@@ -247,19 +266,20 @@ async function saveKnowledge() {
         `;
     } catch (error) {
         console.error("Save Error:", error);
-        notify("Sync Failed", "Connection interrupted. Please try again.", "error");
+        notify("Sync Failed", "Check your connection and try again.", "error");
     } finally {
         saveBtn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Commit All to Memory`;
         saveBtn.disabled = false;
     }
 }
 
-// --- UPDATED LOAD KNOWLEDGE WITH VIEW TOGGLE ---
-
 function loadKnowledge(agentId) {
+    // 1. Kill the old listener if it exists before starting a new one
+    if (knowledgeUnsubscribe) knowledgeUnsubscribe(); 
+    
     const q = query(collection(db, "agents", agentId, "knowledge"), orderBy("timestamp", "desc"));
     
-    onSnapshot(q, (snapshot) => {
+    knowledgeUnsubscribe = onSnapshot(q, (snapshot) => {
         const list = document.getElementById("kb-items-list");
         list.innerHTML = "";
         snapshot.forEach((snap) => {
@@ -280,29 +300,27 @@ function loadKnowledge(agentId) {
             list.appendChild(row);
         });
     });
-
-    // View Switching Logic (Moved out of loops)
+}
+// Move these OUTSIDE loadKnowledge so they only run ONCE when the app starts
+document.getElementById("scroll-to-kb").onclick = () => {
     const editBtn = document.getElementById("scroll-to-kb");
-    editBtn.onclick = () => {
-        const isEditing = document.body.classList.toggle("editing-mode");
-        editBtn.innerHTML = isEditing 
-            ? `<i class="fa-solid fa-chart-line"></i> View Live Monitor` 
-            : `<i class="fa-solid fa-pen-to-square"></i> Edit Agent Knowledge`;
-    };
+    const isEditing = document.body.classList.toggle("editing-mode");
+    editBtn.innerHTML = isEditing 
+        ? `<i class="fa-solid fa-chart-line"></i> View Live Monitor` 
+        : `<i class="fa-solid fa-pen-to-square"></i> Edit Agent Knowledge`;
+};
 
-    const addBranchBtn = document.getElementById("add-branch-btn");
-    addBranchBtn.onclick = () => {
-        const container = document.getElementById("kb-branches-container");
-        const newBranch = document.createElement("div");
-        newBranch.className = "kb-branch-row";
-        newBranch.innerHTML = `
-            <input type="text" class="kb-name" placeholder="Item Name">
-            <input type="number" class="kb-price" placeholder="Price (ETB)">
-            <input type="text" class="kb-desc" placeholder="Details/Description">
-            <button class="remove-branch-btn" onclick="this.parentElement.remove()"><i class="fa-solid fa-xmark"></i></button>`;
-        container.appendChild(newBranch);
-    };
-} // This closing bracket ends loadKnowledge
+document.getElementById("add-branch-btn").onclick = () => {
+    const container = document.getElementById("kb-branches-container");
+    const newBranch = document.createElement("div");
+    newBranch.className = "kb-branch-row";
+    newBranch.innerHTML = `
+        <input type="text" class="kb-name" placeholder="Item Name">
+        <input type="number" class="kb-price" placeholder="Price (ETB)">
+        <input type="text" class="kb-desc" placeholder="Details/Description">
+        <button class="remove-branch-btn" onclick="this.parentElement.remove()"><i class="fa-solid fa-xmark"></i></button>`;
+    container.appendChild(newBranch);
+};
 
 function listenToSettings(agentId) {
     onSnapshot(doc(db, "agents", agentId), (docSnap) => {
@@ -431,4 +449,82 @@ window.restoreInstruction = async (id, text) => {
         document.getElementById("ai-instructions").scrollIntoView({ behavior: 'smooth' });
     }
 };
+
+// Persona Matrix Toggle Logic
+document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('persona-btn')) {
+        // Toggle 'active' class on click
+        e.target.classList.toggle('active');
+        
+        // Optional: Add a subtle click sound or haptic feedback feel
+        const isActive = e.target.classList.contains('active');
+        console.log(`${e.target.dataset.style} is now ${isActive ? 'selected' : 'unselected'}`);
+    }
+});
+
+const treeCanvas = document.querySelector('.tree-canvas');
+const svgElement = document.getElementById('tree-svg');
+
+// Function to draw smooth S-curves between nodes
+function drawTreeConnections() {
+    if (!svgElement) return;
+    svgElement.innerHTML = ''; // Clear canvas
+    
+    const nodes = document.querySelectorAll('.tree-node');
+    nodes.forEach(node => {
+        const parentId = node.getAttribute('data-id');
+        // Find children that list this node as their parent
+        const children = document.querySelectorAll(`[data-parent="${parentId}"]`);
+        
+        children.forEach(child => {
+            // Calculate coordinates relative to the canvas
+            const startX = node.offsetLeft + (node.offsetWidth / 2);
+            const startY = node.offsetTop + node.offsetHeight;
+            const endX = child.offsetLeft + (child.offsetWidth / 2);
+            const endY = child.offsetTop;
+
+            // Create the Bezier Path (S-Curve)
+            const midY = (startY + endY) / 2;
+            const d = `M ${startX} ${startY} C ${startX} ${midY}, ${endX} ${midY}, ${endX} ${endY}`;
+            
+            const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            path.setAttribute("d", d);
+            svgElement.appendChild(path);
+        });
+    });
+}
+
+// Initial draw and resize listener
+window.addEventListener('resize', drawTreeConnections);
+// Redraw lines when the "Site Map" section becomes visible
+document.getElementById("scroll-to-kb").addEventListener('click', () => {
+    setTimeout(drawTreeConnections, 100); 
+});
+
+const viewport = document.querySelector('.tree-viewport');
+let isDown = false;
+let startX, startY, scrollLeft, scrollTop;
+
+viewport.addEventListener('mousedown', (e) => {
+    isDown = true;
+    viewport.classList.add('active'); // CSS can change cursor to 'grabbing'
+    startX = e.pageX - viewport.offsetLeft;
+    startY = e.pageY - viewport.offsetTop;
+    scrollLeft = viewport.scrollLeft;
+    scrollTop = viewport.scrollTop;
+});
+
+viewport.addEventListener('mouseleave', () => isDown = false);
+viewport.addEventListener('mouseup', () => isDown = false);
+
+viewport.addEventListener('mousemove', (e) => {
+    if (!isDown) return;
+    e.preventDefault();
+    const x = e.pageX - viewport.offsetLeft;
+    const y = e.pageY - viewport.offsetTop;
+    const walkX = (x - startX) * 2; 
+    const walkY = (y - startY) * 2;
+    viewport.scrollLeft = scrollLeft - walkX;
+    viewport.scrollTop = scrollTop - walkY;
+});
 
