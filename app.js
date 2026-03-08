@@ -75,6 +75,7 @@ async function validateAndUnlock() {
         // We SEARCH the 'agents' collection for any document where 'accessKey' matches
         const q = query(collection(db, "agents"), where("accessKey", "==", inputKey));
         const querySnapshot = await getDocs(q);
+        console.log("Documents found:", querySnapshot.size);
 
         if (!querySnapshot.empty) {
             // We found the agent!
@@ -527,4 +528,5 @@ viewport.addEventListener('mousemove', (e) => {
     viewport.scrollLeft = scrollLeft - walkX;
     viewport.scrollTop = scrollTop - walkY;
 });
+
 
