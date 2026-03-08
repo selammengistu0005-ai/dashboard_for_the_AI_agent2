@@ -792,10 +792,149 @@ textarea:focus, .persona-input:focus {
     }
 }
 
+/* --- VISUAL SITE NAVIGATOR (Vertical Tree) --- */
 
+.sitemap-container {
+    max-width: 1400px;
+    margin: 2rem auto;
+    background: var(--card-dark);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 1.5rem;
+    animation: slideDown 0.4s ease-out;
+}
 
+.tree-viewport {
+    width: 100%;
+    height: 500px; /* Fixed height to fit within your dashboard scroll logic */
+    overflow: auto;
+    position: relative;
+    background: var(--bg-dark);
+    border-radius: 14px;
+    padding: 60px 20px;
+    border: 1px solid var(--border-color);
+    /* Soft pattern for a "canvas" feel */
+    background-image: radial-gradient(var(--border-color) 1px, transparent 1px);
+    background-size: 30px 30px;
+    cursor: grab; /* Shows the hand icon so users know they can move around */
+    scroll-behavior: smooth;
+}
 
+.tree-viewport:active {
+    cursor: grabbing;
+}
 
+.tree-canvas {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 80px; /* Vertical spacing between parent and children */
+    min-width: fit-content;
+}
 
+#tree-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Allows clicking nodes through the SVG layer */
+    z-index: 1;
+}
 
+#tree-svg path {
+    stroke: var(--primary-accent);
+    stroke-width: 2.5;
+    fill: none;
+    opacity: 0.5;
+    transition: var(--transition);
+    shape-rendering: geometricPrecision;
+    stroke-linecap: round;
+}
 
+.tree-node {
+    position: relative;
+    z-index: 10;
+    background: var(--card-dark);
+    color: var(--text-main);
+    padding: 12px 20px;
+    border-radius: 14px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 180px;
+    transition: var(--transition);
+}
+
+.tree-node:hover {
+    border-color: var(--primary-accent);
+    transform: translateY(-2px);
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+}
+
+.tree-node .node-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+}
+
+.tree-node .node-content i {
+    color: var(--primary-accent);
+    font-size: 0.9rem;
+}
+
+.tree-node input {
+    background: transparent;
+    border: none;
+    color: var(--text-main);
+    font-weight: 600;
+    font-size: 0.9rem;
+    width: 100%;
+    outline: none;
+    text-align: left;
+}
+
+/* The Branch-spawning [+] Button */
+.add-branch-btn {
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--primary-accent);
+    color: white;
+    border: 3px solid var(--card-dark); /* Creates a clean gap from the box */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    transition: var(--transition);
+    z-index: 11;
+}
+
+.add-branch-btn:hover {
+    transform: translateX(-50%) scale(1.2);
+    background: #4f46e5;
+}
+
+/* Row wrapper for horizontal children */
+.node-row {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    width: 100%;
+}
+
+/* Hide Visual Mapper when in Editing Mode (Optional) */
+/* If you want it only visible when logs are visible, keep it as is. 
+   If you want it to hide when the Knowledge Base is open, add this: */
+.editing-mode #site-map-section {
+    display: none;
+}
