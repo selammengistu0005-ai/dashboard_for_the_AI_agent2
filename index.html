@@ -68,6 +68,28 @@
     <div class="logs-wrapper">
         <div id="logs" class="logs-flex-container"></div>
     </div>
+            <section id="site-map-section" class="sitemap-container">
+    <div class="kb-header">
+        <h3><i class="fa-solid fa-sitemap"></i> Visual Site Navigator</h3>
+        <p>Map the website structure so the AI can guide users downward through branches.</p>
+    </div>
+
+    <div class="tree-viewport">
+        <div id="tree-canvas" class="tree-canvas">
+            <svg id="tree-svg"></svg>
+            
+            <div class="tree-node root" id="node-root" data-id="root">
+                <div class="node-content">
+                    <i class="fa-solid fa-house"></i>
+                    <input type="text" value="Home" placeholder="Page Name...">
+                </div>
+                <button class="add-branch-btn" onclick="addBranch('root')" title="Add Sub-branch">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
 <section id="knowledge-base-section" class="kb-container">
         <div class="kb-split-wrapper">
             
@@ -169,5 +191,6 @@
     <div id="toast-container" class="toast-container"></div>
 </body>
 </html>
+
 
 
