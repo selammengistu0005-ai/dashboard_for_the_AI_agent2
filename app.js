@@ -283,6 +283,7 @@ async function saveKnowledge() {
         saveBtn.disabled = false;
     }
 }
+window.saveKnowledge = saveKnowledge;
 
 function loadKnowledge(agentId) {
     // 1. Kill the old listener if it exists before starting a new one
@@ -312,37 +313,40 @@ function loadKnowledge(agentId) {
         });
     });
 }
-// Move these OUTSIDE loadKnowledge so they only run ONCE when the app starts
-document.getElementById("scroll-to-kb").onclick = () => {
-    const editBtn = document.getElementById("scroll-to-kb");
-    const isEditing = document.body.classList.toggle("editing-mode");
-    
-    editBtn.innerHTML = isEditing 
-        ? `<i class="fa-solid fa-chart-line"></i> View Live Monitor` 
-        : `<i class="fa-solid fa-pen-to-square"></i> Edit Agent Knowledge`;
+// NEW FIXED KNOWLEDGE BASE CONTROLS
+const scrollBtn = document.getElementById("scroll-to-kb");
+if (scrollBtn) {
+    scrollBtn.onclick = () => {
+        const isEditing = document.body.classList.toggle("editing-mode");
+        scrollBtn.innerHTML = isEditing 
+            ? `<i class="fa-solid fa-chart-line"></i> View Live Monitor` 
+            : `<i class="fa-solid fa-pen-to-square"></i> Edit Agent Knowledge`;
 
-    if (isEditing) {
-        // Wait for CSS transitions to finish, then draw lines
-        setTimeout(() => {
-            drawTreeConnections();
-            // Optional: Center the viewport on the first node
-            const firstNode = document.querySelector('.tree-node');
-            if (firstNode) firstNode.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 300);
-    }
-};
+        if (isEditing) {
+            setTimeout(() => {
+                drawTreeConnections();
+                const firstNode = document.querySelector('.tree-node');
+                if (firstNode) firstNode.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        }
+    };
+}
 
-document.getElementById("add-branch-btn").onclick = () => {
-    const container = document.getElementById("kb-branches-container");
-    const newBranch = document.createElement("div");
-    newBranch.className = "kb-branch-row";
-    newBranch.innerHTML = `
-        <input type="text" class="kb-name" placeholder="Item Name">
-        <input type="number" class="kb-price" placeholder="Price (ETB)">
-        <input type="text" class="kb-desc" placeholder="Details/Description">
-        <button class="remove-branch-btn" onclick="this.parentElement.remove()"><i class="fa-solid fa-xmark"></i></button>`;
-    container.appendChild(newBranch);
-};
+const addBranchBtn = document.getElementById("add-branch-btn");
+if (addBranchBtn) {
+    addBranchBtn.onclick = () => {
+        const container = document.getElementById("kb-branches-container");
+        if (!container) return;
+        const newBranch = document.createElement("div");
+        newBranch.className = "kb-branch-row";
+        newBranch.innerHTML = `
+            <input type="text" class="kb-name" placeholder="Item Name">
+            <input type="number" class="kb-price" placeholder="Price (ETB)">
+            <input type="text" class="kb-desc" placeholder="Details/Description">
+            <button class="remove-branch-btn" onclick="this.parentElement.remove()"><i class="fa-solid fa-xmark"></i></button>`;
+        container.appendChild(newBranch);
+    };
+}
 
 function listenToSettings(agentId) {
     onSnapshot(doc(db, "agents", agentId), (docSnap) => {
@@ -596,4 +600,5 @@ window.initCanvas = () => {
 document.getElementById("scroll-to-kb").addEventListener('click', () => {
     setTimeout(window.initCanvas, 300);
 });
+
 
