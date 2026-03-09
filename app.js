@@ -306,9 +306,20 @@ function loadKnowledge(agentId) {
 document.getElementById("scroll-to-kb").onclick = () => {
     const editBtn = document.getElementById("scroll-to-kb");
     const isEditing = document.body.classList.toggle("editing-mode");
+    
     editBtn.innerHTML = isEditing 
         ? `<i class="fa-solid fa-chart-line"></i> View Live Monitor` 
         : `<i class="fa-solid fa-pen-to-square"></i> Edit Agent Knowledge`;
+
+    if (isEditing) {
+        // Wait for CSS transitions to finish, then draw lines
+        setTimeout(() => {
+            drawTreeConnections();
+            // Optional: Center the viewport on the first node
+            const firstNode = document.querySelector('.tree-node');
+            if (firstNode) firstNode.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 300);
+    }
 };
 
 document.getElementById("add-branch-btn").onclick = () => {
@@ -466,35 +477,6 @@ document.addEventListener('click', (e) => {
 const treeCanvas = document.querySelector('.tree-canvas');
 const svgElement = document.getElementById('tree-svg');
 
-// Function to draw smooth S-curves between nodes
-function drawTreeConnections() {
-    if (!svgElement) return;
-    svgElement.innerHTML = ''; // Clear canvas
-    
-    const nodes = document.querySelectorAll('.tree-node');
-    nodes.forEach(node => {
-        const parentId = node.getAttribute('data-id');
-        // Find children that list this node as their parent
-        const children = document.querySelectorAll(`[data-parent="${parentId}"]`);
-        
-        children.forEach(child => {
-            // Calculate coordinates relative to the canvas
-            const startX = node.offsetLeft + (node.offsetWidth / 2);
-            const startY = node.offsetTop + node.offsetHeight;
-            const endX = child.offsetLeft + (child.offsetWidth / 2);
-            const endY = child.offsetTop;
-
-            // Create the Bezier Path (S-Curve)
-            const midY = (startY + endY) / 2;
-            const d = `M ${startX} ${startY} C ${startX} ${midY}, ${endX} ${midY}, ${endX} ${endY}`;
-            
-            const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-            path.setAttribute("d", d);
-            svgElement.appendChild(path);
-        });
-    });
-}
-
 // Initial draw and resize listener
 window.addEventListener('resize', drawTreeConnections);
 // Redraw lines when the "Site Map" section becomes visible
@@ -523,10 +505,84 @@ viewport.addEventListener('mousemove', (e) => {
     e.preventDefault();
     const x = e.pageX - viewport.offsetLeft;
     const y = e.pageY - viewport.offsetTop;
-    const walkX = (x - startX) * 2; 
-    const walkY = (y - startY) * 2;
+    const walkX = (x - startX) * 1.5; 
+    const walkY = (y - startY) * 1.5;
     viewport.scrollLeft = scrollLeft - walkX;
     viewport.scrollTop = scrollTop - walkY;
 });
 
+// --- 🌳 THE SITE MAP CANVAS ENGINE (OPTIMIZED) ---
 
+/**
+ * 1. The Connector Logic
+ */
+function drawTreeConnections() {
+    const svg = document.getElementById('tree-svg');
+    if (!svg) return;
+    svg.innerHTML = ''; 
+
+    const nodes = document.querySelectorAll('.tree-node');
+    nodes.forEach(node => {
+        const nodeId = node.dataset.id;
+        const children = document.querySelectorAll(`[data-parent="${nodeId}"]`);
+
+        children.forEach(child => {
+            const startX = node.offsetLeft + (node.offsetWidth / 2);
+            const startY = node.offsetTop + node.offsetHeight;
+            const endX = child.offsetLeft + (child.offsetWidth / 2);
+            const endY = child.offsetTop;
+
+            const cpY = startY + (endY - startY) / 2;
+            const d = `M ${startX} ${startY} C ${startX} ${cpY}, ${endX} ${cpY}, ${endX} ${endY}`;
+
+            const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            path.setAttribute("d", d);
+            path.setAttribute("fill", "none");
+            path.setAttribute("stroke", "var(--primary-accent)");
+            path.setAttribute("stroke-width", "2");
+            path.setAttribute("stroke-dasharray", "5,5");
+            path.style.opacity = "0.4";
+            
+            svg.appendChild(path);
+        });
+    });
+}
+
+/**
+ * 2. Draggable Logic with Initialization
+ */
+function makeDraggable(el) {
+    let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+    el.onmousedown = (e) => {
+        if (['INPUT', 'TEXTAREA', 'BUTTON', 'I'].includes(e.target.tagName)) return;
+        e.preventDefault();
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        document.onmouseup = () => {
+            document.onmouseup = null;
+            document.onmousemove = null;
+            el.style.zIndex = 10;
+        };
+        document.onmousemove = (ev) => {
+            pos1 = pos3 - ev.clientX;
+            pos2 = pos4 - ev.clientY;
+            pos3 = ev.clientX;
+            pos4 = ev.clientY;
+            el.style.top = (el.offsetTop - pos2) + "px";
+            el.style.left = (el.offsetLeft - pos1) + "px";
+            drawTreeConnections();
+        };
+        el.style.zIndex = 1000;
+    };
+}
+
+// Global Initialization Function
+window.initCanvas = () => {
+    document.querySelectorAll('.tree-node').forEach(makeDraggable);
+    drawTreeConnections();
+};
+
+// Call init when switching to edit mode
+document.getElementById("scroll-to-kb").addEventListener('click', () => {
+    setTimeout(window.initCanvas, 300);
+});
