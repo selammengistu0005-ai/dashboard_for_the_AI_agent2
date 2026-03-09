@@ -71,18 +71,31 @@
             <section id="site-map-section" class="sitemap-container">
     <div class="kb-header">
         <h3><i class="fa-solid fa-sitemap"></i> Visual Site Navigator</h3>
-        <p>Map the website structure so the AI can guide users downward through branches.</p>
+        <p>Map the website structure. Each branch stores specific knowledge for the AI.</p>
     </div>
 
     <div class="tree-viewport">
+        <div class="canvas-controls">
+            <button onclick="resetCanvas()"><i class="fa-solid fa-location-crosshairs"></i> Recenter</button>
+            <span class="canvas-hint">Drag nodes to organize • + to grow</span>
+        </div>
+
         <div id="tree-canvas" class="tree-canvas">
             <svg id="tree-svg"></svg>
             
-            <div class="tree-node root" id="node-root" data-id="root">
+            <div class="tree-node root-node" id="node-root" data-id="root">
                 <div class="node-content">
-                    <i class="fa-solid fa-house"></i>
-                    <input type="text" value="Home" placeholder="Page Name...">
+                    <div class="node-main-info">
+                        <i class="fa-solid fa-house"></i>
+                        <input type="text" class="node-name" value="Home" placeholder="Page/Product Name">
+                    </div>
+                    
+                    <div class="node-details">
+                        <input type="number" class="node-price" placeholder="Price (ETB)">
+                        <textarea class="node-desc" placeholder="Product details..."></textarea>
+                    </div>
                 </div>
+                
                 <button class="add-branch-btn" onclick="addBranch('root')" title="Add Sub-branch">
                     <i class="fa-solid fa-plus"></i>
                 </button>
@@ -90,86 +103,43 @@
         </div>
     </div>
 </section>
-<section id="knowledge-base-section" class="kb-container">
-        <div class="kb-split-wrapper">
-            
-            <div class="kb-side-panel">
-                <div class="kb-card">
-                    <div class="kb-header">
-                        <h3><i class="fa-solid fa-brain"></i> AI Persona</h3>
-                        <p>Define who the AI is and how it speaks.</p>
-                    </div>
+<section id="knowledge-base-section">
+    <div class="kb-container">
+        <div class="kb-side-panel" style="flex: 1; max-width: 100%;">
+            <div class="kb-card">
+                <div class="kb-header">
+                    <h3><i class="fa-solid fa-brain"></i> Agent Personality</h3>
+                    <p>Configure how your AI speaks and behaves across all branches.</p>
+                </div>
 
-                    <div class="persona-config">
-                        <label class="field-label">Agent Display Name</label>
-                        <input type="text" id="ai-name-input" placeholder="e.g., Lumi, Sarah, Alex..." class="persona-input">
+                <label class="field-label">AI Display Name</label>
+                <input type="text" id="ai-name-input" class="persona-input" placeholder="e.g. Vilto Assistant">
 
-                        <label class="field-label">Behavior Matrix (Select Styles)</label>
-                        <div class="persona-matrix" id="persona-matrix">
-                            <button class="persona-btn active" data-style="Professional">Professional</button>
-                            <button class="persona-btn" data-style="Helpful">Helpful</button>
-                            <button class="persona-btn" data-style="Concise">Concise</button>
-                            <button class="persona-btn" data-style="Enthusiastic">Enthusiastic</button>
-                            <button class="persona-btn" data-style="Empathetic">Empathetic</button>
-                            <button class="persona-btn" data-style="Direct">Direct</button>
-                            <button class="persona-btn" data-style="Humorous">Humorous</button>
-                            <button class="persona-btn" data-style="Technical">Technical</button>
-                            <button class="persona-btn" data-style="Supportive">Supportive</button>
-                            <button class="persona-btn" data-style="Curious">Curious</button>
-                        </div>
-                    </div>
+                <label class="field-label">Master Instructions</label>
+                <textarea id="ai-instructions" placeholder="How should the AI act? (e.g. Professional, mysterious, helpful...)"></textarea>
 
-                    <div class="safety-config">
-                        <div class="kb-header" style="margin-top: 2rem; display: flex; justify-content: space-between; align-items: center;">
-                            <h3><i class="fa-solid fa-gears"></i> Agent Instructions</h3>
-                            <button id="open-history-btn" class="history-trigger" title="View Version History">
-                                <i class="fa-solid fa-clock-rotate-left"></i> History
-                            </button>
-                        </div>
-                        <label class="field-label">System Directives & Constraints</label>
-                        <textarea id="ai-instructions" placeholder="e.g., If an item is missing, suggest a gift card. Never mention discounts..."></textarea>
-                        <p class="field-hint" style="font-size: 0.75rem; color: var(--text-dim); margin-top: 8px; font-style: italic;">
-                            These instructions define the AI's logic and boundaries.
-                        </p>
-                    </div>
-                </div> </div> <div class="kb-main-panel">
-                <div class="kb-card">
-                    <div class="kb-header">
-                        <h3><i class="fa-solid fa-database"></i> Product Knowledge</h3>
-                        <p>Add specific data the AI should remember. Changes apply instantly.</p>
-                    </div>
-                    
-                    <div class="kb-form">
-                        <div id="kb-branches-container">
-                            <div class="kb-branch-row">
-                                <input type="text" class="kb-name" placeholder="Item / Course Name">
-                                <input type="number" class="kb-price" placeholder="Price (ETB)">
-                                <input type="text" class="kb-desc" placeholder="Details/Description">
-                                <button class="remove-branch-btn" onclick="this.parentElement.remove()"><i class="fa-solid fa-xmark"></i></button>
-                            </div>
-                        </div>
-                        <div class="kb-form-actions">
-                            <button id="add-branch-btn"><i class="fa-solid fa-plus"></i> Add Branch</button>
-                            <button id="add-kb-item" class="save-all-btn"><i class="fa-solid fa-cloud-arrow-up"></i> Commit All to Memory</button>
-                        </div>
-                    </div>
+                <label class="field-label">Persona Matrix</label>
+                <div class="persona-matrix">
+                    <button class="persona-btn" data-style="minimalist">Minimalist</button>
+                    <button class="persona-btn" data-style="mysterious">Mysterious</button>
+                    <button class="persona-btn" data-style="bold">Bold</button>
+                    <button class="persona-btn" data-style="empathetic">Empathetic</button>
+                    <button class="persona-btn" data-style="expert">Expert</button>
+                    <button class="persona-btn" data-style="witty">Witty</button>
+                    <button class="persona-btn" data-style="formal">Formal</button>
+                    <button class="persona-btn" data-style="casual">Casual</button>
+                    <button class="persona-btn" data-style="luxury">Luxury</button>
+                    <button class="persona-btn" data-style="fast">High-Speed</button>
+                </div>
 
-                    <div class="kb-list-wrapper">
-                        <table class="kb-table">
-                            <thead>
-                                <tr>
-                                    <th>Item / Course</th>
-                                    <th>Price</th>
-                                    <th>Details</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="kb-items-list"></tbody>
-                        </table>
-                    </div>
-                </div> 
-                </div> 
+                <div class="kb-form-actions" style="margin-top: 2rem;">
+                    <button id="add-kb-item" class="save-all-btn">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> Commit Agent Brain
+                    </button>
+                </div>
+            </div>
         </div>
+    </div>
 </section>
     </main>
 </div> 
@@ -191,6 +161,7 @@
     <div id="toast-container" class="toast-container"></div>
 </body>
 </html>
+
 
 
 
