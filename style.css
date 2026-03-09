@@ -834,6 +834,7 @@ textarea:focus, .persona-input:focus {
     padding: 12px;
     transition: box-shadow 0.3s ease;
     cursor: default;
+    overflow: visible !important;
 }
 
 .tree-node:hover {
@@ -930,3 +931,4 @@ textarea:focus, .persona-input:focus {
     color: rgba(255, 255, 255, 0.4);
     font-size: 0.75rem;
 }
+
