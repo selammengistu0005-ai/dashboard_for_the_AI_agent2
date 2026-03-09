@@ -26,11 +26,6 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 // 2. Elements
-const keyOverlay = document.getElementById("key-overlay");
-const mainApp = document.getElementById("main-app");
-const keyInput = document.getElementById("agent-key-input");
-const unlockBtn = document.getElementById("unlock-btn");
-const authError = document.getElementById("auth-error");
 const logsContainer = document.getElementById("logs");
 const chartCanvas = document.getElementById("intentChart");
 const modeSwitch = document.getElementById("mode-switch");
@@ -42,19 +37,28 @@ const drawerOverlay = document.getElementById("drawer-overlay");
 const openHistoryBtn = document.getElementById("open-history-btn");
 const closeHistoryBtn = document.getElementById("close-history-btn");
 
-openHistoryBtn.addEventListener("click", () => {
-    historyDrawer.classList.add("open");
-    drawerOverlay.classList.add("active");
-    loadHistory(currentAgent); // Fetch history when opened
-});
+// NEW FIXED HISTORY CONTROLS
+if (openHistoryBtn) {
+    openHistoryBtn.addEventListener("click", () => {
+        if (!currentAgent) {
+            notify("Access Denied", "Please authorize first", "error");
+            return;
+        }
+        historyDrawer.classList.add("open");
+        drawerOverlay.classList.add("active");
+        loadHistory(currentAgent); 
+    });
+}
 
 const closeHistory = () => {
-    historyDrawer.classList.remove("open");
-    drawerOverlay.classList.remove("active");
+    if (historyDrawer && drawerOverlay) {
+        historyDrawer.classList.remove("open");
+        drawerOverlay.classList.remove("active");
+    }
 };
 
-closeHistoryBtn.addEventListener("click", closeHistory);
-drawerOverlay.addEventListener("click", closeHistory);
+if (closeHistoryBtn) closeHistoryBtn.addEventListener("click", closeHistory);
+if (drawerOverlay) drawerOverlay.addEventListener("click", closeHistory);
 let currentAgent = null;
 let unsubscribe = null;
 let intentChart = null;
@@ -62,14 +66,20 @@ let knowledgeUnsubscribe = null; // Add this at the top with your other lets
 
 // 3. Auth Logic
 // 3. Auth Logic (Access Key Only Version)
+// --- REPLACE YOUR EXISTING validateAndUnlock FUNCTION ---
 async function validateAndUnlock() {
-    const inputKey = keyInput.value.trim();
+    // Move these inside so they are fetched when the button is clicked
+    const keyInput = document.getElementById("agent-key-input");
+    const unlockBtn = document.getElementById("unlock-btn");
+    const keyOverlay = document.getElementById("key-overlay");
+    const mainApp = document.getElementById("main-app");
+    const authError = document.getElementById("auth-error");
 
+    const inputKey = keyInput.value.trim();
     if (!inputKey) {
         notify("Required", "Please enter your Access Key", "error");
         return;
     }
-
     unlockBtn.innerText = "Verifying...";
     try {
         // We SEARCH the 'agents' collection for any document where 'accessKey' matches
@@ -171,32 +181,32 @@ function updateChart(counts) {
 
 // 6. Events
 // 6. Events (Add these at the bottom of your script)
+// --- REPLACE YOUR SECTION 6 (EVENTS) WITH THIS ---
 
-unlockBtn.addEventListener("click", validateAndUnlock);
-keyInput.addEventListener("keypress", (e) => e.key === "Enter" && validateAndUnlock());
-logoRefresh.addEventListener("click", () => window.location.reload());
-document.getElementById("add-kb-item").onclick = saveKnowledge;
+// Auth Button
+const uBtn = document.getElementById("unlock-btn");
+if (uBtn) uBtn.addEventListener("click", validateAndUnlock);
 
-// Theme Switcher
-modeSwitch.addEventListener("click", () => {
-    document.body.classList.toggle("light-mode");
-    document.body.classList.toggle("dark-mode");
-    // Redraw chart to update font colors
-    if (intentChart) {
-        const currentData = intentChart.data.datasets[0].data;
-        const currentLabels = intentChart.data.labels;
-        const countObj = {};
-        currentLabels.forEach((l, i) => countObj[l] = currentData[i]);
-        updateChart(countObj);
-    }
-});
+// Enter Key on Input
+const kInput = document.getElementById("agent-key-input");
+if (kInput) {
+    kInput.addEventListener("keypress", (e) => e.key === "Enter" && validateAndUnlock());
+}
 
-togglePasswordEye.addEventListener("click", () => {
-    const type = keyInput.getAttribute("type") === "password" ? "text" : "password";
-    keyInput.setAttribute("type", type);
-    togglePasswordEye.classList.toggle("fa-eye");
-    togglePasswordEye.classList.toggle("fa-eye-slash");
-});
+// Password Eye Toggle
+const eye = document.getElementById("toggle-password-eye");
+if (eye && kInput) {
+    eye.addEventListener("click", () => {
+        const type = kInput.getAttribute("type") === "password" ? "text" : "password";
+        kInput.setAttribute("type", type);
+        eye.classList.toggle("fa-eye");
+        eye.classList.toggle("fa-eye-slash");
+    });
+}
+
+// Logo Refresh
+const lRefresh = document.getElementById("logo-refresh");
+if (lRefresh) lRefresh.addEventListener("click", () => window.location.reload());
 
 // --- KNOWLEDGE BASE ENGINE ---
 
@@ -586,3 +596,4 @@ window.initCanvas = () => {
 document.getElementById("scroll-to-kb").addEventListener('click', () => {
     setTimeout(window.initCanvas, 300);
 });
+
