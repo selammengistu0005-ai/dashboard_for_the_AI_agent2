@@ -259,17 +259,6 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
     width: 100%;
 }
 
-.kb-branch-row {
-    display: grid;
-    grid-template-columns: 1.5fr 1fr 2fr 45px; /* Aligns with table columns */
-    gap: 12px;
-    background: var(--glass-bg);
-    padding: 12px;
-    border-radius: 12px;
-    border: 1px solid var(--border-color);
-    animation: slideDown 0.3s ease-out;
-}
-
 @keyframes slideDown {
     from { opacity: 0; transform: translateY(-10px); }
     to { opacity: 1; transform: translateY(0); }
@@ -824,15 +813,6 @@ textarea:focus, .persona-input:focus {
     cursor: grabbing;
 }
 
-.tree-canvas {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 80px; /* Vertical spacing between parent and children */
-    min-width: fit-content;
-}
-
 #tree-svg {
     position: absolute;
     top: 0;
@@ -851,22 +831,6 @@ textarea:focus, .persona-input:focus {
     transition: var(--transition);
     shape-rendering: geometricPrecision;
     stroke-linecap: round;
-}
-
-.tree-node {
-    position: relative;
-    z-index: 10;
-    background: var(--card-dark);
-    color: var(--text-main);
-    padding: 12px 20px;
-    border-radius: 14px;
-    border: 1px solid var(--border-color);
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-width: 180px;
-    transition: var(--transition);
 }
 
 .tree-node:hover {
@@ -938,3 +902,4 @@ textarea:focus, .persona-input:focus {
 .editing-mode #site-map-section {
     display: none;
 }
+
