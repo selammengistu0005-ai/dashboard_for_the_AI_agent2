@@ -55,6 +55,7 @@
         </aside>
 
         <main class="main-content">
+            <div id="live-monitor-view">
     <header class="dashboard-header">
         <div class="header-text">
             <h1>Live Monitor</h1>
@@ -68,7 +69,8 @@
     <div class="logs-wrapper">
         <div id="logs" class="logs-flex-container"></div>
     </div>
-            <section id="site-map-section" class="sitemap-container">
+            </div>
+            <section id="site-map-section" class="sitemap-container" style="display: none;">
     <div class="kb-header">
         <h3><i class="fa-solid fa-sitemap"></i> Visual Site Navigator</h3>
         <p>Map the website structure. Each branch stores specific knowledge for the AI.</p>
@@ -82,28 +84,27 @@
 
         <div id="tree-canvas" class="tree-canvas">
             <svg id="tree-svg"></svg>
-            
             <div class="tree-node root-node" id="node-root" data-id="root">
                 <div class="node-content">
-                    <div class="node-main-info">
-                        <i class="fa-solid fa-house"></i>
-                        <input type="text" class="node-name" value="Home" placeholder="Page/Product Name">
-                    </div>
-                    
-                    <div class="node-details">
-                        <input type="number" class="node-price" placeholder="Price (ETB)">
-                        <textarea class="node-desc" placeholder="Product details..."></textarea>
-                    </div>
-                </div>
-                
-                <button class="add-branch-btn" onclick="addBranch('root')" title="Add Sub-branch">
-                    <i class="fa-solid fa-plus"></i>
-                </button>
-            </div>
+        <div class="node-main-info">
+            <i class="fa-solid fa-house"></i>
+            <input type="text" class="node-name" value="Home" placeholder="Page Name">
+        </div>
+        
+        <div class="node-details">
+            <input type="number" class="node-price" placeholder="Price (ETB)">
+            <textarea class="node-desc" placeholder="Product details..."></textarea>
+        </div>
+    </div>
+    
+    <button class="add-branch-btn" onclick="addNewNode('root')" title="Add Sub-branch">
+        <i class="fa-solid fa-plus"></i>
+    </button>
+</div>
         </div>
     </div>
 </section>
-<section id="knowledge-base-section">
+<section id="knowledge-base-section" style="display: none;">
     <div class="kb-container">
         <div class="kb-side-panel" style="flex: 1; max-width: 100%;">
             <div class="kb-card">
@@ -161,6 +162,7 @@
     <div id="toast-container" class="toast-container"></div>
 </body>
 </html>
+
 
 
 
