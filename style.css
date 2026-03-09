@@ -361,8 +361,10 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
     display: none; /* Hide Logs and Header */
 }
 
+/* Show the map and persona panel together when editing */
+.editing-mode #site-map-section,
 .editing-mode #knowledge-base-section {
-    display: block; /* Show Knowledge Memory */
+    display: block;
 }
 
 /* Optional: change sidebar button color when active */
@@ -781,36 +783,25 @@ textarea:focus, .persona-input:focus {
     }
 }
 
-/* --- VISUAL SITE NAVIGATOR (Vertical Tree) --- */
-
-.sitemap-container {
-    max-width: 1400px;
-    margin: 2rem auto;
-    background: var(--card-dark);
-    border: 1px solid var(--border-color);
-    border-radius: 20px;
-    padding: 1.5rem;
-    animation: slideDown 0.4s ease-out;
-}
-
+/* --- 🌳 DYNAMIC CANVAS --- */
 .tree-viewport {
     width: 100%;
-    height: 500px; /* Fixed height to fit within your dashboard scroll logic */
-    overflow: auto;
+    height: 600px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 16px;
+    overflow: hidden; /* We handle scrolling via JS drag */
     position: relative;
-    background: var(--bg-dark);
-    border-radius: 14px;
-    padding: 60px 20px;
-    border: 1px solid var(--border-color);
-    /* Soft pattern for a "canvas" feel */
-    background-image: radial-gradient(var(--border-color) 1px, transparent 1px);
-    background-size: 30px 30px;
-    cursor: grab; /* Shows the hand icon so users know they can move around */
-    scroll-behavior: smooth;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    cursor: grab;
 }
 
-.tree-viewport:active {
-    cursor: grabbing;
+.tree-viewport:active { cursor: grabbing; }
+
+.tree-canvas {
+    width: 3000px; /* Large area to move nodes around */
+    height: 3000px;
+    position: relative;
+    transform-origin: 0 0;
 }
 
 #tree-svg {
@@ -819,50 +810,82 @@ textarea:focus, .persona-input:focus {
     left: 0;
     width: 100%;
     height: 100%;
-    pointer-events: none; /* Allows clicking nodes through the SVG layer */
+    pointer-events: none; /* Let clicks pass through to nodes */
     z-index: 1;
 }
 
 #tree-svg path {
-    stroke: var(--primary-accent);
-    stroke-width: 2.5;
     fill: none;
-    opacity: 0.5;
-    transition: var(--transition);
-    shape-rendering: geometricPrecision;
-    stroke-linecap: round;
+    stroke: var(--primary-accent); /* Use your primary purple/blue */
+    stroke-width: 2;
+    stroke-dasharray: 5; /* Makes the "string" look like a digital fiber */
+    opacity: 0.4;
+}
+
+/* --- 📦 THE NODE FRAMES --- */
+.tree-node {
+    position: absolute; /* Essential for dragging */
+    z-index: 10;
+    width: 240px;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 12px;
+    transition: box-shadow 0.3s ease;
+    cursor: default;
 }
 
 .tree-node:hover {
     border-color: var(--primary-accent);
-    transform: translateY(-2px);
-    box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
-.tree-node .node-content {
+.node-main-info {
     display: flex;
     align-items: center;
-    gap: 12px;
-    width: 100%;
+    gap: 10px;
+    margin-bottom: 8px;
 }
 
-.tree-node .node-content i {
-    color: var(--primary-accent);
-    font-size: 0.9rem;
-}
-
-.tree-node input {
+.node-name {
     background: transparent;
     border: none;
-    color: var(--text-main);
+    color: #fff;
     font-weight: 600;
-    font-size: 0.9rem;
     width: 100%;
     outline: none;
-    text-align: left;
 }
 
-/* The Branch-spawning [+] Button */
+/* Hidden Details until Hover */
+.node-details {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, opacity 0.3s ease;
+    opacity: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 0;
+}
+
+.tree-node:hover .node-details {
+    max-height: 200px;
+    opacity: 1;
+    padding-top: 10px;
+}
+
+.node-price, .node-desc {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    color: #ccc;
+    border-radius: 4px;
+    padding: 6px;
+    font-size: 0.8rem;
+}
+
+/* --- 🕹️ CONTROLS --- */
 .add-branch-btn {
     position: absolute;
     bottom: -15px;
@@ -873,33 +896,37 @@ textarea:focus, .persona-input:focus {
     border-radius: 50%;
     background: var(--primary-accent);
     color: white;
-    border: 3px solid var(--card-dark); /* Creates a clean gap from the box */
+    border: none;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.8rem;
-    transition: var(--transition);
-    z-index: 11;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 20;
 }
 
-.add-branch-btn:hover {
-    transform: translateX(-50%) scale(1.2);
-    background: #4f46e5;
-}
-
-/* Row wrapper for horizontal children */
-.node-row {
+.canvas-controls {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 100;
     display: flex;
-    justify-content: center;
-    gap: 40px;
-    width: 100%;
+    gap: 10px;
+    align-items: center;
 }
 
-/* Hide Visual Mapper when in Editing Mode (Optional) */
-/* If you want it only visible when logs are visible, keep it as is. 
-   If you want it to hide when the Knowledge Base is open, add this: */
-.editing-mode #site-map-section {
-    display: none;
+.canvas-controls button {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.8rem;
 }
 
+.canvas-hint {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.75rem;
+}
