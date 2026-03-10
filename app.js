@@ -531,9 +531,16 @@ viewport.addEventListener('mousemove', (e) => {
  * 1. The Connector Logic
  */
 function drawTreeConnections() {
-    const svg = document.getElementById('tree-svg');
-    if (!svg) return;
-    svg.innerHTML = ''; 
+    const svg = document.getElementById('tree-svg'); // 1. Define it first
+    const canvas = document.querySelector('.tree-canvas');
+    
+    if (!svg || !canvas) return; // 2. Safety check
+
+    // 3. The "Ghost Node" Fix: Match SVG size to the scrollable canvas area
+    svg.setAttribute('width', canvas.scrollWidth);
+    svg.setAttribute('height', canvas.scrollHeight);
+    
+    svg.innerHTML = ''; // 4. Clear old lines
 
     const nodes = document.querySelectorAll('.tree-node');
     nodes.forEach(node => {
@@ -541,11 +548,15 @@ function drawTreeConnections() {
         const children = document.querySelectorAll(`[data-parent="${nodeId}"]`);
 
         children.forEach(child => {
+            // Calculate center-bottom of parent
             const startX = node.offsetLeft + (node.offsetWidth / 2);
             const startY = node.offsetTop + node.offsetHeight;
+            
+            // Calculate center-top of child
             const endX = child.offsetLeft + (child.offsetWidth / 2);
             const endY = child.offsetTop;
 
+            // Create a curved Cubic Bezier path
             const cpY = startY + (endY - startY) / 2;
             const d = `M ${startX} ${startY} C ${startX} ${cpY}, ${endX} ${cpY}, ${endX} ${endY}`;
 
@@ -600,5 +611,6 @@ window.initCanvas = () => {
 document.getElementById("scroll-to-kb").addEventListener('click', () => {
     setTimeout(window.initCanvas, 300);
 });
+
 
 
