@@ -939,3 +939,62 @@ textarea:focus, .persona-input:focus {
     from { stroke-dashoffset: 100; }
     to { stroke-dashoffset: 0; }
 }
+
+/* --- VIEW SWITCHING LOGIC --- */
+
+/* 1. Hide the editor and map by default */
+#site-map-section, 
+#knowledge-base-section {
+    display: none;
+}
+
+/* 2. When Editing Mode is active (toggled by JS) */
+.editing-mode #site-map-section,
+.editing-mode #knowledge-base-section {
+    display: block !important;
+}
+
+/* 3. Hide the Live Monitor elements when editing */
+.editing-mode #live-monitor-view {
+    display: none;
+}
+
+/* 4. Style the Sidebar Buttons & Version History */
+.sidebar-action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px 15px;
+    margin-top: 1rem;
+    background: var(--glass-bg);
+    color: var(--primary-accent);
+    border: 1px solid var(--primary-accent);
+    border-radius: 12px;
+    width: 100%;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.sidebar-action-btn:hover {
+    background: var(--primary-accent);
+    color: white;
+}
+
+/* Specific styling for the History Button to make it look secondary */
+#open-history-btn {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+#open-history-btn:hover {
+    background: rgba(99, 102, 241, 0.2) !important;
+    border-color: var(--primary-accent);
+}
+
+/* 5. Hide the History button when in Editing Mode to focus on the editor */
+.editing-mode #open-history-btn {
+    display: none;
+}
