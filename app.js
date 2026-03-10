@@ -612,5 +612,34 @@ document.getElementById("scroll-to-kb").addEventListener('click', () => {
     setTimeout(window.initCanvas, 300);
 });
 
+window.addNewNode = (parentId) => {
+    const container = document.getElementById("tree-canvas");
+    const id = "node-" + Date.now();
+    const newNode = document.createElement("div");
+    newNode.className = "tree-node";
+    newNode.dataset.id = id;
+    newNode.dataset.parent = parentId;
+    newNode.style.top = "200px"; 
+    newNode.style.left = "200px";
+    
+    newNode.innerHTML = `
+        <div class="node-content">
+            <div class="node-main-info">
+                <i class="fa-solid fa-code-branch"></i>
+                <input type="text" class="node-name" placeholder="New Branch">
+            </div>
+        </div>
+        <button class="add-branch-btn" onclick="addNewNode('${id}')"><i class="fa-solid fa-plus"></i></button>
+    `;
+    
+    container.appendChild(newNode);
+    makeDraggable(newNode);
+    drawTreeConnections();
+};
 
-
+window.resetCanvas = () => {
+    const viewport = document.querySelector('.tree-viewport');
+    viewport.scrollLeft = 0;
+    viewport.scrollTop = 0;
+    drawTreeConnections();
+};
