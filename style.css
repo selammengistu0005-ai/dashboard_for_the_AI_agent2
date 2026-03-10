@@ -480,7 +480,7 @@ textarea:focus, .persona-input:focus {
 /* --- ADJUSTMENT TO PREVIOUS KB STYLES --- */
 .kb-container {
     max-width: 1400px;
-    margin: 0 auto;
+    margin: 40px auto 0; /* Added 40px top margin to prevent overlapping the Tree */
 }
 
 /* Responsive fix for smaller desktops */
@@ -860,22 +860,15 @@ textarea:focus, .persona-input:focus {
 
 /* Hidden Details until Hover */
 .node-details {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.4s ease, opacity 0.3s ease;
-    opacity: 0;
     display: flex;
     flex-direction: column;
     gap: 8px;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
-    padding-top: 0;
-}
-
-.tree-node:hover .node-details {
-    max-height: 200px;
-    opacity: 1;
     padding-top: 10px;
+    margin-top: 8px;
+    opacity: 1; /* Always visible to keep the frame size constant */
 }
+/* REMOVED: .tree-node:hover .node-details toggle */
 
 .node-price, .node-desc {
     background: rgba(0, 0, 0, 0.2);
@@ -892,18 +885,24 @@ textarea:focus, .persona-input:focus {
     bottom: -15px;
     left: 50%;
     transform: translateX(-50%);
-    width: 30px;
-    height: 30px;
+    width: 28px; /* Slightly smaller for precision */
+    height: 28px;
     border-radius: 50%;
     background: var(--primary-accent);
     color: white;
-    border: none;
+    border: 2px solid var(--bg-dark); /* This creates the "cut-out" effect against the SVG lines */
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     z-index: 20;
+    transition: var(--transition);
+}
+
+.add-branch-btn:hover {
+    transform: translateX(-50%) scale(1.1);
+    background: #4f46e5;
 }
 
 .canvas-controls {
@@ -932,3 +931,11 @@ textarea:focus, .persona-input:focus {
     font-size: 0.75rem;
 }
 
+#tree-svg path {
+    animation: flow 20s linear infinite;
+}
+
+@keyframes flow {
+    from { stroke-dashoffset: 100; }
+    to { stroke-dashoffset: 0; }
+}
