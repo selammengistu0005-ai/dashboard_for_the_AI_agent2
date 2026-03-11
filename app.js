@@ -365,10 +365,6 @@ function listenToSettings(agentId) {
     });
 }
 
-// Global functions for table buttons
-// Replace your existing global function block with this cleaner version:
-
-// Bridge for HTML onclick events (Required for type="module")
 window.toggleStock = async (id, currentStatus) => {
     try {
         const itemRef = doc(db, "agents", currentAgent, "knowledge", id);
@@ -660,4 +656,5 @@ window.resetCanvas = () => {
     viewport.scrollTop = 0;
     drawTreeConnections();
 };
+
 
