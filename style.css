@@ -481,9 +481,8 @@ textarea:focus, .persona-input:focus {
 }
 
 /* --- ADJUSTMENT TO PREVIOUS KB STYLES --- */
-.kb-container {
-    max-width: 1400px;
-    margin: 40px auto 0; /* Added 40px top margin to prevent overlapping the Tree */
+.editing-mode #knowledge-base-section .kb-container {
+    margin-top: 0; 
 }
 
 /* Responsive fix for smaller desktops */
@@ -965,12 +964,11 @@ textarea:focus, .persona-input:focus {
 /* --- END: DUAL-PANE COMMAND CENTER --- */
 
 /* Highlights the active tool in the sidebar */
-.editing-mode #open-editor-btn {
+.editing-mode #scroll-to-kb {
     background: var(--primary-accent);
     color: white;
     box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
 }
-
 /* --- Custom Stealth Scrollbar --- */
 ::-webkit-scrollbar {
     width: 6px;
@@ -988,3 +986,4 @@ textarea:focus, .persona-input:focus {
 ::-webkit-scrollbar-thumb:hover {
     background: var(--primary-accent);
 }
+
