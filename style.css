@@ -345,10 +345,29 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
     display: none; /* Hide Logs and Header */
 }
 
-/* Show the map and persona panel together when editing */
-.editing-mode #site-map-section,
+/* Create the side-by-side Command Center */
+.editing-mode .app-container {
+    display: flex;
+    flex-direction: row; 
+    overflow: hidden;
+}
+
 .editing-mode #knowledge-base-section {
-    display: block;
+    display: block !important;
+    flex: 0 0 420px; /* Sidebar width for instructions */
+    height: 100vh;
+    overflow-y: auto;
+    background: var(--card-dark);
+    border-right: 1px solid var(--border-color);
+    padding: 2rem;
+}
+
+.editing-mode #site-map-section {
+    display: block !important;
+    flex: 1; /* Tree takes all remaining space */
+    height: 100vh;
+    position: relative;
+    background: #0b1120; 
 }
 
 /* Optional: change sidebar button color when active */
@@ -770,12 +789,10 @@ textarea:focus, .persona-input:focus {
 /* --- 🌳 DYNAMIC CANVAS --- */
 .tree-viewport {
     width: 100%;
-    height: 600px;
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 16px;
-    overflow: hidden; /* We handle scrolling via JS drag */
+    height: 100vh; /* Fills the entire right-side panel */
+    background: radial-gradient(circle at center, rgba(99, 102, 241, 0.05) 0%, transparent 70%);
+    overflow: hidden;
     position: relative;
-    border: 1px solid rgba(255, 255, 255, 0.05);
     cursor: grab;
 }
 
@@ -800,10 +817,16 @@ textarea:focus, .persona-input:focus {
 
 #tree-svg path {
     fill: none;
-    stroke: var(--primary-accent); /* Use your primary purple/blue */
+    stroke: var(--primary-accent);
     stroke-width: 2;
-    stroke-dasharray: 5; /* Makes the "string" look like a digital fiber */
+    stroke-dasharray: 8; /* Clean dashes */
     opacity: 0.4;
+    animation: flow 20s linear infinite;
+}
+
+@keyframes flow {
+    from { stroke-dashoffset: 100; }
+    to { stroke-dashoffset: 0; }
 }
 
 /* --- 📦 THE NODE FRAMES --- */
@@ -924,7 +947,7 @@ textarea:focus, .persona-input:focus {
     to { stroke-dashoffset: 0; }
 }
 
-/* --- VIEW SWITCHING LOGIC --- */
+/* --- START: DUAL-PANE COMMAND CENTER --- */
 
 /* 1. Hide the editor and map by default */
 #site-map-section, 
@@ -932,54 +955,34 @@ textarea:focus, .persona-input:focus {
     display: none;
 }
 
-/* 2. When Editing Mode is active (toggled by JS) */
-.editing-mode #site-map-section,
+/* 2. Transition to Editing Mode: Activated by JS */
+.editing-mode #live-monitor-view {
+    display: none !important; 
+}
+
+.editing-mode .app-container {
+    display: flex;
+    flex-direction: row; 
+    overflow: hidden;
+}
+
 .editing-mode #knowledge-base-section {
     display: block !important;
+    flex: 0 0 420px; /* Fixed Left Panel for Identity/Instructions */
+    height: 100vh;
+    overflow-y: auto;
+    padding: 2rem;
+    background: var(--card-dark);
+    border-right: 1px solid var(--border-color);
+    z-index: 100;
 }
 
-/* 3. Hide the Live Monitor elements when editing */
-.editing-mode #live-monitor-view {
-    display: none;
+.editing-mode #site-map-section {
+    display: block !important;
+    flex: 1; /* Right Panel: The Interactive Tree Canvas */
+    height: 100vh;
+    position: relative;
+    background: #0b1120; 
+    overflow: hidden;
 }
-
-/* 4. Style the Sidebar Buttons & Version History */
-.sidebar-action-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    padding: 12px 15px;
-    margin-top: 1rem;
-    background: var(--glass-bg);
-    color: var(--primary-accent);
-    border: 1px solid var(--primary-accent);
-    border-radius: 12px;
-    width: 100%;
-    cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 600;
-    transition: var(--transition);
-}
-
-.sidebar-action-btn:hover {
-    background: var(--primary-accent);
-    color: white;
-}
-
-/* Specific styling for the History Button to make it look secondary */
-#open-history-btn {
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(255, 255, 255, 0.05);
-}
-
-#open-history-btn:hover {
-    background: rgba(99, 102, 241, 0.2) !important;
-    border-color: var(--primary-accent);
-}
-
-/* 5. Hide the History button when in Editing Mode to focus on the editor */
-.editing-mode #open-history-btn {
-    display: none;
-}
-
+/* --- END: DUAL-PANE COMMAND CENTER --- */
