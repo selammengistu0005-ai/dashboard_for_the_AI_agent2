@@ -314,6 +314,7 @@ function loadKnowledge(agentId) {
     });
 }
 // NEW FIXED KNOWLEDGE BASE CONTROLS
+// --- REPLACE THE ENTIRE BLOCK BELOW ---
 const scrollBtn = document.getElementById("scroll-to-kb");
 if (scrollBtn) {
     scrollBtn.onclick = () => {
@@ -324,13 +325,14 @@ if (scrollBtn) {
 
         if (isEditing) {
             setTimeout(() => {
-                drawTreeConnections();
-                const firstNode = document.querySelector('.tree-node');
-                if (firstNode) firstNode.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                window.initCanvas(); // Refreshes the lines
+                const rootNode = document.querySelector('.tree-node');
+                if (rootNode) rootNode.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }, 300);
         }
     };
 }
+// --- END OF REPLACEMENT ---
 
 const addBranchBtn = document.getElementById("add-branch-btn");
 if (addBranchBtn) {
@@ -557,7 +559,7 @@ function drawTreeConnections() {
             const endY = child.offsetTop;
 
             // Create a curved Cubic Bezier path
-            const cpY = startY + (endY - startY) / 2;
+            const cpY = startY + (endY - startY) / 1.5; 
             const d = `M ${startX} ${startY} C ${startX} ${cpY}, ${endX} ${cpY}, ${endX} ${endY}`;
 
             const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
@@ -614,27 +616,42 @@ document.getElementById("scroll-to-kb").addEventListener('click', () => {
 
 window.addNewNode = (parentId) => {
     const container = document.getElementById("tree-canvas");
+    if (!container) return;
+
     const id = "node-" + Date.now();
     const newNode = document.createElement("div");
     newNode.className = "tree-node";
     newNode.dataset.id = id;
     newNode.dataset.parent = parentId;
-    newNode.style.top = "200px"; 
-    newNode.style.left = "200px";
-    
+
+    // --- SYSTEM 2 & 3: DOWNWARD GROWTH & ALIGNMENT ---
+    const parentNode = document.querySelector(`[data-id="${parentId}"]`);
+    if (parentNode) {
+        // Position child exactly 250px below and horizontally aligned with parent
+        newNode.style.top = (parentNode.offsetTop + 250) + "px";
+        newNode.style.left = parentNode.offsetLeft + "px"; 
+    } else {
+        // Fallback for root nodes
+        newNode.style.top = "100px";
+        newNode.style.left = "100px";
+    }
+
+    // --- SYSTEM 1: IDENTITY INTEGRATION CONTENT ---
     newNode.innerHTML = `
         <div class="node-content">
             <div class="node-main-info">
                 <i class="fa-solid fa-code-branch"></i>
-                <input type="text" class="node-name" placeholder="New Branch">
+                <input type="text" class="node-name" placeholder="New Branch Name...">
             </div>
         </div>
-        <button class="add-branch-btn" onclick="addNewNode('${id}')"><i class="fa-solid fa-plus"></i></button>
+        <button class="add-branch-btn" onclick="addNewNode('${id}')">
+            <i class="fa-solid fa-plus"></i>
+        </button>
     `;
-    
+
     container.appendChild(newNode);
     makeDraggable(newNode);
-    drawTreeConnections();
+    drawTreeConnections(); // Redraw lines to show the new connection
 };
 
 window.resetCanvas = () => {
@@ -643,3 +660,4 @@ window.resetCanvas = () => {
     viewport.scrollTop = 0;
     drawTreeConnections();
 };
+
