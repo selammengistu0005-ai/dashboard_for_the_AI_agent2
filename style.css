@@ -749,43 +749,28 @@ textarea:focus, .persona-input:focus {
     font-size: 0.9rem;
 }
 
-/* --- Mobile Responsiveness --- */
+/* --- Mobile Responsiveness Fix --- */
 @media (max-width: 768px) {
-    .app-container {
-        flex-direction: column; /* Stack sidebar on top of main content */
-        overflow-y: auto;       /* Allow the whole page to scroll */
+    .app-container, 
+    .editing-mode .app-container { 
+        flex-direction: column; 
+        height: auto;
+        overflow-y: auto; 
     }
 
-    .sidebar {
-        width: 100%;            /* Sidebar takes full width */
-        height: auto;           /* Let it height-adjust to the chart */
+    .sidebar, 
+    .editing-mode #knowledge-base-section {
+        width: 100% !important;
+        flex: none !important;
+        height: auto;
         border-right: none;
         border-bottom: 1px solid var(--border-color);
-        padding: 1rem;
-    }
-
-    .sidebar-card {
-        height: 220px;          /* Slightly smaller chart for mobile screens */
-    }
-
-    .main-content {
-        overflow: visible;      /* Let the logs scroll with the page */
-    }
-
-    .logs-wrapper {
-        padding: 1rem;
     }
 
     .log-frame {
-        flex: 1 1 100%;         /* One log per row on mobile */
-        min-width: 0;           /* Allow it to shrink to screen width */
-    }
-    
-    .dashboard-header {
-        padding: 1rem;
+        flex: 1 1 100%;
     }
 }
-
 /* --- 🌳 DYNAMIC CANVAS --- */
 .tree-viewport {
     width: 100%;
@@ -831,17 +816,18 @@ textarea:focus, .persona-input:focus {
 
 /* --- 📦 THE NODE FRAMES --- */
 .tree-node {
-    position: absolute; /* Essential for dragging */
+    position: absolute;
     z-index: 10;
-    width: 240px;
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    padding: 12px;
-    transition: box-shadow 0.3s ease;
-    cursor: default;
-    overflow: visible !important;
+    width: 260px; /* Slightly wider for better text fit */
+    background: rgba(30, 41, 59, 0.7); /* Darker glass for better contrast */
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 16px;
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+    cursor: grab;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
 }
 
 .tree-node:hover {
@@ -938,15 +924,6 @@ textarea:focus, .persona-input:focus {
     font-size: 0.75rem;
 }
 
-#tree-svg path {
-    animation: flow 20s linear infinite;
-}
-
-@keyframes flow {
-    from { stroke-dashoffset: 100; }
-    to { stroke-dashoffset: 0; }
-}
-
 /* --- START: DUAL-PANE COMMAND CENTER --- */
 
 /* 1. Hide the editor and map by default */
@@ -986,3 +963,28 @@ textarea:focus, .persona-input:focus {
     overflow: hidden;
 }
 /* --- END: DUAL-PANE COMMAND CENTER --- */
+
+/* Highlights the active tool in the sidebar */
+.editing-mode #open-editor-btn {
+    background: var(--primary-accent);
+    color: white;
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+}
+
+/* --- Custom Stealth Scrollbar --- */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-accent);
+}
