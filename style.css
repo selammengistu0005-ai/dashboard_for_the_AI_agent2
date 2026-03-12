@@ -705,15 +705,13 @@ textarea:focus, .persona-input:focus {
 .tree-viewport:active { cursor: grabbing; }
 
 .tree-canvas {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding: 150px;
-    gap: 80px;
-    position: relative;
-    min-width: max-content; /* Critical: allows canvas to expand sideways */
-    min-height: max-content;
-    transform-origin: 0 0;
+    display: inline-flex; /* Changed from flex to inline-flex */
+    flex-direction: column;
+    align-items: center;
+    padding: 200px;
+    min-width: 100%;
+    min-height: 100%;
+    transform-origin: center top; /* Better for zooming */
 }
 
 #tree-svg {
@@ -1019,10 +1017,10 @@ textarea:focus, .persona-input:focus {
 .node-group {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: flex-start; /* ADD THIS: keeps parent anchored at top */
-    gap: 80px; 
-    position: relative; /* ADD THIS: helps with connection line math */
+    align-items: center;  /* This keeps the parent centered over its children */
+    justify-content: flex-start;
+    position: relative;
+    flex-shrink: 0;
 }
 
 /* The Row that holds all children of a node */
@@ -1038,12 +1036,15 @@ textarea:focus, .persona-input:focus {
 }
 
 /* Level 2 and deeper: Switch to vertical to prevent infinite width */
-.depth-2 .children-container, 
-.depth-3 .children-container {
-    flex-direction: column;
+/* Ensure every level of the tree remains a centered vertical stack */
+.children-container {
+    display: flex;
+    flex-direction: row; 
+    justify-content: center;
     align-items: flex-start;
-    padding-left: 50px;
-    border-left: 1px dashed rgba(99, 102, 241, 0.2);
+    gap: 60px;
+    padding-top: 40px; /* Space for the connection lines */
+    width: 100%;
 }
 
 /* Use font-size or opacity instead of transform to avoid hover conflicts */
@@ -1170,4 +1171,5 @@ textarea:focus, .persona-input:focus {
     stroke-width: 3;
     filter: drop-shadow(0 0 8px var(--primary-accent));
 }
+
 
