@@ -319,13 +319,15 @@ const scrollBtn = document.getElementById("scroll-to-kb");
 if (scrollBtn) {
     scrollBtn.onclick = () => {
         const isEditing = document.body.classList.toggle("editing-mode");
+        
+        // This keeps your cool transformation text
         scrollBtn.innerHTML = isEditing 
             ? `<i class="fa-solid fa-chart-line"></i> View Live Monitor` 
             : `<i class="fa-solid fa-pen-to-square"></i> Edit Agent Knowledge`;
 
         if (isEditing) {
             setTimeout(() => {
-                window.initCanvas(); // Refreshes the lines
+                window.initCanvas();
                 const rootNode = document.querySelector('.tree-node');
                 if (rootNode) rootNode.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }, 300);
@@ -656,5 +658,6 @@ window.resetCanvas = () => {
     viewport.scrollTop = 0;
     drawTreeConnections();
 };
+
 
 
