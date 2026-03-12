@@ -538,13 +538,20 @@ viewport.addEventListener('mousemove', (e) => {
 /**
  * 1. The Connector Logic
  */
+// --- UPDATE THIS SECTION IN drawTreeConnections ---
 function drawTreeConnections() {
     const svg = document.getElementById('tree-svg');
     const canvas = document.querySelector('.tree-canvas');
     if (!svg || !canvas) return;
 
-    svg.setAttribute('width', canvas.scrollWidth);
-    svg.setAttribute('height', canvas.scrollHeight);
+    // Force SVG to cover the entire scrollable area of the canvas
+    const scrollW = canvas.scrollWidth;
+    const scrollH = canvas.scrollHeight;
+    svg.setAttribute('width', scrollW);
+    svg.setAttribute('height', scrollH);
+    svg.style.width = scrollW + "px";
+    svg.style.height = scrollH + "px";
+    
     svg.innerHTML = ''; 
 
     const nodes = document.querySelectorAll('.tree-node');
@@ -609,53 +616,51 @@ window.addNewNode = (parentId) => {
     const parentNode = document.querySelector(`[data-id="${parentId}"]`);
     if (!parentNode) return;
 
-    // 1. Ensure a children-container exists inside the parent's group
-    let childrenContainer = parentNode.parentElement.querySelector('.children-container');
+    // Find the closest .node-group that contains the parentNode
+    const parentGroup = parentNode.closest('.node-group');
+    
+    // Check if a children-container already exists for this parent
+    let childrenContainer = parentGroup.querySelector(':scope > .children-container');
+    
     if (!childrenContainer) {
         childrenContainer = document.createElement('div');
         childrenContainer.className = 'children-container';
-        parentNode.parentElement.appendChild(childrenContainer);
+        parentGroup.appendChild(childrenContainer);
     }
 
     const id = "node-" + Date.now();
     const newNodeGroup = document.createElement("div");
-    newNodeGroup.className = "node-group"; // This is the vertical anchor
+    newNodeGroup.className = "node-group";
 
-    const newNode = document.createElement("div");
+    // Depth Logic
+    const parentDepth = parseInt(parentNode.className.match(/depth-(\d+)/)?.[1] || 1);
+    const newDepth = Math.min(parentDepth + 1, 4); // Cap at depth-4 for CSS
     
-    // 2. Depth Logic: Check parent's depth to assign child's depth
-    let depth = 1;
-    if (parentNode.classList.contains('depth-1')) depth = 2;
-    else if (parentNode.classList.contains('depth-2')) depth = 3;
-    else if (parentNode.classList.contains('depth-3')) depth = 4;
-    
-    newNode.className = `tree-node depth-${depth}`; 
-    newNode.dataset.id = id;
-    newNode.dataset.parent = parentId;
-
-    newNode.innerHTML = `
-        <div class="node-content">
-            <div class="node-main-info">
-                <i class="fa-solid fa-circle node-status-dot"></i>
-                <input type="text" class="node-name" placeholder="Branch Label...">
+    newNodeGroup.innerHTML = `
+        <div class="tree-node depth-${newDepth}" data-id="${id}" data-parent="${parentId}">
+            <div class="node-content">
+                <div class="node-main-info">
+                    <i class="fa-solid fa-circle node-status-dot"></i>
+                    <input type="text" class="node-name" placeholder="Branch Label...">
+                </div>
+                <div class="node-color-picker">
+                    <span class="dot green" onclick="changeNodeShade('${id}', 'green')"></span>
+                    <span class="dot yellow" onclick="changeNodeShade('${id}', 'yellow')"></span>
+                    <span class="dot red" onclick="changeNodeShade('${id}', 'red')"></span>
+                </div>
             </div>
-            <div class="node-color-picker">
-                <span class="dot green" onclick="changeNodeShade('${id}', 'green')"></span>
-                <span class="dot yellow" onclick="changeNodeShade('${id}', 'yellow')"></span>
-                <span class="dot red" onclick="changeNodeShade('${id}', 'red')"></span>
-            </div>
+            <button class="add-branch-btn" onclick="addNewNode('${id}')">
+                <i class="fa-solid fa-plus"></i>
+            </button>
         </div>
-        <button class="add-branch-btn" onclick="addNewNode('${id}')">
-            <i class="fa-solid fa-plus"></i>
-        </button>
     `;
 
-    // 3. Append to the container and trigger line redraw
-    newNodeGroup.appendChild(newNode);
     childrenContainer.appendChild(newNodeGroup);
     
-    // Give the DOM a millisecond to breathe before drawing lines
-    setTimeout(drawTreeConnections, 50); 
+    // Wait for the flexbox to expand the width before drawing lines
+    requestAnimationFrame(() => {
+        drawTreeConnections();
+    });
 };
 
 // Add this helper function below addNewNode
@@ -667,6 +672,7 @@ window.changeNodeShade = (nodeId, color) => {
     // Add the new one
     node.classList.add(`${color}-shade`);
 };
+
 
 
 
