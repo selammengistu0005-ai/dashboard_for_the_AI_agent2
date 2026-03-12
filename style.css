@@ -1048,3 +1048,57 @@ textarea:focus, .persona-input:focus {
 /* Keep the nodes at 100% scale so the JS coordinate math for lines stays simple */
 .depth-2 .node-name { font-size: 0.9rem; }
 .depth-3 .node-name { font-size: 0.85rem; }
+
+/* --- 🎨 NODE SHADE SYSTEM (ADDITION) --- */
+
+/* Green Shade (Healthy / Online) */
+.tree-node.green-shade {
+    border-color: #10b981 !important;
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.15), 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+}
+.tree-node.green-shade .node-status-dot { color: #10b981; text-shadow: 0 0 8px #10b981; }
+
+/* Yellow Shade (Pending / Warning) */
+.tree-node.yellow-shade {
+    border-color: #f59e0b !important;
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.15), 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+}
+.tree-node.yellow-shade .node-status-dot { color: #f59e0b; text-shadow: 0 0 8px #f59e0b; }
+
+/* Red Shade (Urgent / Error) */
+.tree-node.red-shade {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.15), 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+}
+.tree-node.red-shade .node-status-dot { color: #ef4444; text-shadow: 0 0 8px #ef4444; }
+
+/* Mini Color Picker UI inside Node */
+.node-color-picker {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    justify-content: flex-end;
+}
+
+.color-opt {
+    width: 12px;
+    height: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: var(--transition);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.color-opt:hover { transform: scale(1.3); }
+.color-opt.green { background: #10b981; }
+.color-opt.yellow { background: #f59e0b; }
+.color-opt.red { background: #ef4444; }
+.color-opt.reset { background: var(--card-dark); }
+
+/* Ensure the status dot looks like a small neon light */
+.node-status-dot {
+    font-size: 0.6rem;
+    transition: var(--transition);
+}
