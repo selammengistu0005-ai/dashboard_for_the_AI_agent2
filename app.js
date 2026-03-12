@@ -636,34 +636,40 @@ window.addNewNode = (parentId) => {
     const parentNode = document.querySelector(`[data-id="${parentId}"]`);
     
     if (parentNode) {
-        // Is the parent the Root? (Root has no data-parent attribute)
-        const isParentRoot = !parentNode.dataset.parent;
+        // --- 1. CALCULATE DEPTH ---
+        let depth = 0;
+        let tempParent = parentNode;
+        while(tempParent && tempParent.dataset.parent) {
+            tempParent = document.querySelector(`[data-id="${tempParent.dataset.parent}"]`);
+            depth++;
+        }
 
-        if (isParentRoot) {
-            // Level 1: Grow Horizontally
+        // --- 2. DEFINE COLORS BY DEPTH ---
+        const colors = ["#6366f1", "#10b981", "#f59e0b", "#ef4444", "#a855f7"];
+        const nodeColor = colors[depth % colors.length];
+        newNode.style.borderLeft = `4px solid ${nodeColor}`; // Visual accent
+
+        // --- 3. POSITIONING LOGIC ---
+        if (depth === 0) {
+            // Level 1: Horizontal Growth from Root
             newNode.style.top = (parentNode.offsetTop + 250) + "px";
             newNode.style.left = (parentNode.offsetLeft + (childCount * 300)) + "px";
         } else {
-            // Level 2+: Grow Vertically (Stacked)
-            // Position it below the previous sibling, or 120px below the parent if it's the first child
-            const verticalOffset = childCount === 0 ? 120 : (childCount * 110) + 120;
+            // Level 2+: Vertical Cascade with Indentation
+            // Push 40px to the right for every level of depth
+            const indentation = 40; 
+            const verticalSpacing = 120;
             
-            newNode.style.top = (parentNode.offsetTop + verticalOffset) + "px";
-            // Keep the same horizontal line as the parent (Strict alignment)
-            newNode.style.left = parentNode.offsetLeft + "px";
-            
-            // Subtle visual cue: make grandchild nodes slightly narrower or different style
-            newNode.style.width = "220px"; 
+            newNode.style.top = (parentNode.offsetTop + (childCount + 1) * verticalSpacing) + "px";
+            newNode.style.left = (parentNode.offsetLeft + indentation) + "px";
+            newNode.style.width = (260 - (depth * 20)) + "px"; // Slightly narrower as they get deeper
         }
-    } else {
-        newNode.style.top = "100px";
-        newNode.style.left = "100px";
     }
 
     newNode.innerHTML = `
         <div class="node-content">
             <div class="node-main-info">
-                <i class="fa-solid ${!parentNode.dataset.parent ? 'fa-folder-tree' : 'fa-leaf'}"></i>
+                <i class="fa-solid fa-link"></i>
                 <input type="text" class="node-name" placeholder="Branch Label...">
             </div>
         </div>
