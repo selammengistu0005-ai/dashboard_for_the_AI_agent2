@@ -987,4 +987,63 @@ textarea:focus, .persona-input:focus {
     background: var(--primary-accent);
 }
 
+/* --- Enhanced Glass Navigation Buttons --- */
+#scroll-to-kb, .history-trigger, #open-history-btn {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 10px 20px;
+    border-radius: 100px; /* Perfectly round edges */
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* The Professional Glow Effect */
+#scroll-to-kb:hover, .history-trigger:hover, #open-history-btn:hover {
+    border-color: var(--primary-accent);
+    background: rgba(99, 102, 241, 0.1); /* Subtle tint */
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.3), 
+                inset 0 0 10px rgba(99, 102, 241, 0.2);
+    transform: translateY(-2px);
+    color: #fff;
+}
+
+/* Specular Highlight (The 1px Edge) */
+#scroll-to-kb::before, .history-trigger::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    border-radius: 100px;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent, rgba(99,102,241,0.2));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+}
+
+/* Click Feedback */
+#scroll-to-kb:active, .history-trigger:active {
+    transform: scale(0.96);
+    box-shadow: 0 2px 10px rgba(99, 102, 241, 0.2);
+}
+
+/* Active State for Edit Mode Toggle */
+.editing-mode #scroll-to-kb {
+    background: var(--primary-accent);
+    border-color: var(--primary-accent);
+    color: white;
+    box-shadow: 0 0 25px rgba(99, 102, 241, 0.5);
+}
 
