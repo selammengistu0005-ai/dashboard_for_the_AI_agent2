@@ -112,14 +112,19 @@
             </div>
             <div id="tree-canvas" class="tree-canvas">
                 <svg id="tree-svg"></svg>
-                <div class="tree-node" data-id="root" style="top: 100px; left: 100px;">
-                    <div class="node-main-info">
-                        <i class="fa-solid fa-house"></i>
-                        <input type="text" class="node-name" value="Main Greeting">
-                    </div>
-                    <button class="add-branch-btn" onclick="addNewNode('root')">
-                        <i class="fa-solid fa-plus"></i>
-                    </button>
+                <div class="node-group" style="position: absolute; top: 100px; left: 100px;">
+    <div class="tree-node depth-1" data-id="root">
+        <div class="node-content">
+            <div class="node-main-info">
+                <i class="fa-solid fa-house"></i>
+                <input type="text" class="node-name" value="Main Greeting">
+            </div>
+        </div>
+        <button class="add-branch-btn" onclick="addNewNode('root')">
+            <i class="fa-solid fa-plus"></i>
+        </button>
+    </div>
+    </div>
                 </div>
             </div>
         </div>
@@ -145,6 +150,7 @@
     <div id="toast-container" class="toast-container"></div>
 </body>
 </html>
+
 
 
 
