@@ -592,11 +592,9 @@ document.getElementById("scroll-to-kb").addEventListener('click', () => {
 });
 
 window.addNewNode = (parentId) => {
-    // 1. Find the parent node's group
     const parentNode = document.querySelector(`[data-id="${parentId}"]`);
     if (!parentNode) return;
 
-    // 2. Find or create the children container for this parent
     let childrenContainer = parentNode.parentElement.querySelector('.children-container');
     if (!childrenContainer) {
         childrenContainer = document.createElement('div');
@@ -605,17 +603,15 @@ window.addNewNode = (parentId) => {
     }
 
     const id = "node-" + Date.now();
-    
-    // 3. Create the Node Group (Wrapper for node + its future children)
     const newNodeGroup = document.createElement("div");
     newNodeGroup.className = "node-group";
 
-    // 4. Create the Node itself
     const newNode = document.createElement("div");
-    newNode.className = "tree-node";
+    newNode.className = "tree-node"; // Base class
     newNode.dataset.id = id;
     newNode.dataset.parent = parentId;
 
+    // FIX: Use classList.add/remove instead of overwriting .className
     newNode.innerHTML = `
         <div class="node-content">
             <div class="node-main-info">
@@ -623,9 +619,9 @@ window.addNewNode = (parentId) => {
                 <input type="text" class="node-name" placeholder="Branch Label...">
             </div>
             <div class="node-color-picker">
-                <span class="dot green" onclick="this.closest('.tree-node').className='tree-node green-shade'"></span>
-                <span class="dot yellow" onclick="this.closest('.tree-node').className='tree-node yellow-shade'"></span>
-                <span class="dot red" onclick="this.closest('.tree-node').className='tree-node red-shade'"></span>
+                <span class="dot green" onclick="changeNodeShade('${id}', 'green')"></span>
+                <span class="dot yellow" onclick="changeNodeShade('${id}', 'yellow')"></span>
+                <span class="dot red" onclick="changeNodeShade('${id}', 'red')"></span>
             </div>
         </div>
         <button class="add-branch-btn" onclick="addNewNode('${id}')">
@@ -633,11 +629,17 @@ window.addNewNode = (parentId) => {
         </button>
     `;
 
-    // 5. Build the hierarchy and append
     newNodeGroup.appendChild(newNode);
     childrenContainer.appendChild(newNodeGroup);
-
-    // Redraw lines
     setTimeout(drawTreeConnections, 50); 
 };
 
+// Add this helper function below addNewNode
+window.changeNodeShade = (nodeId, color) => {
+    const node = document.querySelector(`[data-id="${nodeId}"]`);
+    if (!node) return;
+    // Remove all possible shades first
+    node.classList.remove('green-shade', 'yellow-shade', 'red-shade');
+    // Add the new one
+    node.classList.add(`${color}-shade`);
+};
