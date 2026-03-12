@@ -601,6 +601,7 @@ window.addNewNode = (parentId) => {
     const parentNode = document.querySelector(`[data-id="${parentId}"]`);
     if (!parentNode) return;
 
+    // 1. Ensure a children-container exists inside the parent's group
     let childrenContainer = parentNode.parentElement.querySelector('.children-container');
     if (!childrenContainer) {
         childrenContainer = document.createElement('div');
@@ -610,14 +611,20 @@ window.addNewNode = (parentId) => {
 
     const id = "node-" + Date.now();
     const newNodeGroup = document.createElement("div");
-    newNodeGroup.className = "node-group";
+    newNodeGroup.className = "node-group"; // This is the vertical anchor
 
     const newNode = document.createElement("div");
-    newNode.className = "tree-node"; // Base class
+    
+    // 2. Depth Logic: Check parent's depth to assign child's depth
+    let depth = 1;
+    if (parentNode.classList.contains('depth-1')) depth = 2;
+    else if (parentNode.classList.contains('depth-2')) depth = 3;
+    else if (parentNode.classList.contains('depth-3')) depth = 4;
+    
+    newNode.className = `tree-node depth-${depth}`; 
     newNode.dataset.id = id;
     newNode.dataset.parent = parentId;
 
-    // FIX: Use classList.add/remove instead of overwriting .className
     newNode.innerHTML = `
         <div class="node-content">
             <div class="node-main-info">
@@ -635,8 +642,11 @@ window.addNewNode = (parentId) => {
         </button>
     `;
 
+    // 3. Append to the container and trigger line redraw
     newNodeGroup.appendChild(newNode);
     childrenContainer.appendChild(newNodeGroup);
+    
+    // Give the DOM a millisecond to breathe before drawing lines
     setTimeout(drawTreeConnections, 50); 
 };
 
@@ -649,4 +659,5 @@ window.changeNodeShade = (nodeId, color) => {
     // Add the new one
     node.classList.add(`${color}-shade`);
 };
+
 
