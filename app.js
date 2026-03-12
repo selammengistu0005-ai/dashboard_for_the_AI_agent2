@@ -314,27 +314,35 @@ function loadKnowledge(agentId) {
     });
 }
 // NEW FIXED KNOWLEDGE BASE CONTROLS
-// --- REPLACE THE ENTIRE BLOCK BELOW ---
+// --- REPLACED: NEW HORIZONTAL MODE SWITCHER ---
 const scrollBtn = document.getElementById("scroll-to-kb");
 if (scrollBtn) {
     scrollBtn.onclick = () => {
         const isEditing = document.body.classList.toggle("editing-mode");
-        
+        const liveMonitor = document.querySelector(".logs-wrapper"); // Target the logs
+        const liveChart = document.querySelector(".sidebar-chart-container"); // Target sidebar chart
+
         // This keeps your cool transformation text
         scrollBtn.innerHTML = isEditing 
             ? `<i class="fa-solid fa-chart-line"></i> View Live Monitor` 
             : `<i class="fa-solid fa-pen-to-square"></i> Edit Agent Knowledge`;
 
         if (isEditing) {
+            // 1. Hide the Monitor stuff so it doesn't bleed through
+            if(liveMonitor) liveMonitor.style.display = "none";
+            
+            // 2. Initialize the Horizontal Map
             setTimeout(() => {
                 window.initCanvas();
                 const rootNode = document.querySelector('.tree-node');
                 if (rootNode) rootNode.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }, 300);
+        } else {
+            // 3. Bring the Monitor back when we exit Edit Mode
+            if(liveMonitor) liveMonitor.style.display = "block";
         }
     };
 }
-// --- END OF REPLACEMENT ---
 
 const addBranchBtn = document.getElementById("add-branch-btn");
 if (addBranchBtn) {
@@ -658,6 +666,7 @@ window.resetCanvas = () => {
     viewport.scrollTop = 0;
     drawTreeConnections();
 };
+
 
 
 
