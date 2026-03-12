@@ -625,24 +625,32 @@ window.addNewNode = (parentId) => {
     if (!container) return;
 
     const id = "node-" + Date.now();
+    
+    // 1. Count how many siblings this new node will have
+    const existingChildren = document.querySelectorAll(`[data-parent="${parentId}"]`);
+    const childCount = existingChildren.length;
+
     const newNode = document.createElement("div");
     newNode.className = "tree-node";
     newNode.dataset.id = id;
     newNode.dataset.parent = parentId;
 
-    // --- SYSTEM 2 & 3: DOWNWARD GROWTH & ALIGNMENT ---
+    // 2. IMPROVED ALIGNMENT LOGIC
     const parentNode = document.querySelector(`[data-id="${parentId}"]`);
     if (parentNode) {
-        // Position child exactly 250px below and horizontally aligned with parent
+        // Vertical gap remains 250px
         newNode.style.top = (parentNode.offsetTop + 250) + "px";
-        newNode.style.left = parentNode.offsetLeft + "px"; 
+        
+        // Horizontal logic: 
+        // Start at parent's Left position, then move right by (300px * number of children)
+        // 300px accounts for node width (260px) + gap (40px)
+        const horizontalOffset = childCount * 300;
+        newNode.style.left = (parentNode.offsetLeft + horizontalOffset) + "px"; 
     } else {
-        // Fallback for root nodes
         newNode.style.top = "100px";
         newNode.style.left = "100px";
     }
 
-    // --- SYSTEM 1: IDENTITY INTEGRATION CONTENT ---
     newNode.innerHTML = `
         <div class="node-content">
             <div class="node-main-info">
@@ -657,16 +665,5 @@ window.addNewNode = (parentId) => {
 
     container.appendChild(newNode);
     makeDraggable(newNode);
-    drawTreeConnections(); // Redraw lines to show the new connection
+    drawTreeConnections(); 
 };
-
-window.resetCanvas = () => {
-    const viewport = document.querySelector('.tree-viewport');
-    viewport.scrollLeft = 0;
-    viewport.scrollTop = 0;
-    drawTreeConnections();
-};
-
-
-
-
