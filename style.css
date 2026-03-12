@@ -325,44 +325,6 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
 }
 .status-in { background: rgba(16, 185, 129, 0.1); color: #10b981; }
 .status-out { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
-
-/* --- VIEW SWITCHING LOGIC --- */
-
-/* Hide Knowledge Base by default */
-#knowledge-base-section {
-    display: none; 
-}
-
-/* When .editing-mode is added to the body: */
-.editing-mode .dashboard-header,
-.editing-mode .logs-wrapper {
-    display: none; /* Hide Logs and Header */
-}
-
-/* Create the side-by-side Command Center */
-.editing-mode .app-container {
-    display: flex;
-    flex-direction: row; 
-    overflow: hidden;
-}
-
-.editing-mode #knowledge-base-section {
-    display: block !important;
-    flex: 0 0 420px; /* Sidebar width for instructions */
-    height: 100vh;
-    overflow-y: auto;
-    background: var(--card-dark);
-    border-right: 1px solid var(--border-color);
-    padding: 2rem;
-}
-
-.editing-mode #site-map-section {
-    display: block !important;
-    flex: 1; /* Tree takes all remaining space */
-    height: 100vh;
-    position: relative;
-    background: #0b1120; 
-}
 /* --- NEW COMMAND CENTER LAYOUT --- */
 .kb-split-wrapper {
     display: flex;
@@ -882,46 +844,6 @@ textarea:focus, .persona-input:focus {
     color: rgba(255, 255, 255, 0.4);
     font-size: 0.75rem;
 }
-
-/* --- START: DUAL-PANE COMMAND CENTER --- */
-
-/* 1. Hide the editor and map by default */
-#site-map-section, 
-#knowledge-base-section {
-    display: none;
-}
-
-/* 2. Transition to Editing Mode: Activated by JS */
-.editing-mode #live-monitor-view {
-    display: none !important; 
-}
-
-.editing-mode .app-container {
-    display: flex;
-    flex-direction: row; 
-    overflow: hidden;
-}
-
-.editing-mode #knowledge-base-section {
-    display: block !important;
-    flex: 0 0 420px; /* Fixed Left Panel for Identity/Instructions */
-    height: 100vh;
-    overflow-y: auto;
-    padding: 2rem;
-    background: var(--card-dark);
-    border-right: 1px solid var(--border-color);
-    z-index: 100;
-}
-
-.editing-mode #site-map-section {
-    display: block !important;
-    flex: 1; /* Right Panel: The Interactive Tree Canvas */
-    height: 100vh;
-    position: relative;
-    background: #0b1120; 
-    overflow: hidden;
-}
-/* --- END: DUAL-PANE COMMAND CENTER --- */
 ::-webkit-scrollbar {
     width: 6px;
 }
@@ -1006,4 +928,36 @@ textarea:focus, .persona-input:focus {
     position: absolute;
     top: 0; left: 0; right: 0; height: 1px;
     background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+}
+
+/* --- FINAL COMMAND CENTER OVERRIDE --- */
+
+/* Ensures the container itself behaves as a horizontal row */
+.editing-mode #editor-view-container {
+    display: flex !important;
+    flex-direction: row !important;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Personality Panel (Small Side) */
+.editing-mode #knowledge-base-section {
+    display: block !important;
+    flex: 0 0 380px !important; /* Forces the small size */
+    background: var(--card-dark);
+    border-right: 1px solid var(--border-color);
+    padding: 2rem;
+    height: 100%;
+    overflow-y: auto;
+}
+
+/* Visual Site Map (Large Side) */
+.editing-mode #site-map-section {
+    display: block !important;
+    flex: 1 !important; /* Forces it to fill the rest of the screen */
+    background: #0b1120;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
 }
