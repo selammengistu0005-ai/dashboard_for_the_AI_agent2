@@ -1027,11 +1027,18 @@ textarea:focus, .persona-input:focus {
 }
 
 /* Active State for the Toggle */
+/* 1. This handles how the button looks when "Active" (but not hovered) */
 .editing-mode #scroll-to-kb {
     background: var(--primary-accent) !important;
     border-color: var(--primary-accent);
     color: white !important;
-    box-shadow: 0 0 30px rgba(99, 102, 241, 0.4);
+    box-shadow: none; /* Remove the constant glow */
+}
+
+/* 2. This adds the glow BACK only when you hover over the active button */
+.editing-mode #scroll-to-kb:hover {
+    box-shadow: 0 0 30px rgba(99, 102, 241, 0.6);
+    transform: translateY(-2px) scale(1.02);
 }
 
 /* Click Feedback */
@@ -1043,4 +1050,5 @@ textarea:focus, .persona-input:focus {
     border-color: rgba(255, 255, 255, 0.4); /* White glow instead of Purple */
     box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
 }
+
 
