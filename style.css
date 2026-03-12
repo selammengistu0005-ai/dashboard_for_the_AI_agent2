@@ -754,6 +754,8 @@ textarea:focus, .persona-input:focus {
     cursor: grab;
     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
     flex-shrink: 0; /* Prevents nodes from squishing */
+    margin: 0 auto; /* Keeps it centered relative to its children container */
+    flex-shrink: 0; /* Ensures it doesn't squash when children wrap */
 }
 
 .tree-node:hover {
@@ -1018,7 +1020,9 @@ textarea:focus, .persona-input:focus {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 100px; /* Space for the SVG strings to breathe */
+    justify-content: flex-start; /* ADD THIS: keeps parent anchored at top */
+    gap: 80px; 
+    position: relative; /* ADD THIS: helps with connection line math */
 }
 
 /* The Row that holds all children of a node */
@@ -1166,3 +1170,4 @@ textarea:focus, .persona-input:focus {
     stroke-width: 3;
     filter: drop-shadow(0 0 8px var(--primary-accent));
 }
+
