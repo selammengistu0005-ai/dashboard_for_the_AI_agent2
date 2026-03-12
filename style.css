@@ -730,12 +730,13 @@ textarea:focus, .persona-input:focus {
     fill: none;
     stroke: var(--primary-accent);
     stroke-width: 2;
-    opacity: 0.3; /* Increased slightly so the line is visible */
+    opacity: 0.3;
     transition: var(--transition);
     
     /* Logic Flow Setup */
-    stroke-dasharray: 6, 12; /* This creates the "dots" (6px dot, 12px space) */
-    animation: logicFlow 20s linear infinite;
+    stroke-dasharray: 4, 12; 
+    stroke-dashoffset: 100; /* Start with an offset */
+    animation: logicFlowUp 8s linear infinite; /* Match the new keyframe name */
 }
 
 /* --- 📦 THE NODE FRAMES --- */
@@ -1144,18 +1145,24 @@ textarea:focus, .persona-input:focus {
     stroke-width: 2;
 }
 
-@keyframes logicFlow {
+@keyframes logicFlowUp {
     from {
-        stroke-dashoffset: 0; 
+        stroke-dashoffset: 100; 
     }
     to {
-        stroke-dashoffset: 500; /* Moves the dots "backward" up the line */
+        stroke-dashoffset: 0; /* Moving to 0 pulls the dots toward the parent */
     }
 }
 
-/* Hover Effect: When you hover a node, make its specific logic flow brighter */
-.tree-node:hover ~ #tree-svg path {
-    opacity: 0.8;
+/* If any node in the canvas is hovered, make the whole SVG slightly clearer */
+.tree-canvas:has(.tree-node:hover) #tree-svg path {
+    opacity: 0.5;
+    stroke-width: 2.5;
+}
+
+/* Individual path highlighting is best handled by JS adding a class to the <path> */
+#tree-svg path.active-path {
+    opacity: 1;
     stroke-width: 3;
     filter: drop-shadow(0 0 8px var(--primary-accent));
 }
