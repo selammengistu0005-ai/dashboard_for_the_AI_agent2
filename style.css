@@ -729,9 +729,13 @@ textarea:focus, .persona-input:focus {
 #tree-svg path {
     fill: none;
     stroke: var(--primary-accent);
-    stroke-width: 1.5;
-    opacity: 0.15; /* Makes the "wire" faint so dots pop */
-    transition: opacity 0.3s;
+    stroke-width: 2;
+    opacity: 0.3; /* Increased slightly so the line is visible */
+    transition: var(--transition);
+    
+    /* Logic Flow Setup */
+    stroke-dasharray: 6, 12; /* This creates the "dots" (6px dot, 12px space) */
+    animation: logicFlow 20s linear infinite;
 }
 
 /* --- 📦 THE NODE FRAMES --- */
@@ -1138,4 +1142,20 @@ textarea:focus, .persona-input:focus {
 .tree-node:hover ~ #tree-svg path {
     opacity: 0.4;
     stroke-width: 2;
+}
+
+@keyframes logicFlow {
+    from {
+        stroke-dashoffset: 0; 
+    }
+    to {
+        stroke-dashoffset: 500; /* Moves the dots "backward" up the line */
+    }
+}
+
+/* Hover Effect: When you hover a node, make its specific logic flow brighter */
+.tree-node:hover ~ #tree-svg path {
+    opacity: 0.8;
+    stroke-width: 3;
+    filter: drop-shadow(0 0 8px var(--primary-accent));
 }
