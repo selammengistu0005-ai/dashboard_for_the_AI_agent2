@@ -939,52 +939,6 @@ textarea:focus, .persona-input:focus {
     background: var(--primary-accent);
 }
 
-/* --- Master Style for All Action Buttons --- */
-.sidebar-action-btn {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: #cbd5e1;
-    padding: 12px 20px;
-    border-radius: 12px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-    width: 100%;
-    position: relative;
-    overflow: hidden;
-    margin-bottom: 10px; /* Spacing between buttons */
-}
-
-/* --- Unified Hover Animation & Glow --- */
-.sidebar-action-btn:hover {
-    border-color: var(--primary-accent);
-    background: rgba(99, 102, 241, 0.08); 
-    box-shadow: 0 0 20px rgba(99, 102, 241, 0.25), 
-                inset 0 0 10px rgba(99, 102, 241, 0.1);
-    color: #ffffff;
-    transform: translateY(-2px);
-}
-
-/* --- Tactile Click Feedback --- */
-.sidebar-action-btn:active {
-    transform: scale(0.97);
-}
-
-/* --- Professional Glass Edge (Highlight) --- */
-.sidebar-action-btn::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-}
-
-/* --- State-Specific logic (When in Edit Mode) --- */
 /* Note: We removed the constant glow from here as requested */
 .editing-mode #scroll-to-kb {
     background: var(--primary-accent) !important;
@@ -1054,3 +1008,4 @@ textarea:focus, .persona-input:focus {
     top: 0; left: 0; right: 0; height: 1px;
     background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
 }
+
