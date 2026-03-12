@@ -1013,30 +1013,49 @@ textarea:focus, .persona-input:focus {
     to { transform: rotate(360deg); }
 }
 
+/* 1. The Wrapper for the whole branch */
 .node-group {
     display: flex;
     flex-direction: column;
-    align-items: center; 
+    align-items: center;    /* Keeps parent centered above children */
     position: relative;
-    flex-shrink: 0;         /* Prevents the group from collapsing */
+    flex-shrink: 0;
+    /* Removed absolute from here if it's nested; keep it only for the ROOT group */
 }
 
-/* --- THE FIXED CHILDREN CONTAINER --- */
+/* 2. THE KEY FIX: The Children Container */
 .children-container {
     display: flex;
-    flex-direction: row;
+    flex-direction: row;    /* Children spread side-by-side */
     justify-content: center;
     align-items: flex-start;
-    gap: 80px;              /* Keeps nodes from touching */
-    padding-top: 60px;      /* Space for SVG lines */
-    width: max-content;     /* CRITICAL: Allows the tree to grow wide instead of stacking */
-    min-width: 100%;        /* Ensures centering on small trees */
-    flex-wrap: nowrap;      /* FORBID stacking: stays in a horizontal line */
+    gap: 100px;             /* INCREASED: More horizontal room for lines */
+    padding-top: 80px;      /* CRITICAL: Creates the vertical "Safe Zone" */
+    width: max-content;     /* Allows tree to grow wide without wrapping */
+    min-width: 100%;
+    position: relative;
+    z-index: 1;
 }
 
+/* 3. The Node Frame */
 .tree-node {
-    z-index: 10;
-    margin: 0 20px;         /* Adds a horizontal buffer around the node itself */
+    position: relative;
+    z-index: 10;           /* Ensures node sits ABOVE the SVG lines */
+    margin: 0 auto;        /* Centers itself in the group */
+    flex-shrink: 0;
+    /* Ensure the add-branch-btn doesn't get cut off */
+    overflow: visible;     
+}
+
+/* 4. The Connector Line Area */
+#tree-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 5;            /* Sits between the container and the nodes */
 }
 
 /* Use font-size or opacity instead of transform to avoid hover conflicts */
@@ -1164,5 +1183,17 @@ textarea:focus, .persona-input:focus {
     filter: drop-shadow(0 0 8px var(--primary-accent));
 }
 
+/* Add this below your .kb-main-panel styles */
+.view-hidden {
+    display: none !important;
+}
+
+/* Ensure the viewport actually fills the remaining space */
+.kb-main-panel .tree-viewport {
+    width: 100%;
+    height: 600px; /* Or calc(100vh - 200px) */
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+}
 
 
