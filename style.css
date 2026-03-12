@@ -705,9 +705,14 @@ textarea:focus, .persona-input:focus {
 .tree-viewport:active { cursor: grabbing; }
 
 .tree-canvas {
-    width: 3000px; /* Large area to move nodes around */
-    height: 3000px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 150px;
+    gap: 80px;
     position: relative;
+    min-width: max-content; /* Critical: allows canvas to expand sideways */
+    min-height: max-content;
     transform-origin: 0 0;
 }
 
@@ -737,18 +742,19 @@ textarea:focus, .persona-input:focus {
 
 /* --- 📦 THE NODE FRAMES --- */
 .tree-node {
-    position: absolute;
+    position: relative; /* Change from absolute to relative */
     z-index: 10;
-    width: 260px; /* Slightly wider for better text fit */
-    background: rgba(30, 41, 59, 0.7); /* Darker glass for better contrast */
+    width: 260px; 
+    background: rgba(30, 41, 59, 0.7); 
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border: 1px solid var(--border-color);
     border-radius: 16px;
     padding: 16px;
-    transition: transform 0.2s ease, box-shadow 0.3s ease;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
     cursor: grab;
     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+    flex-shrink: 0; /* Prevents nodes from squishing */
 }
 
 .tree-node:hover {
@@ -1007,3 +1013,34 @@ textarea:focus, .persona-input:focus {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
 }
+
+/* Container for a Parent Node + its Row of Children */
+.node-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 100px; /* Space for the SVG strings to breathe */
+}
+
+/* The Row that holds all children of a node */
+.children-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 40px;
+    transition: var(--transition);
+}
+
+/* Level 2 and deeper: Switch to vertical to prevent infinite width */
+.depth-2 .children-container, 
+.depth-3 .children-container {
+    flex-direction: column;
+    align-items: flex-start;
+    padding-left: 50px;
+    border-left: 1px dashed rgba(99, 102, 241, 0.2);
+}
+
+/* Scaling: Nodes get smaller as they get deeper (Railway style) */
+.depth-2 .tree-node { transform: scale(0.9); }
+.depth-3 .tree-node { transform: scale(0.85); }
+.depth-4 .tree-node { transform: scale(0.8); }
