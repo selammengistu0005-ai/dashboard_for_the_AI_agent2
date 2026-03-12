@@ -729,15 +729,9 @@ textarea:focus, .persona-input:focus {
 #tree-svg path {
     fill: none;
     stroke: var(--primary-accent);
-    stroke-width: 2;
-    stroke-dasharray: 8; /* Clean dashes */
-    opacity: 0.4;
-    animation: flow 20s linear infinite;
-}
-
-@keyframes flow {
-    from { stroke-dashoffset: 100; }
-    to { stroke-dashoffset: 0; }
+    stroke-width: 1.5;
+    opacity: 0.15; /* Makes the "wire" faint so dots pop */
+    transition: opacity 0.3s;
 }
 
 /* --- 📦 THE NODE FRAMES --- */
@@ -1029,6 +1023,9 @@ textarea:focus, .persona-input:focus {
     justify-content: center;
     gap: 40px;
     transition: var(--transition);
+    /* ADD THE TWO LINES BELOW */
+    flex-wrap: wrap; 
+    max-width: 1200px; 
 }
 
 /* Level 2 and deeper: Switch to vertical to prevent infinite width */
@@ -1070,6 +1067,12 @@ textarea:focus, .persona-input:focus {
     border-color: #ef4444 !important;
     box-shadow: 0 0 20px rgba(239, 68, 68, 0.15), 0 10px 25px -5px rgba(0, 0, 0, 0.4);
 }
+
+/* Brighten the node body when a shade is applied so the color is visible */
+.tree-node.green-shade, .tree-node.yellow-shade, .tree-node.red-shade {
+    background: rgba(30, 41, 59, 0.9);
+}
+
 .tree-node.red-shade .node-status-dot { color: #ef4444; text-shadow: 0 0 8px #ef4444; }
 
 /* Mini Color Picker UI inside Node */
@@ -1124,3 +1127,15 @@ textarea:focus, .persona-input:focus {
 .dot.green { background: #10b981; }
 .dot.yellow { background: #f59e0b; }
 .dot.red { background: #ef4444; }
+
+/* Glowing Data Packet */
+.data-packet {
+    opacity: 0.9;
+    filter: drop-shadow(0 0 5px var(--primary-accent));
+}
+
+/* Highlights connection on hover */
+.tree-node:hover ~ #tree-svg path {
+    opacity: 0.4;
+    stroke-width: 2;
+}
