@@ -1040,7 +1040,11 @@ textarea:focus, .persona-input:focus {
     border-left: 1px dashed rgba(99, 102, 241, 0.2);
 }
 
-/* Scaling: Nodes get smaller as they get deeper (Railway style) */
-.depth-2 .tree-node { transform: scale(0.9); }
-.depth-3 .tree-node { transform: scale(0.85); }
-.depth-4 .tree-node { transform: scale(0.8); }
+/* Use font-size or opacity instead of transform to avoid hover conflicts */
+.depth-2 .tree-node { border-style: solid; opacity: 0.95; }
+.depth-3 .tree-node { border-style: dashed; opacity: 0.9; }
+.depth-4 .tree-node { border-style: dotted; opacity: 0.85; }
+
+/* Keep the nodes at 100% scale so the JS coordinate math for lines stays simple */
+.depth-2 .node-name { font-size: 0.9rem; }
+.depth-3 .node-name { font-size: 0.85rem; }
