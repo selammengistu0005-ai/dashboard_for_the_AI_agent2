@@ -326,12 +326,6 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
 .status-in { background: rgba(16, 185, 129, 0.1); color: #10b981; }
 .status-out { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
 
-
-.sidebar-action-btn:hover {
-    background: var(--primary-accent);
-    color: white;
-}
-
 /* --- VIEW SWITCHING LOGIC --- */
 
 /* Hide Knowledge Base by default */
@@ -369,13 +363,6 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
     position: relative;
     background: #0b1120; 
 }
-
-/* Optional: change sidebar button color when active */
-.editing-mode .sidebar-action-btn {
-    background: var(--primary-accent);
-    color: white;
-}
-
 /* --- NEW COMMAND CENTER LAYOUT --- */
 .kb-split-wrapper {
     display: flex;
@@ -586,33 +573,6 @@ textarea:focus, .persona-input:focus {
 .toast.fade-out {
     opacity: 0;
     transform: translateX(120%);
-}
-
-/* --- 🕒 HISTORY TIME MACHINE STYLES --- */
-
-/* 1. History Trigger Button (Header) */
-.history-trigger {
-    background: var(--glass-bg);
-    border: 1px solid var(--border-color);
-    color: var(--text-dim);
-    padding: 6px 14px;
-    border-radius: 8px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: var(--transition);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.history-trigger:hover {
-    background: rgba(99, 102, 241, 0.1);
-    color: var(--primary-accent);
-    border-color: var(--primary-accent);
-    transform: translateY(-1px);
 }
 
 /* 2. Slide-out Drawer Panel */
@@ -962,14 +922,6 @@ textarea:focus, .persona-input:focus {
     overflow: hidden;
 }
 /* --- END: DUAL-PANE COMMAND CENTER --- */
-
-/* Highlights the active tool in the sidebar */
-.editing-mode #scroll-to-kb {
-    background: var(--primary-accent);
-    color: white;
-    box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
-}
-/* --- Custom Stealth Scrollbar --- */
 ::-webkit-scrollbar {
     width: 6px;
 }
@@ -1043,4 +995,62 @@ textarea:focus, .persona-input:focus {
 /* This allows the active button to still glow on hover specifically */
 .editing-mode #scroll-to-kb:hover {
     box-shadow: 0 0 30px rgba(99, 102, 241, 0.5);
+}
+
+/* --- THE FINAL UNIFIED BUTTON SYSTEM --- */
+
+/* Targets: Edit Knowledge, Version History, and View Monitor */
+.sidebar-action-btn, .history-trigger {
+    background: rgba(255, 255, 255, 0.03) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #cbd5e1 !important;
+    padding: 12px 20px !important;
+    border-radius: 12px !important;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1) !important;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 10px;
+    text-transform: none !important; 
+    letter-spacing: normal !important;
+}
+
+/* Unified Hover for ALL buttons */
+.sidebar-action-btn:hover, .history-trigger:hover {
+    border-color: var(--primary-accent) !important;
+    background: rgba(99, 102, 241, 0.08) !important; 
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.25), 
+                inset 0 0 10px rgba(99, 102, 241, 0.1) !important;
+    color: #ffffff !important;
+    transform: translateY(-2px);
+}
+
+/* Toggled ON State (The active mode) */
+.editing-mode #scroll-to-kb {
+    background: var(--primary-accent) !important;
+    border-color: var(--primary-accent) !important;
+    color: white !important;
+}
+
+/* Ensure the toggled button still glows on hover */
+.editing-mode #scroll-to-kb:hover {
+    box-shadow: 0 0 30px rgba(99, 102, 241, 0.5) !important;
+}
+
+/* Tactile Click & Glass Highlight */
+.sidebar-action-btn:active, .history-trigger:active { transform: scale(0.97); }
+
+.sidebar-action-btn::after, .history-trigger::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
 }
