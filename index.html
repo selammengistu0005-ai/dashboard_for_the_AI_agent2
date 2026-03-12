@@ -73,78 +73,58 @@
         <div id="logs" class="logs-flex-container"></div>
     </div>
             </div>
-            <section id="site-map-section" class="sitemap-container"> 
-    <div class="kb-header">
-        <h3><i class="fa-solid fa-sitemap"></i> Visual Site Navigator</h3>
-        <p>Map the website structure. Each branch stores specific knowledge for the AI.</p>
-    </div>
-
-    <div class="tree-viewport">
-        <div class="canvas-controls">
-            <button onclick="resetCanvas()"><i class="fa-solid fa-location-crosshairs"></i> Recenter</button>
-            <span class="canvas-hint">Drag nodes to organize • + to grow</span>
-        </div>
-
-        <div id="tree-canvas" class="tree-canvas">
-            <svg id="tree-svg"></svg>
-            <div class="tree-node root-node" id="node-root" data-id="root">
-                <div class="node-content">
-        <div class="node-main-info">
-            <i class="fa-solid fa-house"></i>
-            <input type="text" class="node-name" value="Home" placeholder="Page Name">
-        </div>
-        
-        <div class="node-details">
-            <input type="number" class="node-price" placeholder="Price (ETB)">
-            <textarea class="node-desc" placeholder="Product details..."></textarea>
-        </div>
-    </div>
+            <div id="editor-view-container" style="display: none;">
     
-    <button class="add-branch-btn" onclick="addNewNode('root')" title="Add Sub-branch">
-        <i class="fa-solid fa-plus"></i>
-    </button>
-</div>
+    <section id="knowledge-base-section">
+        <div class="kb-container">
+            <div class="kb-header">
+                <h3><i class="fa-solid fa-brain"></i> Agent Personality</h3>
+                <p>Configure how your AI thinks and speaks.</p>
+            </div>
+            
+            <label class="field-label">AI Display Name</label>
+            <input type="text" id="ai-name-input" class="persona-input" placeholder="e.g. Lumi2">
+
+            <label class="field-label">Instructional Logic</label>
+            <textarea id="ai-instructions" placeholder="Enter master system instructions..."></textarea>
+
+            <label class="field-label">Persona Matrix</label>
+            <div class="persona-matrix">
+                <button class="persona-btn" data-style="Professional">Professional</button>
+                <button class="persona-btn" data-style="Friendly">Friendly</button>
+                <button class="persona-btn" data-style="Witty">Witty</button>
+                <button class="persona-btn" data-style="Aggressive">Aggressive</button>
+            </div>
+
+            <div class="kb-form-actions" style="margin-top: 20px;">
+                <button id="add-kb-item" class="save-all-btn" onclick="saveKnowledge()">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Commit Changes
+                </button>
+            </div>
         </div>
-    </div>
-</section>
-<section id="knowledge-base-section">
-    <div class="kb-container">
-        <div class="kb-side-panel" style="flex: 1; max-width: 100%;">
-            <div class="kb-card">
-                <div class="kb-header">
-                    <h3><i class="fa-solid fa-brain"></i> Agent Personality</h3>
-                    <p>Configure how your AI speaks and behaves across all branches.</p>
-                </div>
+    </section>
 
-                <label class="field-label">AI Display Name</label>
-                <input type="text" id="ai-name-input" class="persona-input" placeholder="e.g. Vilto Assistant">
-
-                <label class="field-label">Master Instructions</label>
-                <textarea id="ai-instructions" placeholder="How should the AI act? (e.g. Professional, mysterious, helpful...)"></textarea>
-
-                <label class="field-label">Persona Matrix</label>
-                <div class="persona-matrix">
-                    <button class="persona-btn" data-style="minimalist">Minimalist</button>
-                    <button class="persona-btn" data-style="mysterious">Mysterious</button>
-                    <button class="persona-btn" data-style="bold">Bold</button>
-                    <button class="persona-btn" data-style="empathetic">Empathetic</button>
-                    <button class="persona-btn" data-style="expert">Expert</button>
-                    <button class="persona-btn" data-style="witty">Witty</button>
-                    <button class="persona-btn" data-style="formal">Formal</button>
-                    <button class="persona-btn" data-style="casual">Casual</button>
-                    <button class="persona-btn" data-style="luxury">Luxury</button>
-                    <button class="persona-btn" data-style="fast">High-Speed</button>
-                </div>
-
-                <div class="kb-form-actions" style="margin-top: 2rem;">
-                    <button id="add-kb-item" class="save-all-btn">
-                        <i class="fa-solid fa-cloud-arrow-up"></i> Commit Agent Brain
+    <section id="site-map-section">
+        <div class="tree-viewport">
+            <div class="canvas-controls">
+                <span class="canvas-hint">Drag to navigate • Click + to branch</span>
+                <button onclick="resetCanvas()"><i class="fa-solid fa-compress"></i> Recenter</button>
+            </div>
+            <div id="tree-canvas" class="tree-canvas">
+                <svg id="tree-svg"></svg>
+                <div class="tree-node" data-id="root" style="top: 100px; left: 100px;">
+                    <div class="node-main-info">
+                        <i class="fa-solid fa-house"></i>
+                        <input type="text" class="node-name" value="Main Greeting">
+                    </div>
+                    <button class="add-branch-btn" onclick="addNewNode('root')">
+                        <i class="fa-solid fa-plus"></i>
                     </button>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
+</div>
     </main>
 </div> 
     <div id="history-drawer" class="history-drawer">
@@ -165,6 +145,7 @@
     <div id="toast-container" class="toast-container"></div>
 </body>
 </html>
+
 
 
 
