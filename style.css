@@ -987,15 +987,15 @@ textarea:focus, .persona-input:focus {
     background: var(--primary-accent);
 }
 
-/* --- Professional Glass Navigation Switches --- */
+/* --- Master Style for All Action Buttons --- */
 .sidebar-action-btn {
-    background: rgba(255, 255, 255, 0.03); /* Base transparency */
+    background: rgba(255, 255, 255, 0.03);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    color: #cbd5e1; /* Subtle text color */
+    color: #cbd5e1;
     padding: 12px 20px;
-    border-radius: 12px; /* Professional slightly rounded edges */
+    border-radius: 12px;
     font-size: 0.85rem;
     font-weight: 500;
     cursor: pointer;
@@ -1003,12 +1003,13 @@ textarea:focus, .persona-input:focus {
     align-items: center;
     gap: 12px;
     transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-    width: 100%; /* Spans sidebar width */
+    width: 100%;
     position: relative;
     overflow: hidden;
+    margin-bottom: 10px; /* Spacing between buttons */
 }
 
-/* The Hover Glow Logic */
+/* --- Unified Hover Animation & Glow --- */
 .sidebar-action-btn:hover {
     border-color: var(--primary-accent);
     background: rgba(99, 102, 241, 0.08); 
@@ -1018,7 +1019,12 @@ textarea:focus, .persona-input:focus {
     transform: translateY(-2px);
 }
 
-/* The Inner Border "Glass" Highlight */
+/* --- Tactile Click Feedback --- */
+.sidebar-action-btn:active {
+    transform: scale(0.97);
+}
+
+/* --- Professional Glass Edge (Highlight) --- */
 .sidebar-action-btn::after {
     content: '';
     position: absolute;
@@ -1026,29 +1032,15 @@ textarea:focus, .persona-input:focus {
     background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
 }
 
-/* Active State for the Toggle */
-/* 1. This handles how the button looks when "Active" (but not hovered) */
+/* --- State-Specific logic (When in Edit Mode) --- */
+/* Note: We removed the constant glow from here as requested */
 .editing-mode #scroll-to-kb {
     background: var(--primary-accent) !important;
     border-color: var(--primary-accent);
     color: white !important;
-    box-shadow: none; /* Remove the constant glow */
 }
 
-/* 2. This adds the glow BACK only when you hover over the active button */
+/* This allows the active button to still glow on hover specifically */
 .editing-mode #scroll-to-kb:hover {
-    box-shadow: 0 0 30px rgba(99, 102, 241, 0.6);
-    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 0 30px rgba(99, 102, 241, 0.5);
 }
-
-/* Click Feedback */
-.sidebar-action-btn:active {
-    transform: scale(0.97);
-}
-
-.secondary-action:hover {
-    border-color: rgba(255, 255, 255, 0.4); /* White glow instead of Purple */
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
-}
-
-
