@@ -539,79 +539,50 @@ viewport.addEventListener('mousemove', (e) => {
  * 1. The Connector Logic
  */
 function drawTreeConnections() {
-    const svg = document.getElementById('tree-svg'); // 1. Define it first
+    const svg = document.getElementById('tree-svg');
     const canvas = document.querySelector('.tree-canvas');
-    
-    if (!svg || !canvas) return; // 2. Safety check
+    if (!svg || !canvas) return;
 
-    // 3. The "Ghost Node" Fix: Match SVG size to the scrollable canvas area
     svg.setAttribute('width', canvas.scrollWidth);
     svg.setAttribute('height', canvas.scrollHeight);
-    
-    svg.innerHTML = ''; // 4. Clear old lines
+    svg.innerHTML = ''; 
 
     const nodes = document.querySelectorAll('.tree-node');
+    const canvasRect = canvas.getBoundingClientRect();
+
     nodes.forEach(node => {
         const nodeId = node.dataset.id;
         const children = document.querySelectorAll(`[data-parent="${nodeId}"]`);
 
         children.forEach(child => {
-            // Calculate center-bottom of parent
-            const startX = node.offsetLeft + (node.offsetWidth / 2);
-            const startY = node.offsetTop + node.offsetHeight;
-            
-            // Calculate center-top of child
-            const endX = child.offsetLeft + (child.offsetWidth / 2);
-            const endY = child.offsetTop;
+            const pRect = node.getBoundingClientRect();
+            const cRect = child.getBoundingClientRect();
 
-            // Create a curved Cubic Bezier path
-            const cpY = startY + (endY - startY) / 1.5; 
+            // Calculate coordinates relative to the canvas
+            const startX = (pRect.left - canvasRect.left) + (pRect.width / 2);
+            const startY = (pRect.top - canvasRect.top) + pRect.height;
+            
+            const endX = (cRect.left - canvasRect.left) + (cRect.width / 2);
+            const endY = (cRect.top - canvasRect.top);
+
+            // Smooth Railway Curve
+            const cpY = startY + (endY - startY) / 2; 
             const d = `M ${startX} ${startY} C ${startX} ${cpY}, ${endX} ${cpY}, ${endX} ${endY}`;
 
             const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
             path.setAttribute("d", d);
-            path.setAttribute("fill", "none");
-            path.setAttribute("stroke", "var(--primary-accent)");
-            path.setAttribute("stroke-width", "2");
-            path.setAttribute("stroke-dasharray", "5,5");
+            path.style.stroke = "var(--primary-accent)";
+            path.style.strokeWidth = "2";
+            path.style.fill = "none";
             path.style.opacity = "0.4";
+            path.setAttribute("stroke-dasharray", "8");
             
             svg.appendChild(path);
         });
     });
 }
 
-/**
- * 2. Draggable Logic with Initialization
- */
-function makeDraggable(el) {
-    let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-    el.onmousedown = (e) => {
-        if (['INPUT', 'TEXTAREA', 'BUTTON', 'I'].includes(e.target.tagName)) return;
-        e.preventDefault();
-        pos3 = e.clientX;
-        pos4 = e.clientY;
-        document.onmouseup = () => {
-            document.onmouseup = null;
-            document.onmousemove = null;
-            el.style.zIndex = 10;
-        };
-        document.onmousemove = (ev) => {
-            pos1 = pos3 - ev.clientX;
-            pos2 = pos4 - ev.clientY;
-            pos3 = ev.clientX;
-            pos4 = ev.clientY;
-            el.style.top = (el.offsetTop - pos2) + "px";
-            el.style.left = (el.offsetLeft - pos1) + "px";
-            drawTreeConnections();
-        };
-        el.style.zIndex = 1000;
-    };
-}
-
-// Global Initialization Function
 window.initCanvas = () => {
-    document.querySelectorAll('.tree-node').forEach(makeDraggable);
     drawTreeConnections();
 };
 
@@ -621,50 +592,29 @@ document.getElementById("scroll-to-kb").addEventListener('click', () => {
 });
 
 window.addNewNode = (parentId) => {
-    const container = document.getElementById("tree-canvas");
-    if (!container) return;
+    // 1. Find the parent node's group
+    const parentNode = document.querySelector(`[data-id="${parentId}"]`);
+    if (!parentNode) return;
+
+    // 2. Find or create the children container for this parent
+    let childrenContainer = parentNode.parentElement.querySelector('.children-container');
+    if (!childrenContainer) {
+        childrenContainer = document.createElement('div');
+        childrenContainer.className = 'children-container';
+        parentNode.parentElement.appendChild(childrenContainer);
+    }
 
     const id = "node-" + Date.now();
-    const existingChildren = document.querySelectorAll(`[data-parent="${parentId}"]`);
-    const childCount = existingChildren.length;
+    
+    // 3. Create the Node Group (Wrapper for node + its future children)
+    const newNodeGroup = document.createElement("div");
+    newNodeGroup.className = "node-group";
 
+    // 4. Create the Node itself
     const newNode = document.createElement("div");
     newNode.className = "tree-node";
     newNode.dataset.id = id;
     newNode.dataset.parent = parentId;
-
-    const parentNode = document.querySelector(`[data-id="${parentId}"]`);
-    
-    if (parentNode) {
-        // --- 1. CALCULATE DEPTH ---
-        let depth = 0;
-        let tempParent = parentNode;
-        while(tempParent && tempParent.dataset.parent) {
-            tempParent = document.querySelector(`[data-id="${tempParent.dataset.parent}"]`);
-            depth++;
-        }
-
-        // --- 2. DEFINE COLORS BY DEPTH ---
-        const colors = ["#6366f1", "#10b981", "#f59e0b", "#ef4444", "#a855f7"];
-        const nodeColor = colors[depth % colors.length];
-        newNode.style.borderLeft = `4px solid ${nodeColor}`; // Visual accent
-
-        // --- 3. POSITIONING LOGIC ---
-        if (depth === 0) {
-            // Level 1: Horizontal Growth from Root
-            newNode.style.top = (parentNode.offsetTop + 250) + "px";
-            newNode.style.left = (parentNode.offsetLeft + (childCount * 300)) + "px";
-        } else {
-            // Level 2+: Vertical Cascade with Indentation
-            // Push 40px to the right for every level of depth
-            const indentation = 40; 
-            const verticalSpacing = 120;
-            
-            newNode.style.top = (parentNode.offsetTop + (childCount + 1) * verticalSpacing) + "px";
-            newNode.style.left = (parentNode.offsetLeft + indentation) + "px";
-            newNode.style.width = (260 - (depth * 20)) + "px"; // Slightly narrower as they get deeper
-        }
-    }
 
     newNode.innerHTML = `
         <div class="node-content">
@@ -678,7 +628,10 @@ window.addNewNode = (parentId) => {
         </button>
     `;
 
-    container.appendChild(newNode);
-    makeDraggable(newNode);
-    drawTreeConnections(); 
+    // 5. Build the hierarchy and append
+    newNodeGroup.appendChild(newNode);
+    childrenContainer.appendChild(newNodeGroup);
+
+    // Redraw lines
+    setTimeout(drawTreeConnections, 50); 
 };
