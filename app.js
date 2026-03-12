@@ -558,24 +558,30 @@ function drawTreeConnections() {
             const pRect = node.getBoundingClientRect();
             const cRect = child.getBoundingClientRect();
 
-            // Calculate coordinates relative to the canvas
-            const startX = (pRect.left - canvasRect.left) + (pRect.width / 2);
-            const startY = (pRect.top - canvasRect.top) + pRect.height;
+            // 1. START at the Child (Top-Center)
+            const startX = (cRect.left - canvasRect.left) + (cRect.width / 2);
+            const startY = (cRect.top - canvasRect.top); 
             
-            const endX = (cRect.left - canvasRect.left) + (cRect.width / 2);
-            const endY = (cRect.top - canvasRect.top);
+            // 2. END at the Parent (Bottom-Center)
+            const endX = (pRect.left - canvasRect.left) + (pRect.width / 2);
+            const endY = (pRect.top - canvasRect.top) + pRect.height; 
 
-            // Smooth Railway Curve
+            // 3. Create the Curve (Control point stays in the middle)
             const cpY = startY + (endY - startY) / 2; 
             const d = `M ${startX} ${startY} C ${startX} ${cpY}, ${endX} ${cpY}, ${endX} ${endY}`;
 
             const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
             path.setAttribute("d", d);
+            
+            // Apply the styles and the animation class
+            path.classList.add("logic-flow-path"); 
             path.style.stroke = "var(--primary-accent)";
             path.style.strokeWidth = "2";
             path.style.fill = "none";
-            path.style.opacity = "0.4";
-            path.setAttribute("stroke-dasharray", "8");
+            path.style.opacity = "0.6";
+            
+            // dasharray: first number is dot length, second is gap
+            path.setAttribute("stroke-dasharray", "4, 12"); 
             
             svg.appendChild(path);
         });
@@ -643,3 +649,4 @@ window.changeNodeShade = (nodeId, color) => {
     // Add the new one
     node.classList.add(`${color}-shade`);
 };
+
