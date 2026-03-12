@@ -1102,3 +1102,25 @@ textarea:focus, .persona-input:focus {
     font-size: 0.6rem;
     transition: var(--transition);
 }
+
+/* --- Color Picker Dots --- */
+.node-color-picker {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.node-color-picker .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.node-color-picker .dot:hover { transform: scale(1.3); }
+.dot.green { background: #10b981; }
+.dot.yellow { background: #f59e0b; }
+.dot.red { background: #ef4444; }
