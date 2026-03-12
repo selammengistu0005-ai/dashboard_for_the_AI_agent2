@@ -1038,3 +1038,9 @@ textarea:focus, .persona-input:focus {
 .sidebar-action-btn:active {
     transform: scale(0.97);
 }
+
+.secondary-action:hover {
+    border-color: rgba(255, 255, 255, 0.4); /* White glow instead of Purple */
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+}
+
