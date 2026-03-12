@@ -554,21 +554,29 @@ function drawTreeConnections() {
         const nodeId = node.dataset.id;
         const children = document.querySelectorAll(`[data-parent="${nodeId}"]`);
 
+        // --- REPLACE THE MATH INSIDE THE children.forEach LOOP ---
+
         children.forEach(child => {
             const pRect = node.getBoundingClientRect();
             const cRect = child.getBoundingClientRect();
 
+            // FIX: Add window.scroll to get absolute page coordinates, 
+            // then subtract canvas offset to get local SVG coordinates.
+            const scrollX = window.scrollX;
+            const scrollY = window.scrollY;
+
             // 1. START at the Child (Top-Center)
-            const startX = (cRect.left - canvasRect.left) + (cRect.width / 2);
-            const startY = (cRect.top - canvasRect.top); 
+            const startX = (cRect.left + scrollX) - (canvasRect.left + scrollX) + (cRect.width / 2);
+            const startY = (cRect.top + scrollY) - (canvasRect.top + scrollY); 
             
             // 2. END at the Parent (Bottom-Center)
-            const endX = (pRect.left - canvasRect.left) + (pRect.width / 2);
-            const endY = (pRect.top - canvasRect.top) + pRect.height; 
+            const endX = (pRect.left + scrollX) - (canvasRect.left + scrollX) + (pRect.width / 2);
+            const endY = (pRect.top + scrollY) - (canvasRect.top + scrollY) + pRect.height; 
 
-            // 3. Create the Curve (Control point stays in the middle)
+            // 3. Create the Curve
             const cpY = startY + (endY - startY) / 2; 
             const d = `M ${startX} ${startY} C ${startX} ${cpY}, ${endX} ${cpY}, ${endX} ${endY}`;
+// --- END OF REPLACEMENT ---
 
             const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
             path.setAttribute("d", d);
@@ -659,5 +667,6 @@ window.changeNodeShade = (nodeId, color) => {
     // Add the new one
     node.classList.add(`${color}-shade`);
 };
+
 
 
