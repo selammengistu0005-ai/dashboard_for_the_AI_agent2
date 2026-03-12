@@ -619,8 +619,13 @@ window.addNewNode = (parentId) => {
     newNode.innerHTML = `
         <div class="node-content">
             <div class="node-main-info">
-                <i class="fa-solid fa-link"></i>
+                <i class="fa-solid fa-circle node-status-dot"></i>
                 <input type="text" class="node-name" placeholder="Branch Label...">
+            </div>
+            <div class="node-color-picker">
+                <span class="dot green" onclick="this.closest('.tree-node').className='tree-node green-shade'"></span>
+                <span class="dot yellow" onclick="this.closest('.tree-node').className='tree-node yellow-shade'"></span>
+                <span class="dot red" onclick="this.closest('.tree-node').className='tree-node red-shade'"></span>
             </div>
         </div>
         <button class="add-branch-btn" onclick="addNewNode('${id}')">
@@ -635,3 +640,4 @@ window.addNewNode = (parentId) => {
     // Redraw lines
     setTimeout(drawTreeConnections, 50); 
 };
+
