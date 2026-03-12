@@ -625,8 +625,6 @@ window.addNewNode = (parentId) => {
     if (!container) return;
 
     const id = "node-" + Date.now();
-    
-    // 1. Count how many siblings this new node will have
     const existingChildren = document.querySelectorAll(`[data-parent="${parentId}"]`);
     const childCount = existingChildren.length;
 
@@ -635,17 +633,28 @@ window.addNewNode = (parentId) => {
     newNode.dataset.id = id;
     newNode.dataset.parent = parentId;
 
-    // 2. IMPROVED ALIGNMENT LOGIC
     const parentNode = document.querySelector(`[data-id="${parentId}"]`);
+    
     if (parentNode) {
-        // Vertical gap remains 250px
-        newNode.style.top = (parentNode.offsetTop + 250) + "px";
-        
-        // Horizontal logic: 
-        // Start at parent's Left position, then move right by (300px * number of children)
-        // 300px accounts for node width (260px) + gap (40px)
-        const horizontalOffset = childCount * 300;
-        newNode.style.left = (parentNode.offsetLeft + horizontalOffset) + "px"; 
+        // Is the parent the Root? (Root has no data-parent attribute)
+        const isParentRoot = !parentNode.dataset.parent;
+
+        if (isParentRoot) {
+            // Level 1: Grow Horizontally
+            newNode.style.top = (parentNode.offsetTop + 250) + "px";
+            newNode.style.left = (parentNode.offsetLeft + (childCount * 300)) + "px";
+        } else {
+            // Level 2+: Grow Vertically (Stacked)
+            // Position it below the previous sibling, or 120px below the parent if it's the first child
+            const verticalOffset = childCount === 0 ? 120 : (childCount * 110) + 120;
+            
+            newNode.style.top = (parentNode.offsetTop + verticalOffset) + "px";
+            // Keep the same horizontal line as the parent (Strict alignment)
+            newNode.style.left = parentNode.offsetLeft + "px";
+            
+            // Subtle visual cue: make grandchild nodes slightly narrower or different style
+            newNode.style.width = "220px"; 
+        }
     } else {
         newNode.style.top = "100px";
         newNode.style.left = "100px";
@@ -654,8 +663,8 @@ window.addNewNode = (parentId) => {
     newNode.innerHTML = `
         <div class="node-content">
             <div class="node-main-info">
-                <i class="fa-solid fa-code-branch"></i>
-                <input type="text" class="node-name" placeholder="New Branch Name...">
+                <i class="fa-solid ${!parentNode.dataset.parent ? 'fa-folder-tree' : 'fa-leaf'}"></i>
+                <input type="text" class="node-name" placeholder="Branch Label...">
             </div>
         </div>
         <button class="add-branch-btn" onclick="addNewNode('${id}')">
