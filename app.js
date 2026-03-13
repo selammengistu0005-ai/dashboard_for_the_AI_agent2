@@ -225,13 +225,16 @@ async function saveKnowledge() {
     try {
         const batch = writeBatch(db);
 
-        // 1. Update Main Settings
+        // 1. Update Main Settings & Tree Structure
         const agentRef = doc(db, "agents", currentAgent);
+        const visualTree = getTreeData(); // Get the current tree state
+        
         batch.update(agentRef, {
             aiDisplayName: aiName,
             personas: activePersonas,
             systemInstructions: systemInstructions,
-            lastConfigUpdate: new Date()
+            lastConfigUpdate: new Date(),
+            knowledgeTree: visualTree // This saves your visual map layout!
         });
 
         // 2. Archive to History
@@ -244,7 +247,7 @@ async function saveKnowledge() {
             });
         }
 
-        // 3. Save New Inventory Items
+        // 3. Save New Inventory Items (from the list rows)
         branches.forEach((branch) => {
             const name = branch.querySelector(".kb-name").value.trim();
             const price = branch.querySelector(".kb-price").value;
@@ -262,9 +265,8 @@ async function saveKnowledge() {
             }
         });
 
-        await batch.commit(); // Sends EVERYTHING in one shot!
-
-        notify("Sync Complete", "Agent updated and live.", "success");
+        await batch.commit();
+        notify("Sync Complete", "Agent brain and visual map updated.", "success");
         
         // Reset branches UI
         document.getElementById("kb-branches-container").innerHTML = `
@@ -360,17 +362,32 @@ if (addBranchBtn) {
     };
 }
 
+let isInitialLoad = true; // Add this variable above the function
+
 function listenToSettings(agentId) {
     onSnapshot(doc(db, "agents", agentId), (docSnap) => {
         if (docSnap.exists()) {
             const settings = docSnap.data();
-            document.getElementById("ai-name-input").value = settings.aiDisplayName || "";
-            document.getElementById("ai-instructions").value = settings.systemInstructions || "";
+            
+            // Only update the name/instructions if the user isn't currently typing (prevents cursor jumping)
+            if (document.activeElement !== document.getElementById("ai-name-input")) {
+                document.getElementById("ai-name-input").value = settings.aiDisplayName || "";
+            }
+            if (document.activeElement !== document.getElementById("ai-instructions")) {
+                document.getElementById("ai-instructions").value = settings.systemInstructions || "";
+            }
             
             const savedStyles = settings.personas || [];
             document.querySelectorAll(".persona-btn").forEach(btn => {
                 btn.classList.toggle("active", savedStyles.includes(btn.dataset.style));
             });
+
+            // GATEKEEPER: Only rebuild the visual tree on the first load
+            // This prevents the map from "refreshing" while you are editing it
+            if (isInitialLoad && settings.knowledgeTree) {
+                rebuildTreeFromData(settings.knowledgeTree);
+                isInitialLoad = false; 
+            }
         }
     });
 }
@@ -532,15 +549,15 @@ viewport.addEventListener('mousemove', (e) => {
 
 // --- 🌳 THE SITE MAP CANVAS ENGINE (OPTIMIZED) ---
 
-/**
- * 1. The Connector Logic
- */
-// --- UPDATE THIS SECTION IN drawTreeConnections ---
 function drawTreeConnections() {
     const svg = document.getElementById('tree-svg');
     const canvas = document.querySelector('.tree-canvas');
     if (!svg || !canvas) return;
-
+    const scrollW = canvas.scrollWidth;
+    const scrollH = canvas.scrollHeight;
+    svg.setAttribute('width', scrollW);
+    svg.setAttribute('height', scrollH);
+    
     // 1. Match SVG size to the TOTAL scrollable content of the canvas
     const scrollW = canvas.scrollWidth;
     const scrollH = canvas.scrollHeight;
@@ -561,17 +578,11 @@ function drawTreeConnections() {
         children.forEach(child => {
             const pRect = node.getBoundingClientRect();
             const cRect = child.getBoundingClientRect();
-
-            // CORRECT MATH:
-            // (Node Position - Canvas Top-Left) + Current Scroll Amount
-            
-            // Start (at Child Top)
             const startX = (cRect.left - canvasRect.left) + canvas.scrollLeft + (cRect.width / 2);
             const startY = (cRect.top - canvasRect.top) + canvas.scrollTop; 
-            
-            // End (at Parent Bottom)
             const endX = (pRect.left - canvasRect.left) + canvas.scrollLeft + (pRect.width / 2);
             const endY = (pRect.top - canvasRect.top) + canvas.scrollTop + pRect.height; 
+
             const cpY = startY + (endY - startY) / 2; 
             const d = `M ${startX} ${startY} C ${startX} ${cpY}, ${endX} ${cpY}, ${endX} ${endY}`;
 
@@ -650,8 +661,7 @@ window.addNewNode = (parentId) => {
             drawTreeConnections();
         });
     });
-}; // Removed extra indentation and trailing semicolon issues here
-
+};
 // Add this helper function below addNewNode
 window.changeNodeShade = (nodeId, color) => {
     const node = document.querySelector(`[data-id="${nodeId}"]`);
@@ -692,9 +702,70 @@ if (treeCanvasElement) {
     canvasObserver.observe(treeCanvasElement);
 }
 
+// Helper to extract the visual tree into a structured object for Firebase
+function getTreeData() {
+    const nodes = document.querySelectorAll('.tree-node');
+    const treeMap = [];
+    
+    nodes.forEach(node => {
+        const nameInput = node.querySelector('.node-name');
+        treeMap.push({
+            id: node.dataset.id,
+            parentId: node.dataset.parent || null,
+            label: nameInput ? nameInput.value.trim() : "Untitled",
+            shade: node.classList.contains('green-shade') ? 'green' : 
+                   node.classList.contains('yellow-shade') ? 'yellow' : 
+                   node.classList.contains('red-shade') ? 'red' : 'default'
+        });
+    });
+    return treeMap;
+}
 
 
+function rebuildTreeFromData(treeData) {
+    if (!treeData || !treeData.length) return;
 
+    const container = document.querySelector('.tree-canvas');
+    // Keep the root, but clear everything else to rebuild
+    const rootGroup = container.querySelector('.node-group');
+    const rootChildrenContainer = rootGroup.querySelector('.children-container');
+    if (rootChildrenContainer) rootChildrenContainer.innerHTML = '';
 
+    // Sort by depth or parentage logic if necessary, but usually, 
+    // we can just map them. For a simple implementation:
+    const nodeMap = {};
+    
+    treeData.forEach(item => {
+        if (item.parentId === null) {
+            // Update the existing root
+            const root = document.querySelector('.tree-node.depth-1');
+            if (root) {
+                root.querySelector('.node-name').value = item.label;
+                changeNodeShade(root.dataset.id, item.shade);
+            }
+        } else {
+            // It's a child. We use your existing addNewNode logic 
+            // but modified to accept data.
+            renderSavedNode(item);
+        }
+    });
+    setTimeout(drawTreeConnections, 500);
+}
+
+function renderSavedNode(data) {
+    window.addNewNode(data.parentId); 
+    
+    // Give the DOM a millisecond to breathe
+    setTimeout(() => {
+        const allNodes = document.querySelectorAll('.tree-node');
+        const newNode = allNodes[allNodes.length - 1];
+        if (newNode) {
+            newNode.dataset.id = data.id;
+            const nameInput = newNode.querySelector('.node-name');
+            if (nameInput) nameInput.value = data.label;
+            window.changeNodeShade(data.id, data.shade);
+        }
+    }, 10);
+}
 
 
