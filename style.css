@@ -1003,8 +1003,9 @@ textarea:focus, .persona-input:focus {
     display: flex;
     flex-direction: column;
     align-items: center;
-    position: absolute; /* Changed from relative */
+    position: relative; 
     width: max-content;
+    transition: var(--transition);
 }
 
 .children-container {
@@ -1167,10 +1168,10 @@ textarea:focus, .persona-input:focus {
 }
 
 .logic-flow-bg {
-    stroke: #1e40af; /* The Deep Blue solid line */
-    stroke-width: 3;
+    stroke: #1e40af; /* Deep Blue */
+    stroke-width: 4; /* Increased from 3 */
     fill: none;
-    opacity: 0.8;
+    opacity: 0.6; /* Softened slightly */
 }
 
 @keyframes flow {
@@ -1198,4 +1199,5 @@ textarea:focus, .persona-input:focus {
 .node-group:has(.delete-node-btn:hover) > .tree-node {
     z-index: 10;
 }
+
 
