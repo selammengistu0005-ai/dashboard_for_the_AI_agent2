@@ -636,24 +636,31 @@ window.addNewNode = (parentId) => {
     const parentDepth = parseInt(parentNode.className.match(/depth-(\d+)/)?.[1] || 1);
     const newDepth = Math.min(parentDepth + 1, 4); // Cap at depth-4 for CSS
     
-    newNodeGroup.innerHTML = `
-        <div class="tree-node depth-${newDepth}" data-id="${id}" data-parent="${parentId}">
-            <div class="node-content">
-                <div class="node-main-info">
-                    <i class="fa-solid fa-circle node-status-dot"></i>
-                    <input type="text" class="node-name" placeholder="Branch Label...">
-                </div>
-                <div class="node-color-picker">
-                    <span class="dot green" onclick="changeNodeShade('${id}', 'green')"></span>
-                    <span class="dot yellow" onclick="changeNodeShade('${id}', 'yellow')"></span>
-                    <span class="dot red" onclick="changeNodeShade('${id}', 'red')"></span>
-                </div>
+    // Inside your addNewNode function...
+newNodeGroup.innerHTML = `
+    <div class="tree-node depth-${newDepth}" data-id="${id}" data-parent="${parentId}">
+        <div class="node-content">
+            <div class="node-main-info">
+                <i class="fa-solid fa-circle node-status-dot"></i>
+                <input type="text" class="node-name" placeholder="Branch Label...">
             </div>
+            <div class="node-color-picker">
+                <span class="dot green" onclick="changeNodeShade('${id}', 'green')"></span>
+                <span class="dot yellow" onclick="changeNodeShade('${id}', 'yellow')"></span>
+                <span class="dot red" onclick="changeNodeShade('${id}', 'red')"></span>
+            </div>
+        </div>
+        
+        <div class="node-actions">
             <button class="add-branch-btn" onclick="addNewNode('${id}')">
                 <i class="fa-solid fa-plus"></i>
             </button>
+            <button class="delete-node-btn" onclick="deleteNode('${id}')">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
         </div>
-    `;
+    </div>
+`;
 
     childrenContainer.appendChild(newNodeGroup);
     
@@ -702,6 +709,7 @@ const treeCanvasElement = document.querySelector('.tree-canvas');
 if (treeCanvasElement) {
     canvasObserver.observe(treeCanvasElement);
 }
+
 
 
 
