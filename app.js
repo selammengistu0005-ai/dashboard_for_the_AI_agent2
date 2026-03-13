@@ -544,13 +544,11 @@ function drawTreeConnections() {
     const canvas = document.querySelector('.tree-canvas');
     if (!svg || !canvas) return;
 
-    // Force SVG to cover the entire scrollable area of the canvas
+    // 1. Match SVG size to the TOTAL scrollable content of the canvas
     const scrollW = canvas.scrollWidth;
     const scrollH = canvas.scrollHeight;
     svg.setAttribute('width', scrollW);
     svg.setAttribute('height', scrollH);
-    svg.style.width = scrollW + "px";
-    svg.style.height = scrollH + "px";
     
     svg.innerHTML = ''; 
 
@@ -561,41 +559,31 @@ function drawTreeConnections() {
         const nodeId = node.dataset.id;
         const children = document.querySelectorAll(`[data-parent="${nodeId}"]`);
 
-        // --- REPLACE THE MATH INSIDE THE children.forEach LOOP ---
-
         children.forEach(child => {
             const pRect = node.getBoundingClientRect();
             const cRect = child.getBoundingClientRect();
 
-            // FIX: Add window.scroll to get absolute page coordinates, 
-            // then subtract canvas offset to get local SVG coordinates.
-            const scrollX = window.scrollX;
-            const scrollY = window.scrollY;
-
-            // 1. START at the Child (Top-Center)
-            const startX = (cRect.left + scrollX) - (canvasRect.left + scrollX) + (cRect.width / 2);
-            const startY = (cRect.top + scrollY) - (canvasRect.top + scrollY); 
+            // 2. MATH FIX: Relative to canvas + Current Scroll Position
+            // Start (at Child Top)
+            const startX = (cRect.left - canvasRect.left) + canvas.scrollLeft + (cRect.width / 2);
+            const startY = (cRect.top - canvasRect.top) + canvas.scrollTop; 
             
-            // 2. END at the Parent (Bottom-Center)
-            const endX = (pRect.left + scrollX) - (canvasRect.left + scrollX) + (pRect.width / 2);
-            const endY = (pRect.top + scrollY) - (canvasRect.top + scrollY) + pRect.height; 
+            // End (at Parent Bottom)
+            const endX = (pRect.left - canvasRect.left) + canvas.scrollLeft + (pRect.width / 2);
+            const endY = (pRect.top - canvasRect.top) + canvas.scrollTop + pRect.height; 
 
-            // 3. Create the Curve
+            // 3. Create the Bezier Curve
             const cpY = startY + (endY - startY) / 2; 
             const d = `M ${startX} ${startY} C ${startX} ${cpY}, ${endX} ${cpY}, ${endX} ${endY}`;
-// --- END OF REPLACEMENT ---
 
             const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
             path.setAttribute("d", d);
-            
-            // Apply the styles and the animation class
             path.classList.add("logic-flow-path"); 
+            
+            // Optional: Re-applying inline styles if your CSS class doesn't cover everything
             path.style.stroke = "var(--primary-accent)";
             path.style.strokeWidth = "2";
             path.style.fill = "none";
-            path.style.opacity = "0.6";
-            
-            // dasharray: first number is dot length, second is gap
             path.setAttribute("stroke-dasharray", "4, 12"); 
             
             svg.appendChild(path);
@@ -664,11 +652,12 @@ newNodeGroup.innerHTML = `
 
     childrenContainer.appendChild(newNodeGroup);
     
-    // Wait for the flexbox to expand the width before drawing lines
+    // Use requestAnimationFrame to wait for the DOM to paint the new size
     requestAnimationFrame(() => {
-        drawTreeConnections();
+        requestAnimationFrame(() => {
+            drawTreeConnections();
+        });
     });
-};
 
 // Add this helper function below addNewNode
 window.changeNodeShade = (nodeId, color) => {
@@ -709,6 +698,7 @@ const treeCanvasElement = document.querySelector('.tree-canvas');
 if (treeCanvasElement) {
     canvasObserver.observe(treeCanvasElement);
 }
+
 
 
 
