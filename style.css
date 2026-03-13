@@ -705,13 +705,12 @@ textarea:focus, .persona-input:focus {
 .tree-viewport:active { cursor: grabbing; }
 
 .tree-canvas {
-    display: flex;          /* Changed from inline-flex */
-    flex-direction: column;
-    align-items: center;
-    padding: 200px;
-    min-width: 100%;
-    min-height: 100%;
-    transform-origin: center top; 
+    position: relative;
+    width: 5000px;
+    height: 5000px;
+    background: transparent;
+    transform-origin: 0 0; /* Critical for zoom/math */
+    overflow: visible;
 }
 
 #tree-svg {
@@ -1000,28 +999,23 @@ textarea:focus, .persona-input:focus {
     to { transform: rotate(360deg); }
 }
 
-/* 1. The Wrapper for the whole branch */
 .node-group {
     display: flex;
     flex-direction: column;
-    align-items: center;    /* Keeps parent centered above children */
-    position: relative;
-    flex-shrink: 0;
-    /* Removed absolute from here if it's nested; keep it only for the ROOT group */
+    align-items: center;
+    position: absolute; /* Changed from relative */
+    width: max-content;
 }
 
-/* 2. THE KEY FIX: The Children Container */
 .children-container {
     display: flex;
-    flex-direction: row;    /* Children spread side-by-side */
-    justify-content: center;
+    flex-direction: row;
+    justify-content: flex-start; /* Do not use center here */
     align-items: flex-start;
-    gap: 100px;             /* INCREASED: More horizontal room for lines */
-    padding-top: 80px;      /* CRITICAL: Creates the vertical "Safe Zone" */
-    width: max-content;     /* Allows tree to grow wide without wrapping */
-    min-width: 100%;
+    gap: 80px;
+    padding-top: 100px;
+    width: max-content;
     position: relative;
-    z-index: 1;
 }
 
 /* 3. The Node Frame */
@@ -1034,15 +1028,14 @@ textarea:focus, .persona-input:focus {
     overflow: visible;     
 }
 
-/* 4. The Connector Line Area */
 #tree-svg {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 5000px; /* Match canvas size */
+    height: 5000px; /* Match canvas size */
     pointer-events: none;
-    z-index: 5;            /* Sits between the container and the nodes */
+    z-index: 0;
 }
 
 /* Use font-size or opacity instead of transform to avoid hover conflicts */
@@ -1205,3 +1198,4 @@ textarea:focus, .persona-input:focus {
 .node-group:has(.delete-node-btn:hover) > .tree-node {
     z-index: 10;
 }
+
