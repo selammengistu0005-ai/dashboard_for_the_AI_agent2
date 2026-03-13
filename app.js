@@ -286,6 +286,7 @@ async function saveKnowledge() {
     }
 }
 window.saveKnowledge = saveKnowledge;
+window.getTreeData = getTreeData;
 
 function loadKnowledge(agentId) {
     // 1. Kill the old listener if it exists before starting a new one
@@ -715,34 +716,31 @@ function getTreeData() {
     return treeMap;
 }
 
-
 function rebuildTreeFromData(treeData) {
     if (!treeData || !treeData.length) return;
 
-    const container = document.querySelector('.tree-canvas');
-    // Keep the root, but clear everything else to rebuild
-    const rootGroup = container.querySelector('.node-group');
-    const rootChildrenContainer = rootGroup.querySelector('.children-container');
-    if (rootChildrenContainer) rootChildrenContainer.innerHTML = '';
-
-    // Sort by depth or parentage logic if necessary, but usually, 
-    // we can just map them. For a simple implementation:
-    const nodeMap = {};
-    
-    treeData.forEach(item => {
-        if (item.parentId === null) {
-            // Update the existing root
-            const root = document.querySelector('.tree-node.depth-1');
-            if (root) {
-                root.querySelector('.node-name').value = item.label;
-                changeNodeShade(root.dataset.id, item.shade);
-            }
-        } else {
-            // It's a child. We use your existing addNewNode logic 
-            // but modified to accept data.
-            renderSavedNode(item);
+    // 1. Update the Root Node first (it always exists)
+    const rootData = treeData.find(item => item.parentId === null);
+    if (rootData) {
+        const rootNode = document.querySelector('.tree-node.depth-1');
+        if (rootNode) {
+            rootNode.dataset.id = rootData.id; // Sync the ID
+            rootNode.querySelector('.node-name').value = rootData.label;
+            window.changeNodeShade(rootData.id, rootData.shade);
         }
+    }
+
+    // 2. Sort data by depth or simply loop multiple times to ensure parents exist
+    // A simple trick: render in the order they appear in the array, 
+    // but filter out the root.
+    const children = treeData.filter(item => item.parentId !== null);
+    
+    // We sort by ID length or similar if needed, but usually, 
+    // the saved order from getTreeData works if we use a simple loop.
+    children.forEach(item => {
+        renderSavedNode(item);
     });
+
     setTimeout(drawTreeConnections, 500);
 }
 
@@ -791,6 +789,10 @@ function renderSavedNode(data) {
     childrenContainer.appendChild(newNodeGroup);
     window.changeNodeShade(data.id, data.shade);
 }
+// Exporting functions to window so HTML onclick attributes can find them
+window.deleteNode = deleteNode;
+window.changeNodeShade = changeNodeShade;
+window.addNewNode = addNewNode;
 
 
 
