@@ -432,9 +432,6 @@ function notify(title, message, type = "success") {
 }
 
 
-
-// Fetch and Display History
-// Fetch and Display History
 async function loadHistory(agentId) {
     const historyList = document.getElementById("history-list");
     const hQuery = query(collection(db, "agents", agentId, "history"), orderBy("timestamp", "desc"));
@@ -559,11 +556,15 @@ function drawTreeConnections() {
         const nodeId = node.dataset.id;
         const children = document.querySelectorAll(`[data-parent="${nodeId}"]`);
 
+        // --- FIND THIS SECTION IN app.js (around line 423) ---
+
         children.forEach(child => {
             const pRect = node.getBoundingClientRect();
             const cRect = child.getBoundingClientRect();
 
-            // 2. MATH FIX: Relative to canvas + Current Scroll Position
+            // CORRECT MATH:
+            // (Node Position - Canvas Top-Left) + Current Scroll Amount
+            
             // Start (at Child Top)
             const startX = (cRect.left - canvasRect.left) + canvas.scrollLeft + (cRect.width / 2);
             const startY = (cRect.top - canvasRect.top) + canvas.scrollTop; 
@@ -571,8 +572,6 @@ function drawTreeConnections() {
             // End (at Parent Bottom)
             const endX = (pRect.left - canvasRect.left) + canvas.scrollLeft + (pRect.width / 2);
             const endY = (pRect.top - canvasRect.top) + canvas.scrollTop + pRect.height; 
-
-            // 3. Create the Bezier Curve
             const cpY = startY + (endY - startY) / 2; 
             const d = `M ${startX} ${startY} C ${startX} ${cpY}, ${endX} ${cpY}, ${endX} ${endY}`;
 
@@ -600,14 +599,12 @@ document.getElementById("scroll-to-kb").addEventListener('click', () => {
     setTimeout(window.initCanvas, 300);
 });
 
+// --- REPLACE YOUR addNewNode FUNCTION (Around line 335) ---
 window.addNewNode = (parentId) => {
     const parentNode = document.querySelector(`[data-id="${parentId}"]`);
     if (!parentNode) return;
 
-    // Find the closest .node-group that contains the parentNode
     const parentGroup = parentNode.closest('.node-group');
-    
-    // Check if a children-container already exists for this parent
     let childrenContainer = parentGroup.querySelector(':scope > .children-container');
     
     if (!childrenContainer) {
@@ -620,46 +617,40 @@ window.addNewNode = (parentId) => {
     const newNodeGroup = document.createElement("div");
     newNodeGroup.className = "node-group";
 
-    // Depth Logic
     const parentDepth = parseInt(parentNode.className.match(/depth-(\d+)/)?.[1] || 1);
-    const newDepth = Math.min(parentDepth + 1, 4); // Cap at depth-4 for CSS
+    const newDepth = Math.min(parentDepth + 1, 4); 
     
-    // Inside your addNewNode function...
-newNodeGroup.innerHTML = `
-    <div class="tree-node depth-${newDepth}" data-id="${id}" data-parent="${parentId}">
-        <div class="node-content">
-            <div class="node-main-info">
-                <i class="fa-solid fa-circle node-status-dot"></i>
-                <input type="text" class="node-name" placeholder="Branch Label...">
+    newNodeGroup.innerHTML = `
+        <div class="tree-node depth-${newDepth}" data-id="${id}" data-parent="${parentId}">
+            <div class="node-content">
+                <div class="node-main-info">
+                    <i class="fa-solid fa-circle node-status-dot"></i>
+                    <input type="text" class="node-name" placeholder="Branch Label...">
+                </div>
+                <div class="node-color-picker">
+                    <span class="dot green" onclick="changeNodeShade('${id}', 'green')"></span>
+                    <span class="dot yellow" onclick="changeNodeShade('${id}', 'yellow')"></span>
+                    <span class="dot red" onclick="changeNodeShade('${id}', 'red')"></span>
+                </div>
             </div>
-            <div class="node-color-picker">
-                <span class="dot green" onclick="changeNodeShade('${id}', 'green')"></span>
-                <span class="dot yellow" onclick="changeNodeShade('${id}', 'yellow')"></span>
-                <span class="dot red" onclick="changeNodeShade('${id}', 'red')"></span>
+            <div class="node-actions">
+                <button class="add-branch-btn" onclick="addNewNode('${id}')">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+                <button class="delete-node-btn" onclick="deleteNode('${id}')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
             </div>
-        </div>
-        
-        <div class="node-actions">
-            <button class="add-branch-btn" onclick="addNewNode('${id}')">
-                <i class="fa-solid fa-plus"></i>
-            </button>
-            <button class="delete-node-btn" onclick="deleteNode('${id}')">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-        </div>
-    </div>
-`;
+        </div>`;
 
     childrenContainer.appendChild(newNodeGroup);
     
-    // Use requestAnimationFrame to wait for the DOM to paint the new size
     requestAnimationFrame(() => {
         requestAnimationFrame(() => {
             drawTreeConnections();
         });
     });
-
-    };
+}; // Removed extra indentation and trailing semicolon issues here
 
 // Add this helper function below addNewNode
 window.changeNodeShade = (nodeId, color) => {
@@ -700,6 +691,7 @@ const treeCanvasElement = document.querySelector('.tree-canvas');
 if (treeCanvasElement) {
     canvasObserver.observe(treeCanvasElement);
 }
+
 
 
 
