@@ -794,5 +794,17 @@ window.deleteNode = deleteNode;
 window.changeNodeShade = changeNodeShade;
 window.addNewNode = addNewNode;
 
+// Function to snap back to the center Root
+window.recenterTree = () => {
+    const rootNode = document.querySelector('.tree-node.depth-1');
+    if (rootNode) {
+        rootNode.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center', 
+            inline: 'center' 
+        });
+        notify("Map Recentered", "Back at the Root node.", "success");
+    }
+};
 
 
