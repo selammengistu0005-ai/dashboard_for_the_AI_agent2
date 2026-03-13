@@ -673,6 +673,35 @@ window.changeNodeShade = (nodeId, color) => {
     node.classList.add(`${color}-shade`);
 };
 
+window.deleteNode = (nodeId) => {
+    const node = document.querySelector(`[data-id="${nodeId}"]`);
+    if (!node) return;
+    
+    // Don't allow deleting the root node
+    if (node.classList.contains('depth-1')) {
+        notify("Action Denied", "Cannot delete the core Root node.", "error");
+        return;
+    }
+
+    if (confirm("Delete this branch and all its sub-children?")) {
+        const group = node.closest('.node-group');
+        group.remove();
+        drawTreeConnections(); // Clean up the lines
+    }
+};
+
+// --- AUTO-REDRAW OBSERVER ---
+const canvasObserver = new ResizeObserver(() => {
+    if (document.body.classList.contains("editing-mode")) {
+        drawTreeConnections();
+    }
+});
+
+// Start observing the canvas for size changes
+const treeCanvasElement = document.querySelector('.tree-canvas');
+if (treeCanvasElement) {
+    canvasObserver.observe(treeCanvasElement);
+}
 
 
 
