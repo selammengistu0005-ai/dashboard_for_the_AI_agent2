@@ -1185,9 +1185,23 @@ textarea:focus, .persona-input:focus {
     to { stroke-dashoffset: 0; }
 }
 
-
-.node-group:has(.delete-node-btn:hover) {
-    outline: 2px dashed #ef4444;
-    border-radius: 12px;
+/* 1. Only highlight the specific node being hovered, not the whole branch */
+.tree-node:has(.delete-node-btn:hover) {
+    border-color: #ef4444 !important;
+    background: rgba(239, 68, 68, 0.1) !important; /* Subtle red tint */
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.3);
+    transform: scale(1.02); /* Slight pop out effect */
     transition: all 0.2s ease;
+}
+
+/* 2. Optional: Make the X icon spin slightly to show it's active */
+.delete-node-btn:hover i {
+    transform: rotate(90deg);
+    color: #ef4444;
+    transition: all 0.2s ease;
+}
+
+/* 3. Ensure the connections (lines) stay visible but look 'threatened' */
+.node-group:has(.delete-node-btn:hover) > .tree-node {
+    z-index: 10;
 }
