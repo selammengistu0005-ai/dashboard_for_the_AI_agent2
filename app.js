@@ -558,12 +558,6 @@ function drawTreeConnections() {
     svg.setAttribute('width', scrollW);
     svg.setAttribute('height', scrollH);
     
-    // 1. Match SVG size to the TOTAL scrollable content of the canvas
-    const scrollW = canvas.scrollWidth;
-    const scrollH = canvas.scrollHeight;
-    svg.setAttribute('width', scrollW);
-    svg.setAttribute('height', scrollH);
-    
     svg.innerHTML = ''; 
 
     const nodes = document.querySelectorAll('.tree-node');
@@ -753,19 +747,50 @@ function rebuildTreeFromData(treeData) {
 }
 
 function renderSavedNode(data) {
-    window.addNewNode(data.parentId); 
+    // 1. Manually trigger the creation logic but pass the saved ID
+    const parentNode = document.querySelector(`[data-id="${data.parentId}"]`);
+    if (!parentNode) return;
+
+    const parentGroup = parentNode.closest('.node-group');
+    let childrenContainer = parentGroup.querySelector(':scope > .children-container');
     
-    // Give the DOM a millisecond to breathe
-    setTimeout(() => {
-        const allNodes = document.querySelectorAll('.tree-node');
-        const newNode = allNodes[allNodes.length - 1];
-        if (newNode) {
-            newNode.dataset.id = data.id;
-            const nameInput = newNode.querySelector('.node-name');
-            if (nameInput) nameInput.value = data.label;
-            window.changeNodeShade(data.id, data.shade);
-        }
-    }, 10);
+    if (!childrenContainer) {
+        childrenContainer = document.createElement('div');
+        childrenContainer.className = 'children-container';
+        parentGroup.appendChild(childrenContainer);
+    }
+
+    const newNodeGroup = document.createElement("div");
+    newNodeGroup.className = "node-group";
+    const parentDepth = parseInt(parentNode.className.match(/depth-(\d+)/)?.[1] || 1);
+    const newDepth = Math.min(parentDepth + 1, 4); 
+
+    newNodeGroup.innerHTML = `
+        <div class="tree-node depth-${newDepth}" data-id="${data.id}" data-parent="${data.parentId}">
+            <div class="node-content">
+                <div class="node-main-info">
+                    <i class="fa-solid fa-circle node-status-dot"></i>
+                    <input type="text" class="node-name" value="${data.label}">
+                </div>
+                <div class="node-color-picker">
+                    <span class="dot green" onclick="changeNodeShade('${data.id}', 'green')"></span>
+                    <span class="dot yellow" onclick="changeNodeShade('${data.id}', 'yellow')"></span>
+                    <span class="dot red" onclick="changeNodeShade('${data.id}', 'red')"></span>
+                </div>
+            </div>
+            <div class="node-actions">
+                <button class="add-branch-btn" onclick="addNewNode('${data.id}')">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+                <button class="delete-node-btn" onclick="deleteNode('${data.id}')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+        </div>`;
+
+    childrenContainer.appendChild(newNodeGroup);
+    window.changeNodeShade(data.id, data.shade);
 }
+
 
 
