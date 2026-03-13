@@ -103,32 +103,32 @@
             </div>
         </div>
     </section>
-
-    <section id="site-map-section">
-        <div class="tree-viewport">
-            <div class="canvas-controls">
-                <span class="canvas-hint">Drag to navigate • Click + to branch</span>
-                <button onclick="resetCanvas()"><i class="fa-solid fa-compress"></i> Recenter</button>
-            </div>
-            <div id="tree-canvas" class="tree-canvas">
-                <svg id="tree-svg"></svg>
-                <div class="node-group" style="position: absolute; top: 100px; left: 100px;">
-    <div class="tree-node depth-1" data-id="root">
-        <div class="node-content">
-            <div class="node-main-info">
-                <i class="fa-solid fa-house"></i>
-                <input type="text" class="node-name" value="Main Greeting">
-            </div>
+                <section id="site-map-section">
+    <div class="tree-viewport">
+        <div class="canvas-controls">
+            <span class="canvas-hint">Drag to navigate • Click + to branch</span>
+            <button onclick="resetCanvas()"><i class="fa-solid fa-compress"></i> Recenter</button>
         </div>
-        <button class="add-branch-btn" onclick="addNewNode('root')">
-            <i class="fa-solid fa-plus"></i>
-        </button>
-    </div>
-    </div>
+        
+        <div id="tree-canvas" class="tree-canvas" style="position: relative; min-width: 5000px; min-height: 5000px;">
+            <svg id="tree-svg" style="position: absolute; top: 0; left: 0; pointer-events: none; z-index: 0;"></svg>
+            
+            <div class="node-group" style="position: absolute; top: 2500px; left: 100px; z-index: 1;">
+                <div class="tree-node depth-1" data-id="root">
+                    <div class="node-content">
+                        <div class="node-main-info">
+                            <i class="fa-solid fa-house"></i>
+                            <input type="text" class="node-name" value="Main Greeting">
+                        </div>
+                    </div>
+                    <button class="add-branch-btn" onclick="addNewNode('root')">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 </div>
     </main>
 </div> 
@@ -150,6 +150,7 @@
     <div id="toast-container" class="toast-container"></div>
 </body>
 </html>
+
 
 
 
