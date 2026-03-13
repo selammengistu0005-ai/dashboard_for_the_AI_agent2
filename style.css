@@ -1184,3 +1184,10 @@ textarea:focus, .persona-input:focus {
     from { stroke-dashoffset: 40; }
     to { stroke-dashoffset: 0; }
 }
+
+
+.node-group:has(.delete-node-btn:hover) {
+    outline: 2px dashed #ef4444;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+}
