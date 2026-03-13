@@ -807,4 +807,41 @@ window.recenterTree = () => {
     }
 };
 
+export function resetCanvas() {
+    const canvas = document.getElementById('tree-canvas');
+    const viewport = document.querySelector('.tree-viewport');
+    const rootNode = document.querySelector('.tree-node[data-id="root"]');
 
+    if (!canvas || !rootNode) return;
+
+    // 1. Get dimensions
+    const vWidth = viewport.offsetWidth;
+    const vHeight = viewport.offsetHeight;
+
+    // 2. Get Root Node Position relative to the 5000px canvas
+    // We use offsetLeft/Top because the node is inside the canvas
+    const rootX = rootNode.parentElement.offsetLeft + (rootNode.offsetWidth / 2);
+    const rootY = rootNode.parentElement.offsetTop + (rootNode.offsetHeight / 2);
+
+    // 3. Calculate the translation needed to put Root in the middle of the Viewport
+    const translateX = (vWidth / 2) - rootX;
+    const translateY = (vHeight / 2) - rootY;
+
+    // 4. Apply the transform (Resetting scale to 1)
+    canvas.style.transition = "transform 0.5s cubic-bezier(0.2, 0, 0.2, 1)";
+    canvas.style.transform = `translate(${translateX}px, ${translateY}px) scale(1)`;
+    
+    // Clear transition after it finishes so dragging stays smooth
+    setTimeout(() => {
+        canvas.style.transition = "none";
+    }, 500);
+}
+
+// Attach the listener
+document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.querySelector('[onclick="resetCanvas()"]');
+    if(btn) {
+        btn.removeAttribute('onclick'); // Clean up the HTML attribute
+        btn.addEventListener('click', resetCanvas);
+    }
+});
