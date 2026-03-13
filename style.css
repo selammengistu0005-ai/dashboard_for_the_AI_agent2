@@ -1200,4 +1200,32 @@ textarea:focus, .persona-input:focus {
     z-index: 10;
 }
 
+/* Floating Recenter Button */
+.recenter-btn {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: var(--primary-accent);
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    z-index: 100;
+    transition: transform 0.2s, background 0.2s;
+}
 
+.recenter-btn:hover {
+    transform: scale(1.1);
+    background: #4f46e5; /* Slightly darker indigo */
+}
+
+/* Ensure the viewport is the reference for the absolute button */
+.tree-viewport {
+    position: relative;
+}
