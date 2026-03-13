@@ -659,6 +659,8 @@ newNodeGroup.innerHTML = `
         });
     });
 
+    };
+
 // Add this helper function below addNewNode
 window.changeNodeShade = (nodeId, color) => {
     const node = document.querySelector(`[data-id="${nodeId}"]`);
@@ -698,6 +700,7 @@ const treeCanvasElement = document.querySelector('.tree-canvas');
 if (treeCanvasElement) {
     canvasObserver.observe(treeCanvasElement);
 }
+
 
 
 
