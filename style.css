@@ -724,19 +724,6 @@ textarea:focus, .persona-input:focus {
     z-index: 1;
 }
 
-#tree-svg path {
-    fill: none;
-    stroke: var(--primary-accent);
-    stroke-width: 2;
-    opacity: 0.3;
-    transition: var(--transition);
-    
-    /* Logic Flow Setup */
-    stroke-dasharray: 4, 12; 
-    stroke-dashoffset: 100; /* Start with an offset */
-    animation: logicFlowUp 8s linear infinite; /* Match the new keyframe name */
-}
-
 /* --- 📦 THE NODE FRAMES --- */
 .tree-node {
     position: relative; /* Change from absolute to relative */
@@ -1149,27 +1136,6 @@ textarea:focus, .persona-input:focus {
 .dot.yellow { background: #f59e0b; }
 .dot.red { background: #ef4444; }
 
-/* Glowing Data Packet */
-.data-packet {
-    opacity: 0.9;
-    filter: drop-shadow(0 0 5px var(--primary-accent));
-}
-
-/* Highlights connection on hover */
-.tree-node:hover ~ #tree-svg path {
-    opacity: 0.4;
-    stroke-width: 2;
-}
-
-@keyframes logicFlowUp {
-    from {
-        stroke-dashoffset: 100; 
-    }
-    to {
-        stroke-dashoffset: 0; /* Moving to 0 pulls the dots toward the parent */
-    }
-}
-
 /* If any node in the canvas is hovered, make the whole SVG slightly clearer */
 .tree-canvas:has(.tree-node:hover) #tree-svg path {
     opacity: 0.5;
@@ -1196,4 +1162,25 @@ textarea:focus, .persona-input:focus {
     border: 1px solid var(--border-color);
 }
 
+/* NEW ANIMATED FLOW LINES */
+.logic-flow-path {
+    stroke: #ffffff !important; /* The white dots */
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    fill: none;
+    opacity: 1 !important;
+    stroke-dasharray: 2, 18; /* First number is dot size, second is gap */
+    animation: flow 1.5s linear infinite;
+}
 
+.logic-flow-bg {
+    stroke: #1e40af; /* The Deep Blue solid line */
+    stroke-width: 3;
+    fill: none;
+    opacity: 0.8;
+}
+
+@keyframes flow {
+    from { stroke-dashoffset: 40; }
+    to { stroke-dashoffset: 0; }
+}
