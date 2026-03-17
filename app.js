@@ -227,14 +227,12 @@ async function saveKnowledge() {
 
         // 1. Update Main Settings & Tree Structure
         const agentRef = doc(db, "agents", currentAgent);
-        const visualTree = getTreeData(); // Get the current tree state
         
         batch.update(agentRef, {
             aiDisplayName: aiName,
             personas: activePersonas,
             systemInstructions: systemInstructions,
-            lastConfigUpdate: new Date(),
-            knowledgeTree: visualTree // This saves your visual map layout!
+            lastConfigUpdate: new Date()
         });
 
         // 2. Archive to History
@@ -266,7 +264,7 @@ async function saveKnowledge() {
         });
 
         await batch.commit();
-        notify("Sync Complete", "Agent brain and visual map updated.", "success");
+        notify("Sync Complete", "Agent brain updated.", "success");
         
         // Reset branches UI
         document.getElementById("kb-branches-container").innerHTML = `
@@ -284,9 +282,8 @@ async function saveKnowledge() {
         saveBtn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Commit All to Memory`;
         saveBtn.disabled = false;
     }
+    
 }
-window.saveKnowledge = saveKnowledge;
-window.getTreeData = getTreeData;
 
 function loadKnowledge(agentId) {
     // 1. Kill the old listener if it exists before starting a new one
@@ -322,28 +319,9 @@ const scrollBtn = document.getElementById("scroll-to-kb");
 if (scrollBtn) {
     scrollBtn.onclick = () => {
         const isEditing = document.body.classList.toggle("editing-mode");
-        const liveMonitor = document.querySelector(".logs-wrapper"); // Target the logs
-        const liveChart = document.querySelector(".sidebar-chart-container"); // Target sidebar chart
-
-        // This keeps your cool transformation text
         scrollBtn.innerHTML = isEditing 
             ? `<i class="fa-solid fa-chart-line"></i> View Live Monitor` 
             : `<i class="fa-solid fa-pen-to-square"></i> Edit Agent Knowledge`;
-
-        if (isEditing) {
-            // 1. Hide the Monitor stuff so it doesn't bleed through
-            if(liveMonitor) liveMonitor.style.display = "none";
-            
-            // 2. Initialize the Horizontal Map
-            setTimeout(() => {
-                window.initCanvas();
-                const rootNode = document.querySelector('.tree-node');
-                if (rootNode) rootNode.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }, 300);
-        } else {
-            // 3. Bring the Monitor back when we exit Edit Mode
-            if(liveMonitor) liveMonitor.style.display = "block";
-        }
     };
 }
 
@@ -362,6 +340,8 @@ if (addBranchBtn) {
         container.appendChild(newBranch);
     };
 }
+const saveKbBtn = document.getElementById("add-kb-item");
+if (saveKbBtn) saveKbBtn.addEventListener("click", saveKnowledge);
 
 let isInitialLoad = true; // Add this variable above the function
 
@@ -369,8 +349,6 @@ function listenToSettings(agentId) {
     onSnapshot(doc(db, "agents", agentId), (docSnap) => {
         if (docSnap.exists()) {
             const settings = docSnap.data();
-            
-            // Only update the name/instructions if the user isn't currently typing (prevents cursor jumping)
             if (document.activeElement !== document.getElementById("ai-name-input")) {
                 document.getElementById("ai-name-input").value = settings.aiDisplayName || "";
             }
@@ -382,13 +360,6 @@ function listenToSettings(agentId) {
             document.querySelectorAll(".persona-btn").forEach(btn => {
                 btn.classList.toggle("active", savedStyles.includes(btn.dataset.style));
             });
-
-            // GATEKEEPER: Only rebuild the visual tree on the first load
-            // This prevents the map from "refreshing" while you are editing it
-            if (isInitialLoad && settings.knowledgeTree) {
-                rebuildTreeFromData(settings.knowledgeTree);
-                isInitialLoad = false; 
-            }
         }
     });
 }
@@ -508,340 +479,5 @@ document.addEventListener('click', (e) => {
         // Optional: Add a subtle click sound or haptic feedback feel
         const isActive = e.target.classList.contains('active');
         console.log(`${e.target.dataset.style} is now ${isActive ? 'selected' : 'unselected'}`);
-    }
-});
-
-const treeCanvas = document.querySelector('.tree-canvas');
-const svgElement = document.getElementById('tree-svg');
-
-// Initial draw and resize listener
-window.addEventListener('resize', drawTreeConnections);
-// Redraw lines when the "Site Map" section becomes visible
-document.getElementById("scroll-to-kb").addEventListener('click', () => {
-    setTimeout(drawTreeConnections, 100); 
-});
-
-const viewport = document.querySelector('.tree-viewport');
-let isDown = false;
-let startX, startY, scrollLeft, scrollTop;
-
-viewport.addEventListener('mousedown', (e) => {
-    isDown = true;
-    viewport.classList.add('active'); // CSS can change cursor to 'grabbing'
-    startX = e.pageX - viewport.offsetLeft;
-    startY = e.pageY - viewport.offsetTop;
-    scrollLeft = viewport.scrollLeft;
-    scrollTop = viewport.scrollTop;
-});
-
-viewport.addEventListener('mouseleave', () => isDown = false);
-viewport.addEventListener('mouseup', () => isDown = false);
-
-viewport.addEventListener('mousemove', (e) => {
-    if (!isDown) return;
-    e.preventDefault();
-    const x = e.pageX - viewport.offsetLeft;
-    const y = e.pageY - viewport.offsetTop;
-    const walkX = (x - startX) * 1.5; 
-    const walkY = (y - startY) * 1.5;
-    viewport.scrollLeft = scrollLeft - walkX;
-    viewport.scrollTop = scrollTop - walkY;
-});
-
-// --- 🌳 THE SITE MAP CANVAS ENGINE (OPTIMIZED) ---
-
-function drawTreeConnections() {
-    const svg = document.getElementById('tree-svg');
-    const canvas = document.querySelector('.tree-canvas');
-    if (!svg || !canvas) return;
-    const scrollW = canvas.scrollWidth;
-    const scrollH = canvas.scrollHeight;
-    svg.setAttribute('width', scrollW);
-    svg.setAttribute('height', scrollH);
-    
-    svg.innerHTML = ''; 
-
-    const nodes = document.querySelectorAll('.tree-node');
-    const canvasRect = canvas.getBoundingClientRect();
-
-    nodes.forEach(node => {
-        const nodeId = node.dataset.id;
-        const children = document.querySelectorAll(`[data-parent="${nodeId}"]`);
-
-        // --- FIND THIS SECTION IN app.js (around line 423) ---
-
-        children.forEach(child => {
-            const pRect = node.getBoundingClientRect();
-            const cRect = child.getBoundingClientRect();
-            const startX = (cRect.left - canvasRect.left) + canvas.scrollLeft + (cRect.width / 2);
-            const startY = (cRect.top - canvasRect.top) + canvas.scrollTop; 
-            const endX = (pRect.left - canvasRect.left) + canvas.scrollLeft + (pRect.width / 2);
-            const endY = (pRect.top - canvasRect.top) + canvas.scrollTop + pRect.height; 
-
-            const cpY = startY + (endY - startY) / 2; 
-            const d = `M ${startX} ${startY} C ${startX} ${cpY}, ${endX} ${cpY}, ${endX} ${endY}`;
-
-            const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-            path.setAttribute("d", d);
-            path.classList.add("logic-flow-path"); 
-            
-            // Optional: Re-applying inline styles if your CSS class doesn't cover everything
-            path.style.stroke = "var(--primary-accent)";
-            path.style.strokeWidth = "2";
-            path.style.fill = "none";
-            path.setAttribute("stroke-dasharray", "4, 12"); 
-            
-            svg.appendChild(path);
-        });
-    });
-}
-
-window.initCanvas = () => {
-    drawTreeConnections();
-};
-
-// Call init when switching to edit mode
-document.getElementById("scroll-to-kb").addEventListener('click', () => {
-    setTimeout(window.initCanvas, 300);
-});
-
-// --- REPLACE YOUR addNewNode FUNCTION (Around line 335) ---
-window.addNewNode = (parentId) => {
-    const parentNode = document.querySelector(`[data-id="${parentId}"]`);
-    if (!parentNode) return;
-
-    const parentGroup = parentNode.closest('.node-group');
-    let childrenContainer = parentGroup.querySelector(':scope > .children-container');
-    
-    if (!childrenContainer) {
-        childrenContainer = document.createElement('div');
-        childrenContainer.className = 'children-container';
-        parentGroup.appendChild(childrenContainer);
-    }
-
-    const id = "node-" + Date.now();
-    const newNodeGroup = document.createElement("div");
-    newNodeGroup.className = "node-group";
-
-    const parentDepth = parseInt(parentNode.className.match(/depth-(\d+)/)?.[1] || 1);
-    const newDepth = Math.min(parentDepth + 1, 4); 
-    
-    newNodeGroup.innerHTML = `
-        <div class="tree-node depth-${newDepth}" data-id="${id}" data-parent="${parentId}">
-            <div class="node-content">
-                <div class="node-main-info">
-                    <i class="fa-solid fa-circle node-status-dot"></i>
-                    <input type="text" class="node-name" placeholder="Branch Label...">
-                </div>
-                <div class="node-color-picker">
-                    <span class="dot green" onclick="changeNodeShade('${id}', 'green')"></span>
-                    <span class="dot yellow" onclick="changeNodeShade('${id}', 'yellow')"></span>
-                    <span class="dot red" onclick="changeNodeShade('${id}', 'red')"></span>
-                </div>
-            </div>
-            <div class="node-actions">
-                <button class="add-branch-btn" onclick="addNewNode('${id}')">
-                    <i class="fa-solid fa-plus"></i>
-                </button>
-                <button class="delete-node-btn" onclick="deleteNode('${id}')">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-        </div>`;
-
-    childrenContainer.appendChild(newNodeGroup);
-    
-    requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-            drawTreeConnections();
-        });
-    });
-};
-// Add this helper function below addNewNode
-window.changeNodeShade = (nodeId, color) => {
-    const node = document.querySelector(`[data-id="${nodeId}"]`);
-    if (!node) return;
-    // Remove all possible shades first
-    node.classList.remove('green-shade', 'yellow-shade', 'red-shade');
-    // Add the new one
-    node.classList.add(`${color}-shade`);
-};
-
-window.deleteNode = (nodeId) => {
-    const node = document.querySelector(`[data-id="${nodeId}"]`);
-    if (!node) return;
-    
-    // Don't allow deleting the root node
-    if (node.classList.contains('depth-1')) {
-        notify("Action Denied", "Cannot delete the core Root node.", "error");
-        return;
-    }
-
-    if (confirm("Delete this branch and all its sub-children?")) {
-        const group = node.closest('.node-group');
-        group.remove();
-        drawTreeConnections(); // Clean up the lines
-    }
-};
-
-// --- AUTO-REDRAW OBSERVER ---
-const canvasObserver = new ResizeObserver(() => {
-    if (document.body.classList.contains("editing-mode")) {
-        drawTreeConnections();
-    }
-});
-
-// Start observing the canvas for size changes
-const treeCanvasElement = document.querySelector('.tree-canvas');
-if (treeCanvasElement) {
-    canvasObserver.observe(treeCanvasElement);
-}
-
-// Helper to extract the visual tree into a structured object for Firebase
-function getTreeData() {
-    const nodes = document.querySelectorAll('.tree-node');
-    const treeMap = [];
-    
-    nodes.forEach(node => {
-        const nameInput = node.querySelector('.node-name');
-        treeMap.push({
-            id: node.dataset.id,
-            parentId: node.dataset.parent || null,
-            label: nameInput ? nameInput.value.trim() : "Untitled",
-            shade: node.classList.contains('green-shade') ? 'green' : 
-                   node.classList.contains('yellow-shade') ? 'yellow' : 
-                   node.classList.contains('red-shade') ? 'red' : 'default'
-        });
-    });
-    return treeMap;
-}
-
-function rebuildTreeFromData(treeData) {
-    if (!treeData || !treeData.length) return;
-
-    // 1. Update the Root Node first (it always exists)
-    const rootData = treeData.find(item => item.parentId === null);
-    if (rootData) {
-        const rootNode = document.querySelector('.tree-node.depth-1');
-        if (rootNode) {
-            rootNode.dataset.id = rootData.id; // Sync the ID
-            rootNode.querySelector('.node-name').value = rootData.label;
-            window.changeNodeShade(rootData.id, rootData.shade);
-        }
-    }
-
-    // 2. Sort data by depth or simply loop multiple times to ensure parents exist
-    // A simple trick: render in the order they appear in the array, 
-    // but filter out the root.
-    const children = treeData.filter(item => item.parentId !== null);
-    
-    // We sort by ID length or similar if needed, but usually, 
-    // the saved order from getTreeData works if we use a simple loop.
-    children.forEach(item => {
-        renderSavedNode(item);
-    });
-
-    setTimeout(drawTreeConnections, 500);
-}
-
-function renderSavedNode(data) {
-    // 1. Manually trigger the creation logic but pass the saved ID
-    const parentNode = document.querySelector(`[data-id="${data.parentId}"]`);
-    if (!parentNode) return;
-
-    const parentGroup = parentNode.closest('.node-group');
-    let childrenContainer = parentGroup.querySelector(':scope > .children-container');
-    
-    if (!childrenContainer) {
-        childrenContainer = document.createElement('div');
-        childrenContainer.className = 'children-container';
-        parentGroup.appendChild(childrenContainer);
-    }
-
-    const newNodeGroup = document.createElement("div");
-    newNodeGroup.className = "node-group";
-    const parentDepth = parseInt(parentNode.className.match(/depth-(\d+)/)?.[1] || 1);
-    const newDepth = Math.min(parentDepth + 1, 4); 
-
-    newNodeGroup.innerHTML = `
-        <div class="tree-node depth-${newDepth}" data-id="${data.id}" data-parent="${data.parentId}">
-            <div class="node-content">
-                <div class="node-main-info">
-                    <i class="fa-solid fa-circle node-status-dot"></i>
-                    <input type="text" class="node-name" value="${data.label}">
-                </div>
-                <div class="node-color-picker">
-                    <span class="dot green" onclick="changeNodeShade('${data.id}', 'green')"></span>
-                    <span class="dot yellow" onclick="changeNodeShade('${data.id}', 'yellow')"></span>
-                    <span class="dot red" onclick="changeNodeShade('${data.id}', 'red')"></span>
-                </div>
-            </div>
-            <div class="node-actions">
-                <button class="add-branch-btn" onclick="addNewNode('${data.id}')">
-                    <i class="fa-solid fa-plus"></i>
-                </button>
-                <button class="delete-node-btn" onclick="deleteNode('${data.id}')">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-        </div>`;
-
-    childrenContainer.appendChild(newNodeGroup);
-    window.changeNodeShade(data.id, data.shade);
-}
-// Exporting functions to window so HTML onclick attributes can find them
-window.deleteNode = deleteNode;
-window.changeNodeShade = changeNodeShade;
-window.addNewNode = addNewNode;
-
-// Function to snap back to the center Root
-window.recenterTree = () => {
-    const rootNode = document.querySelector('.tree-node.depth-1');
-    if (rootNode) {
-        rootNode.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'center', 
-            inline: 'center' 
-        });
-        notify("Map Recentered", "Back at the Root node.", "success");
-    }
-};
-
-export function resetCanvas() {
-    const canvas = document.getElementById('tree-canvas');
-    const viewport = document.querySelector('.tree-viewport');
-    const rootNode = document.querySelector('.tree-node[data-id="root"]');
-
-    if (!canvas || !rootNode) return;
-
-    // 1. Get dimensions
-    const vWidth = viewport.offsetWidth;
-    const vHeight = viewport.offsetHeight;
-
-    // 2. Get Root Node Position relative to the 5000px canvas
-    // We use offsetLeft/Top because the node is inside the canvas
-    const rootX = rootNode.parentElement.offsetLeft + (rootNode.offsetWidth / 2);
-    const rootY = rootNode.parentElement.offsetTop + (rootNode.offsetHeight / 2);
-
-    // 3. Calculate the translation needed to put Root in the middle of the Viewport
-    const translateX = (vWidth / 2) - rootX;
-    const translateY = (vHeight / 2) - rootY;
-
-    // 4. Apply the transform (Resetting scale to 1)
-    canvas.style.transition = "transform 0.5s cubic-bezier(0.2, 0, 0.2, 1)";
-    canvas.style.transform = `translate(${translateX}px, ${translateY}px) scale(1)`;
-    
-    // Clear transition after it finishes so dragging stays smooth
-    setTimeout(() => {
-        canvas.style.transition = "none";
-    }, 500);
-}
-
-// Attach the listener
-document.addEventListener('DOMContentLoaded', () => {
-    const btn = document.querySelector('[onclick="resetCanvas()"]');
-    if(btn) {
-        btn.removeAttribute('onclick'); // Clean up the HTML attribute
-        btn.addEventListener('click', resetCanvas);
     }
 });
