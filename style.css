@@ -251,14 +251,6 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
 
 /* --- Multi-Branch Architecture --- */
 
-#kb-branches-container {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-bottom: 20px;
-    width: 100%;
-}
-
 @keyframes slideDown {
     from { opacity: 0; transform: translateY(-10px); }
     to { opacity: 1; transform: translateY(0); }
@@ -273,38 +265,13 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
 
 /* --- Action Buttons --- */
 
-#add-branch-btn {
-    background: transparent;
-    border: 1px dashed var(--primary-accent);
-    color: var(--primary-accent);
-    padding: 10px 20px;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: 600;
-}
-
-#add-branch-btn:hover {
-    background: rgba(99, 102, 241, 0.05);
-}
 
 .save-all-btn {
     background: var(--primary-accent) !important;
     box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
 }
 
-.remove-branch-btn {
-    background: rgba(239, 68, 68, 0.1);
-    color: #ef4444;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: var(--transition);
-}
 
-.remove-branch-btn:hover {
-    background: #ef4444;
-    color: white;
-}
 
 .kb-form input { 
     background: var(--bg-dark); border: 1px solid var(--border-color); 
@@ -315,33 +282,13 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
     padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: 600; 
 }
 
-.kb-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-.kb-table th { text-align: left; padding: 10px; color: var(--text-dim); border-bottom: 1px solid var(--border-color); }
-.kb-table td { padding: 12px 10px; border-bottom: 1px solid var(--border-color); }
-
 .status-toggle { 
     padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; 
     cursor: pointer; border: none; font-weight: 700;
 }
 .status-in { background: rgba(16, 185, 129, 0.1); color: #10b981; }
 .status-out { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
-/* --- NEW COMMAND CENTER LAYOUT --- */
-.kb-split-wrapper {
-    display: flex;
-    gap: 24px;
-    align-items: flex-start;
-    padding-top: 10px;
-}
 
-.kb-side-panel {
-    flex: 0 0 320px; /* Fixed width for the "Brain" sidebar */
-    position: sticky;
-    top: 20px;
-}
-
-.kb-main-panel {
-    flex: 1; /* Inventory takes the remaining 70% space */
-}
 
 /* --- PERSONA MATRIX (The 10 Style Buttons) --- */
 .field-label {
@@ -433,20 +380,6 @@ textarea:focus, .persona-input:focus {
 .editing-mode #knowledge-base-section .kb-container {
     margin-top: 0; 
 }
-
-/* Responsive fix for smaller desktops */
-@media (max-width: 1200px) {
-    .kb-split-wrapper {
-        flex-direction: column;
-    }
-    .kb-side-panel {
-        flex: 1 1 100%;
-        width: 100%;
-        position: static;
-        margin-bottom: 20px;
-    }
-}
-
 /* --- Modern Toast Notifications --- */
 .toast-container {
     position: fixed;
@@ -691,4 +624,39 @@ textarea:focus, .persona-input:focus {
     .log-frame {
         flex: 1 1 100%;
     }
+}
+
+/* --- Optimized Editor Layout (Single Panel) --- */
+
+/* Centers the personality settings now that the map is gone */
+#editor-view-container {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    background: var(--bg-dark);
+    display: none; /* Controlled by JS */
+    padding: 3rem 1rem;
+}
+
+#knowledge-base-section {
+    max-width: 700px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.kb-container {
+    background: var(--card-dark);
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    padding: 2.5rem;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+}
+
+/* Make Commit Changes button full width for the new layout */
+#add-kb-item {
+    width: 100%;
+    margin-top: 2rem;
+    padding: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
