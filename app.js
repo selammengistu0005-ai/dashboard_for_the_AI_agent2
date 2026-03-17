@@ -207,6 +207,26 @@ if (eye && kInput) {
 // Logo Refresh
 const lRefresh = document.getElementById("logo-refresh");
 if (lRefresh) lRefresh.addEventListener("click", () => window.location.reload());
+// INSERT THE THEME TOGGLE CODE HERE:
+// Theme Toggle Logic
+if (modeSwitch) {
+    modeSwitch.addEventListener("click", () => {
+        document.body.classList.toggle("light-mode");
+        const isLight = document.body.classList.contains("light-mode");
+        if (intentChart) {
+            intentChart.options.plugins.legend.labels.color = isLight ? '#1e293b' : '#f8fafc';
+            intentChart.update();
+        }
+    });
+}
+
+// Persona Matrix Toggle Logic (Place here)
+document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('persona-btn')) {
+        e.target.classList.toggle('active');
+        // This makes the UI feel instant before the save
+    }
+});
 
 // --- KNOWLEDGE BASE ENGINE ---
 
@@ -357,8 +377,10 @@ function listenToSettings(agentId) {
             }
             
             const savedStyles = settings.personas || [];
-            document.querySelectorAll(".persona-btn").forEach(btn => {
-                btn.classList.toggle("active", savedStyles.includes(btn.dataset.style));
+            document.querySelectorAll(".persona-btn").forEach(btn => { 
+                if (!document.body.classList.contains("editing-mode")) {
+                    btn.classList.toggle("active", savedStyles.includes(btn.dataset.style));
+                }
             });
         }
     });
