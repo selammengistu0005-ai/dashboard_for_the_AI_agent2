@@ -20,7 +20,7 @@
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-body { background-color: var(--bg-dark); color: var(--text-main); transition: var(--transition); overflow: hidden; }
+body { background-color: var(--bg-dark); color: var(--text-main); transition: var(--transition); overflow-x: hidden; }
 
 /* --- Sidebar & Requirement 3: Chart Position --- */
 .app-container { display: flex; height: 100vh; }
@@ -47,7 +47,7 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
 }
 
 /* --- Main Content & Header --- */
-.main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.main-content { flex: 1; display: flex; flex-direction: column; min-height: 0; }
 
 .dashboard-header {
     padding: 1.5rem 2rem;
@@ -609,7 +609,7 @@ textarea:focus, .persona-input:focus {
     .editing-mode .app-container { 
         flex-direction: column; 
         height: auto;
-        overflow-y: auto; 
+        overflow-x: hidden; 
     }
 
     .sidebar, 
@@ -623,6 +623,23 @@ textarea:focus, .persona-input:focus {
 
     .log-frame {
         flex: 1 1 100%;
+    }
+    .persona-matrix {
+        grid-template-columns: repeat(2, 1fr); /* 2 big buttons per row on phones */
+        gap: 15px;
+    }
+    
+    .persona-btn {
+        padding: 20px 10px; /* Much larger touch area for fingers */
+        font-size: 1rem;    /* Easier to read */
+    }
+    .sidebar-card {
+    height: 200px; /* Slimmer for mobile top-view */
+    margin-bottom: 20px;
+    }
+    
+    .app-container {
+        display: block; /* Overrides flex to ensure vertical stacking */
     }
 }
 
@@ -695,6 +712,7 @@ textarea:focus, .persona-input:focus {
     display: flex;
     flex-direction: column;
     padding-bottom: 20px;
+    overflow-y: auto;
 }
 
 #intentChart {
@@ -716,4 +734,51 @@ body.editing-mode #live-monitor-view {
 /* 3. When body has .editing-mode, SHOW the Editor */
 body.editing-mode #editor-view-container {
     display: block;
+}
+
+/* --- REPLACE YOUR BUTTON HOVER EFFECTS WITH THIS --- */
+
+@media (hover: hover) {
+    /* This only runs on computers with a mouse */
+    .persona-btn:hover, .status-toggle:hover {
+        background: var(--primary-accent);
+        filter: brightness(1.2);
+        cursor: pointer;
+    }
+}
+
+/* --- ADD THIS FOR MOBILE TOUCH FEEDBACK --- */
+@media (hover: none) {
+    /* This runs on phones/tablets */
+    .persona-btn:active, .status-toggle:active {
+        transform: scale(0.95); /* Shrinks slightly when pressed */
+        background: var(--primary-accent);
+        transition: 0.1s;
+    }
+}
+
+/* Final Mobile Table Polish */
+@media (max-width: 600px) {
+    #kb-items-list tr {
+        display: flex;
+        flex-direction: column;
+        border-bottom: 1px solid var(--border-color);
+        padding: 15px 10px;
+        background: var(--glass-bg);
+        margin-bottom: 10px;
+        border-radius: 12px;
+    }
+    #kb-items-list td {
+        border: none;
+        padding: 4px 0;
+        display: flex;
+        justify-content: space-between;
+    }
+    /* Adds labels before data so you know what is what */
+    #kb-items-list td::before {
+        content: attr(data-label);
+        font-weight: 700;
+        color: var(--primary-accent);
+        font-size: 0.75rem;
+    }
 }
