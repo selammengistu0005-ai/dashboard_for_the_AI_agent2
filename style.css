@@ -700,3 +700,20 @@ textarea:focus, .persona-input:focus {
 #intentChart {
     margin-bottom: 20px;
 }
+
+/* --- THE MODE SWITCH LOGIC --- */
+
+/* 1. Hide Editor by default when NOT in editing mode */
+#editor-view-container {
+    display: none;
+}
+
+/* 2. When body has .editing-mode, HIDE the Live Monitor */
+body.editing-mode #live-monitor-view {
+    display: none;
+}
+
+/* 3. When body has .editing-mode, SHOW the Editor */
+body.editing-mode #editor-view-container {
+    display: block;
+}
