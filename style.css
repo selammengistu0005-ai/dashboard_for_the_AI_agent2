@@ -303,7 +303,7 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
 
 .persona-matrix {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* 2 buttons per row */
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
     gap: 10px;
     margin-top: 10px;
 }
