@@ -660,3 +660,43 @@ textarea:focus, .persona-input:focus {
     text-transform: uppercase;
     letter-spacing: 1px;
 }
+
+/* Sidebar Button Styling */
+#scroll-to-kb, #open-history-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 90%;
+    margin: 10px auto;
+    padding: 12px 15px;
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 8px;
+    color: #f8fafc;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.3s ease;
+    text-align: left;
+}
+
+#scroll-to-kb:hover, #open-history-btn:hover {
+    background: rgba(99, 102, 241, 0.2);
+    border-color: #6366f1;
+    transform: translateX(5px);
+}
+
+#scroll-to-kb i, #open-history-btn i {
+    color: #6366f1;
+    font-size: 16px;
+}
+
+/* Fix for the chart overlapping */
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 20px;
+}
+
+#intentChart {
+    margin-bottom: 20px;
+}
