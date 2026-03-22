@@ -220,14 +220,6 @@ if (modeSwitch) {
     });
 }
 
-// Persona Matrix Toggle Logic (Place here)
-document.addEventListener('click', (e) => {
-    if (e.target.classList.contains('persona-btn')) {
-        e.target.classList.toggle('active');
-        // This makes the UI feel instant before the save
-    }
-});
-
 // --- KNOWLEDGE BASE ENGINE ---
 
 async function saveKnowledge() {
@@ -369,6 +361,8 @@ function listenToSettings(agentId) {
     onSnapshot(doc(db, "agents", agentId), (docSnap) => {
         if (docSnap.exists()) {
             const settings = docSnap.data();
+            
+            // Only update inputs if the user isn't currently typing in them
             if (document.activeElement !== document.getElementById("ai-name-input")) {
                 document.getElementById("ai-name-input").value = settings.aiDisplayName || "";
             }
@@ -376,12 +370,13 @@ function listenToSettings(agentId) {
                 document.getElementById("ai-instructions").value = settings.systemInstructions || "";
             }
             
-            const savedStyles = settings.personas || [];
-            document.querySelectorAll(".persona-btn").forEach(btn => { 
-                if (!document.body.classList.contains("editing-mode")) {
+            // CRITICAL FIX: Only reset buttons if the user is NOT in editing mode
+            if (!document.body.classList.contains("editing-mode")) {
+                const savedStyles = settings.personas || [];
+                document.querySelectorAll(".persona-btn").forEach(btn => { 
                     btn.classList.toggle("active", savedStyles.includes(btn.dataset.style));
-                }
-            });
+                });
+            }
         }
     });
 }
@@ -495,7 +490,7 @@ window.restoreInstruction = async (id, text) => {
 // Persona Matrix Toggle Logic
 document.addEventListener('click', (e) => {
     if (e.target.classList.contains('persona-btn')) {
-        // Toggle 'active' class on click
+        // .toggle() allows multiple buttons to be active at once
         e.target.classList.toggle('active');
         
         // Optional: Add a subtle click sound or haptic feedback feel
