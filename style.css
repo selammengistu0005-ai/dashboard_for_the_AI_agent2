@@ -679,7 +679,7 @@ textarea:focus, .persona-input:focus {
 }
 
 /* Sidebar Button Styling */
-#scroll-to-kb, #open-history-btn {
+#scroll-to-kb, #open-history-btn, #export-logs-btn {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -696,13 +696,13 @@ textarea:focus, .persona-input:focus {
     text-align: left;
 }
 
-#scroll-to-kb:hover, #open-history-btn:hover {
+#scroll-to-kb:hover, #open-history-btn:hover, #export-logs-btn:hover {
     background: rgba(99, 102, 241, 0.2);
     border-color: #6366f1;
     transform: translateX(5px);
 }
 
-#scroll-to-kb i, #open-history-btn i {
+#scroll-to-kb i, #open-history-btn i, #export-logs-btn i {
     color: #6366f1;
     font-size: 16px;
 }
@@ -736,18 +736,6 @@ body.editing-mode #editor-view-container {
     display: block;
 }
 
-
-/* Export Button specific hover state */
-#export-logs-btn:hover {
-    border-color: var(--primary-accent);
-    background: rgba(99, 102, 241, 0.2);
-    transform: translateX(5px);
-}
-
-/* Ensure the icon matches the primary accent color of the sidebar buttons */
-#export-logs-btn i {
-    color: var(--primary-accent);
-}
 /* --- REPLACE YOUR BUTTON HOVER EFFECTS WITH THIS --- */
 
 @media (hover: hover) {
