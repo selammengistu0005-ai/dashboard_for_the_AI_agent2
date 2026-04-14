@@ -23,15 +23,24 @@
 body { background-color: var(--bg-dark); color: var(--text-main); transition: var(--transition); overflow-x: hidden; }
 
 /* --- Sidebar & Requirement 3: Chart Position --- */
-.app-container { display: flex; height: 100vh; }
+.app-container { 
+    display: flex; 
+    height: 100vh; 
+    width: 100vw;
+    overflow: hidden; /* This stops the whole page from shifting */
+}
 
 .sidebar {
-    width: 320px; /* Widened slightly to fit the chart nicely */
+    width: 320px;
     background: var(--card-dark);
     border-right: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
     padding: 1.5rem;
+    height: 100vh; /* Forces sidebar to the bottom of the viewport */
+    position: sticky;
+    top: 0;
+    flex-shrink: 0;
 }
 
 .sidebar-chart-container {
@@ -50,7 +59,14 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
 }
 
 /* --- Main Content & Header --- */
-.main-content { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+
+.main-content { 
+    flex: 1; 
+    display: flex; 
+    flex-direction: column; 
+    height: 100vh;
+    overflow-y: auto; /* This allows your logs to scroll while sidebar stays still */
+}
 
 .dashboard-header {
     padding: 1.5rem 2rem;
@@ -110,7 +126,12 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
 }
 
 /* --- Theme Toggle (Bottom of Sidebar) --- */
-.theme-section { margin-top: auto; padding-top: 1rem; }
+.theme-section { 
+    margin-top: auto; 
+    padding: 1.5rem 0 0.5rem 0; 
+    border-top: 1px solid var(--border-color); /* Adds a nice separator line */
+}
+
 .toggle-track {
     width: 50px; height: 26px; background: var(--bg-dark); 
     border-radius: 20px; position: relative; cursor: pointer; border: 1px solid var(--border-color);
