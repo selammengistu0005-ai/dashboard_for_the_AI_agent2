@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Agent Analytics | Control Center</title>
+    <title>AI Agent Analytics | Data Center</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -38,10 +38,10 @@
                     <canvas id="intentChart"></canvas>
                 </div>
                 <button id="scroll-to-kb" class="sidebar-action-btn">
-                    <i class="fa-solid fa-pen-to-square"></i> Edit Agent Knowledge
+                    <i class="fa-solid fa-pen-to-square"></i> Edit Knowledge database
                 </button>
                 <button id="open-history-btn" class="sidebar-action-btn secondary-action">
-                    <i class="fa-solid fa-clock-rotate-left"></i> Version History
+                    <i class="fa-solid fa-clock-rotate-left"></i>History
                 </button>
                 <button id="export-logs-btn" class="sidebar-action-btn secondary-action">
                     <i class="fa-solid fa-file-export"></i> Export Conversations (CSV)
@@ -64,10 +64,10 @@
             <div id="live-monitor-view">
     <header class="dashboard-header">
         <div class="header-text">
-            <h1>Live Monitor</h1>
+            <h1>Live</h1>
             <div class="live-indicator">
                 <span class="pulse-dot"></span>
-                <span>Connected to Firebase</span>
+                <span>Connected to your agent</span>
             </div>
         </div>
     </header>
@@ -88,10 +88,10 @@
             <label class="field-label">AI Display Name</label>
             <input type="text" id="ai-name-input" class="persona-input" placeholder="e.g. Lumi2">
 
-            <label class="field-label">Instructional Logic</label>
+            <label class="field-label">Instructions</label>
             <textarea id="ai-instructions" placeholder="Enter master system instructions..."></textarea>
 
-            <label class="field-label">Persona Matrix</label>
+            <label class="field-label">Persona</label>
             <div class="persona-matrix">
                 <button class="persona-btn" data-style="Professional">Professional</button>
                 <button class="persona-btn" data-style="Friendly">Friendly</button>
