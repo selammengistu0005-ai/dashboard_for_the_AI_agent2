@@ -736,6 +736,18 @@ body.editing-mode #editor-view-container {
     display: block;
 }
 
+
+/* Export Button specific hover state */
+#export-logs-btn:hover {
+    border-color: var(--primary-accent);
+    background: rgba(99, 102, 241, 0.2);
+    transform: translateX(5px);
+}
+
+/* Ensure the icon matches the primary accent color of the sidebar buttons */
+#export-logs-btn i {
+    color: var(--primary-accent);
+}
 /* --- REPLACE YOUR BUTTON HOVER EFFECTS WITH THIS --- */
 
 @media (hover: hover) {
