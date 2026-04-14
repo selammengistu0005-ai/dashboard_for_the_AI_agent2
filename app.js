@@ -36,6 +36,7 @@ const historyDrawer = document.getElementById("history-drawer");
 const drawerOverlay = document.getElementById("drawer-overlay");
 const openHistoryBtn = document.getElementById("open-history-btn");
 const closeHistoryBtn = document.getElementById("close-history-btn");
+const exportBtn = document.getElementById("export-logs-btn");
 
 // NEW FIXED HISTORY CONTROLS
 if (openHistoryBtn) {
@@ -498,3 +499,55 @@ document.addEventListener('click', (e) => {
         console.log(`${e.target.dataset.style} is now ${isActive ? 'selected' : 'unselected'}`);
     }
 });
+
+// --- LOG EXPORT SYSTEM ---
+if (exportBtn) {
+    exportBtn.addEventListener("click", async () => {
+        if (!currentAgent) {
+            notify("Access Denied", "Please authorize first", "error");
+            return;
+        }
+
+        const originalContent = exportBtn.innerHTML;
+        exportBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Preparing...`;
+        
+        try {
+            const q = query(collection(db, "agents", currentAgent, "logs"), orderBy("timestamp", "desc"));
+            const querySnapshot = await getDocs(q);
+            
+            if (querySnapshot.empty) {
+                notify("No Data", "There are no conversations to export.", "error");
+                exportBtn.innerHTML = originalContent;
+                return;
+            }
+
+            let csvContent = "Timestamp,User Question,AI Answer,Intent\n";
+
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                const time = data.timestamp?.toDate().toLocaleString().replace(/,/g, "") || "N/A";
+                const question = `"${(data.question || "").replace(/"/g, '""')}"`; 
+                const answer = `"${(data.answer || "").replace(/"/g, '""')}"`;     
+                const intent = data.category || "General";
+                csvContent += `${time},${question},${answer},${intent}\n`;
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", `Agent_Logs_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            notify("Export Successful", "CSV file generated.", "success");
+        } catch (error) {
+            console.error("Export Error:", error);
+            notify("Export Failed", "Check database permissions.", "error");
+        } finally {
+            exportBtn.innerHTML = originalContent;
+        }
+    });
+}
