@@ -66,7 +66,6 @@ let intentChart = null;
 let knowledgeUnsubscribe = null; // Add this at the top with your other lets
 
 // 3. Auth Logic
-// 3. Auth Logic (Access Key Only Version)
 // --- REPLACE YOUR EXISTING validateAndUnlock FUNCTION ---
 async function validateAndUnlock() {
     // Move these inside so they are fetched when the button is clicked
@@ -165,17 +164,24 @@ function updateChart(counts) {
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            layout: {
+                padding: 0 // Removes wasted space around the ring
+            },
             plugins: {
                 legend: { 
                     position: 'bottom',
                     labels: { 
                         color: isLight ? '#1e293b' : '#f8fafc',
-                        font: { size: 10 },
-                        boxWidth: 10
+                        font: { 
+                            size: 13, // Increased from 10 to 13
+                            weight: '600' // Makes the text bold and easier to read
+                        },
+                        boxWidth: 12,
+                        padding: 15 // Space between the ring and the text
                     }
                 }
             },
-            cutout: '80%'
+            cutout: '75%' // Slightly thicker ring looks better when larger
         }
     });
 }
