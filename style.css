@@ -40,10 +40,13 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: va
 }
 
 .sidebar-card {
-    background: var(--bg-dark); /* Slightly darker to pop against sidebar */
-    padding: 1rem;
+    background: var(--bg-dark);
+    padding: 0.5rem; /* Reduced padding to give chart more room */
     border-radius: 16px;
-    height: 280px; /* Fixed height for the ring chart */
+    height: 320px; /* Increased height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* --- Main Content & Header --- */
