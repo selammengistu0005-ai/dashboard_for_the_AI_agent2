@@ -181,7 +181,16 @@ function updateChart(counts) {
                     }
                 }
             },
-            cutout: '75%' // Slightly thicker ring looks better when larger
+            cutout: '75%',
+            onClick: (event, elements) => {
+                if (elements.length > 0) {
+                    const index = elements[0].index;
+                    const clickedIntent = intentChart.data.labels[index];
+                    applyIntentHighlight(clickedIntent);
+                } else {
+                    resetHighlights();
+                }
+            }
         }
     });
 }
@@ -557,3 +566,37 @@ if (exportBtn) {
         }
     });
 }
+
+// Function to make matching cards glow
+function applyIntentHighlight(intentName) {
+    const allLogs = document.querySelectorAll('.log-frame');
+    
+    allLogs.forEach(log => {
+        // We use .textContent to get the text inside the tag
+        const logIntent = log.querySelector('.intent-tag').innerText.replace(/\s+/g, ' ').trim();
+        
+        // We check if the intent name exists within the tag text
+        if (logIntent.includes(intentName)) {
+            log.classList.add('highlight-glow');
+            log.classList.remove('dimmed');
+        } else {
+            log.classList.add('dimmed');
+            log.classList.remove('highlight-glow');
+        }
+    });
+}
+
+// Function to remove the glow
+function resetHighlights() {
+    const allLogs = document.querySelectorAll('.log-frame');
+    allLogs.forEach(log => {
+        log.classList.remove('highlight-glow', 'dimmed');
+    });
+}
+
+// Reset when clicking the background of the live monitor
+document.addEventListener('click', (e) => {
+    if (e.target.id === 'live-monitor-view' || e.target.classList.contains('logs-wrapper')) {
+        resetHighlights();
+    }
+});
