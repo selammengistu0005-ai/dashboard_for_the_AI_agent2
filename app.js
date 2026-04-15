@@ -570,20 +570,30 @@ if (exportBtn) {
 // Function to make matching cards glow
 function applyIntentHighlight(intentName) {
     const allLogs = document.querySelectorAll('.log-frame');
+    let firstMatch = null;
     
     allLogs.forEach(log => {
-        // We use .textContent to get the text inside the tag
         const logIntent = log.querySelector('.intent-tag').innerText.replace(/\s+/g, ' ').trim();
         
-        // We check if the intent name exists within the tag text
         if (logIntent.includes(intentName)) {
             log.classList.add('highlight-glow');
             log.classList.remove('dimmed');
+            
+            // Capture the first matching card we find
+            if (!firstMatch) firstMatch = log;
         } else {
             log.classList.add('dimmed');
             log.classList.remove('highlight-glow');
         }
     });
+
+    // If we found a match, scroll to it automatically
+    if (firstMatch) {
+        firstMatch.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center' 
+        });
+    }
 }
 
 // Function to remove the glow
