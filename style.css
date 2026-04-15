@@ -804,6 +804,21 @@ body.editing-mode #editor-view-container {
     display: block;
 }
 
+/* --- CROSS-HIGHLIGHT GLOW EFFECT --- */
+.log-frame.highlight-glow {
+    border-color: var(--primary-accent) !important;
+    box-shadow: 0 0 25px rgba(99, 102, 241, 0.7);
+    transform: scale(1.05);
+    z-index: 10;
+}
+
+.log-frame.dimmed {
+    opacity: 0.2;
+    filter: grayscale(1);
+    transform: scale(0.95);
+    pointer-events: none; /* Prevents clicking on dimmed cards */
+}
+
 /* --- REPLACE YOUR BUTTON HOVER EFFECTS WITH THIS --- */
 
 @media (hover: hover) {
