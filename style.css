@@ -720,6 +720,16 @@ textarea:focus, .persona-input:focus {
     text-align: left;
 }
 
+/* Change button text to violet only in Light Mode */
+.light-mode #scroll-to-kb, 
+.light-mode #open-history-btn, 
+.light-mode #export-logs-btn {
+    color: var(--primary-accent); /* The violet color */
+    background: rgba(99, 102, 241, 0.08); /* A very faint violet tint */
+    border-color: rgba(99, 102, 241, 0.2);
+    font-weight: 600; /* Makes it even easier to read */
+}
+
 #scroll-to-kb:hover, #open-history-btn:hover, #export-logs-btn:hover {
     background: rgba(99, 102, 241, 0.2);
     border-color: #6366f1;
