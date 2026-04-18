@@ -831,6 +831,52 @@ body.editing-mode #editor-view-container {
     transform: translateX(5px);
 }
 
+/* --- PHONE VAULT VIEW STYLES --- */
+
+/* 1. Smooth Fade-In Animation */
+#phone-vault-view {
+    animation: vaultSlideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes vaultSlideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* 2. Back Button Glow */
+#back-to-monitor {
+    background: var(--glass-bg) !important;
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    font-weight: 700;
+}
+
+#back-to-monitor:hover {
+    background: var(--primary-accent) !important;
+    border-color: var(--primary-accent);
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+    transform: translateX(-5px);
+}
+
+/* 3. Patient Card Highlights */
+#vault-list .log-frame {
+    border-left: 4px solid var(--primary-accent);
+    cursor: default;
+}
+
+#vault-list .log-frame:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+    border-color: var(--primary-accent);
+}
+
+#vault-list .ai-a {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary-accent);
+    letter-spacing: 1px;
+}
+
 @media (hover: hover) {
     /* This only runs on computers with a mouse */
     .persona-btn:hover, .status-toggle:hover {
