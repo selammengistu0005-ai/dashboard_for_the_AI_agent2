@@ -37,6 +37,7 @@ const drawerOverlay = document.getElementById("drawer-overlay");
 const openHistoryBtn = document.getElementById("open-history-btn");
 const closeHistoryBtn = document.getElementById("close-history-btn");
 const exportBtn = document.getElementById("export-logs-btn");
+const openPhoneVaultBtn = document.getElementById("open-phone-vault-btn");
 
 // NEW FIXED HISTORY CONTROLS
 if (openHistoryBtn) {
@@ -233,6 +234,22 @@ if (modeSwitch) {
             intentChart.options.plugins.legend.labels.color = isLight ? '#1e293b' : '#f8fafc';
             intentChart.update();
         }
+    });
+}
+
+if (openPhoneVaultBtn) {
+    openPhoneVaultBtn.addEventListener("click", () => {
+        // First check if an agent is authorized
+        if (!currentAgentId) {
+            notify("Access Denied", "Please authorize an agent first", "error");
+            return;
+        }
+
+        // For now, let's trigger a success notification to prove it works
+        notify("Phone Vault", "Fetching patient records...", "success");
+        
+        // This is where we will eventually call the function to show the list
+        console.log("Phone Vault Clicked for Agent:", currentAgentId);
     });
 }
 
