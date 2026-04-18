@@ -647,14 +647,17 @@ document.addEventListener('click', (e) => {
 
 // --- PHONE VAULT DATA ENGINE ---
 async function loadPhoneVault(agentId) {
-    const listElement = document.getElementById("vault-list");
-    if (!listElement) return; // Safety check
+    // 1. Always use the variable defined at the top of your app.js (vaultList)
+    if (!vaultList) {
+        console.error("Vault list container not found in DOM");
+        return;
+    }
     
-    listElement.innerHTML = `<div class="log-frame">Scanning database for records...</div>`;
+    vaultList.innerHTML = `<div class="log-frame">Scanning database for records...</div>`;
     
     try {
-        // Query the 'patients' sub-collection inside the specific agent
-        const q = query(collection(db, "agents", agentId, "patients"), orderBy("timestamp", "desc"));
+        // 2. This path matches your screenshot: agents -> phone-data -> logs
+        const q = query(collection(db, "agents", "phone-data", "logs"), orderBy("timestamp", "desc"));
         const querySnapshot = await getDocs(q);
         
         vaultList.innerHTML = ""; 
@@ -666,11 +669,13 @@ async function loadPhoneVault(agentId) {
 
         querySnapshot.forEach((doc) => {
             const data = doc.data();
+            
+            // 3. Safety Check: If the random word document (njgkfsj...) doesn't have 
+            // the fields 'name' or 'phone', we skip it or show 'N/A'
             const card = document.createElement("div");
             card.className = "log-frame"; 
             
-            // Format the timestamp
-            const dateStr = data.timestamp?.toDate().toLocaleDateString() || "Recent";
+            const dateStr = data.timestamp?.toDate ? data.timestamp.toDate().toLocaleDateString() : "Recent";
             
             card.innerHTML = `
                 <div class="user-q">
