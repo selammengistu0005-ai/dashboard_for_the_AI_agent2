@@ -239,17 +239,17 @@ if (modeSwitch) {
 
 if (openPhoneVaultBtn) {
     openPhoneVaultBtn.addEventListener("click", () => {
-        // First check if an agent is authorized
-        if (!currentAgentId) {
+        // FIXED: Changed currentAgentId to currentAgent
+        if (!currentAgent) {
             notify("Access Denied", "Please authorize an agent first", "error");
             return;
         }
 
-        // For now, let's trigger a success notification to prove it works
+        // Trigger notification
         notify("Phone Vault", "Fetching patient records...", "success");
         
-        // This is where we will eventually call the function to show the list
-        console.log("Phone Vault Clicked for Agent:", currentAgentId);
+        // FIXED: Changed console log reference as well
+        console.log("Phone Vault Clicked for Agent:", currentAgent);
     });
 }
 
