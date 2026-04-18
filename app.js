@@ -38,6 +38,11 @@ const openHistoryBtn = document.getElementById("open-history-btn");
 const closeHistoryBtn = document.getElementById("close-history-btn");
 const exportBtn = document.getElementById("export-logs-btn");
 const openPhoneVaultBtn = document.getElementById("open-phone-vault-btn");
+const phoneVaultView = document.getElementById("phone-vault-view");
+const liveMonitorView = document.getElementById("live-monitor-view");
+const backToMonitorBtn = document.getElementById("back-to-monitor");
+const vaultList = document.getElementById("vault-list");
+const editorView = document.getElementById("editor-view-container");
 
 // NEW FIXED HISTORY CONTROLS
 if (openHistoryBtn) {
@@ -239,17 +244,28 @@ if (modeSwitch) {
 
 if (openPhoneVaultBtn) {
     openPhoneVaultBtn.addEventListener("click", () => {
-        // FIXED: Changed currentAgentId to currentAgent
         if (!currentAgent) {
-            notify("Access Denied", "Please authorize an agent first", "error");
+            notify("Access Denied", "Authorize an agent first", "error");
             return;
         }
 
-        // Trigger notification
-        notify("Phone Vault", "Fetching patient records...", "success");
+        // 1. Enter Vault Mode (UI Swap)
+        liveMonitorView.style.display = "none";
+        editorView.style.display = "none";
+        document.body.classList.remove("editing-mode");
+        phoneVaultView.style.display = "block";
         
-        // FIXED: Changed console log reference as well
-        console.log("Phone Vault Clicked for Agent:", currentAgent);
+        // 2. Load Data
+        loadPhoneVault(currentAgent);
+        notify("Vault Synced", "Records decrypted successfully.", "success");
+    });
+}
+
+// Back Button Controller
+if (backToMonitorBtn) {
+    backToMonitorBtn.addEventListener("click", () => {
+        phoneVaultView.style.display = "none";
+        liveMonitorView.style.display = "block";
     });
 }
 
@@ -627,3 +643,48 @@ document.addEventListener('click', (e) => {
         resetHighlights();
     }
 });
+
+
+// --- PHONE VAULT DATA ENGINE ---
+async function loadPhoneVault(agentId) {
+    vaultList.innerHTML = `<div class="log-frame">Scanning database for records...</div>`;
+    
+    try {
+        // Query the 'patients' sub-collection inside the specific agent
+        const q = query(collection(db, "agents", agentId, "patients"), orderBy("timestamp", "desc"));
+        const querySnapshot = await getDocs(q);
+        
+        vaultList.innerHTML = ""; 
+
+        if (querySnapshot.empty) {
+            vaultList.innerHTML = `<div class="log-frame">No patient records found in this vault.</div>`;
+            return;
+        }
+
+        querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            const card = document.createElement("div");
+            card.className = "log-frame"; 
+            
+            // Format the timestamp
+            const dateStr = data.timestamp?.toDate().toLocaleDateString() || "Recent";
+            
+            card.innerHTML = `
+                <div class="user-q">
+                    <i class="fa-solid fa-user-doctor" style="color: var(--primary-accent)"></i>
+                    <span><strong>${data.name || 'Anonymous Patient'}</strong></span>
+                </div>
+                <div class="ai-a">
+                    <i class="fa-solid fa-phone"></i> ${data.phone || 'N/A'}
+                </div>
+                <div class="intent-tag">
+                    <i class="fa-solid fa-clock"></i> Captured: ${dateStr}
+                </div>
+            `;
+            vaultList.appendChild(card);
+        });
+    } catch (e) {
+        console.error("Vault Error:", e);
+        notify("Vault Error", "Could not reach database.", "error");
+    }
+}
