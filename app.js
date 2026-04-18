@@ -647,7 +647,10 @@ document.addEventListener('click', (e) => {
 
 // --- PHONE VAULT DATA ENGINE ---
 async function loadPhoneVault(agentId) {
-    vaultList.innerHTML = `<div class="log-frame">Scanning database for records...</div>`;
+    const listElement = document.getElementById("vault-list");
+    if (!listElement) return; // Safety check
+    
+    listElement.innerHTML = `<div class="log-frame">Scanning database for records...</div>`;
     
     try {
         // Query the 'patients' sub-collection inside the specific agent
