@@ -737,7 +737,7 @@ textarea:focus, .persona-input:focus {
 }
 
 /* Sidebar Button Styling */
-#scroll-to-kb, #open-history-btn, #export-logs-btn {
+#scroll-to-kb, #open-history-btn, #export-logs-btn, #open-phone-vault-btn {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -757,17 +757,22 @@ textarea:focus, .persona-input:focus {
 /* Change button text to violet only in Light Mode */
 .light-mode #scroll-to-kb, 
 .light-mode #open-history-btn, 
-.light-mode #export-logs-btn {
+.light-mode #export-logs-btn,
+.light-mode #open-phone-vault-btn {
     color: var(--primary-accent); /* The violet color */
     background: rgba(99, 102, 241, 0.08); /* A very faint violet tint */
     border-color: rgba(99, 102, 241, 0.2);
     font-weight: 600; /* Makes it even easier to read */
 }
 
-#scroll-to-kb:hover, #open-history-btn:hover, #export-logs-btn:hover {
+#scroll-to-kb:hover, 
+#open-history-btn:hover, 
+#export-logs-btn:hover, 
+#open-phone-vault-btn:hover {
     background: rgba(99, 102, 241, 0.2);
     border-color: #6366f1;
     transform: translateX(5px);
+    color: white; /* Ensures text stays bright */
 }
 
 #scroll-to-kb i, #open-history-btn i, #export-logs-btn i {
@@ -819,7 +824,12 @@ body.editing-mode #editor-view-container {
     pointer-events: none; /* Prevents clicking on dimmed cards */
 }
 
-/* --- REPLACE YOUR BUTTON HOVER EFFECTS WITH THIS --- */
+#open-phone-vault-btn:hover {
+    background: var(--primary-accent);
+    color: white;
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+    transform: translateX(5px);
+}
 
 @media (hover: hover) {
     /* This only runs on computers with a mouse */
