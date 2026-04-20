@@ -74,7 +74,6 @@ let knowledgeUnsubscribe = null; // Add this at the top with your other lets
 // 3. Auth Logic
 // --- REPLACE YOUR EXISTING validateAndUnlock FUNCTION ---
 async function validateAndUnlock() {
-    // Move these inside so they are fetched when the button is clicked
     const keyInput = document.getElementById("agent-key-input");
     const unlockBtn = document.getElementById("unlock-btn");
     const keyOverlay = document.getElementById("key-overlay");
@@ -86,35 +85,47 @@ async function validateAndUnlock() {
         notify("Required", "Please enter your Access Key", "error");
         return;
     }
-    unlockBtn.innerText = "Verifying...";
+
+    // CRITICAL: Reset currentAgent so old data doesn't leak if this login fails
+    currentAgent = null;
+    authError.innerText = ""; 
+    unlockBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Verifying...`;
+    
     try {
-        // We SEARCH the 'agents' collection for any document where 'accessKey' matches
         const q = query(collection(db, "agents"), where("accessKey", "==", inputKey));
         const querySnapshot = await getDocs(q);
-        console.log("Documents found:", querySnapshot.size);
 
         if (!querySnapshot.empty) {
-            // We found the agent!
+            // Found the agent
             const docSnap = querySnapshot.docs[0]; 
             const data = docSnap.data();
             
-            currentAgent = docSnap.id; // This sets the ID for the rest of the app
+            // Set the global ID to the actual Document ID (e.g., "tori_data")
+            currentAgent = docSnap.id; 
+            
+            // UI Transition
             keyOverlay.style.display = "none";
             mainApp.style.display = "flex";
+            
+            // Wipe old UI content before loading new data
+            logsContainer.innerHTML = '<div class="loading-state">Initialising Logs...</div>';
             
             // Initialize the dashboard
             loadLogs(currentAgent);
             loadKnowledge(currentAgent);
             listenToSettings(currentAgent);
             
-            notify("Welcome Back", `Authorized as ${data.aiDisplayName || 'Agent'}`, "success");
+            // Use a safe fallback for the name since tori_data is missing the field
+            const name = data.aiDisplayName || "Private Agent";
+            notify("Welcome Back", `Authorized as ${name}`, "success");
         } else {
             throw new Error("Invalid Key");
         }
     } catch (e) {
-        console.error(e);
-        authError.innerText = "Invalid Access Key";
+        console.error("Auth Error:", e);
+        authError.innerText = "Invalid Access Key - Access Denied";
         unlockBtn.innerText = "Authorize Dashboard";
+        notify("Auth Failed", "Key not recognized", "error");
     }
 }
 // 4. Load Logs
