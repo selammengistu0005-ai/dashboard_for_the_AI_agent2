@@ -877,6 +877,43 @@ body.editing-mode #editor-view-container {
     letter-spacing: 1px;
 }
 
+/* --- VAULT EXPANSION SYSTEM --- */
+.vault-card {
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    max-height: 150px; /* Base height when closed */
+    border: 1px solid var(--border-color);
+}
+
+.vault-card.expanded {
+    max-height: 500px; /* High enough to fit long text */
+    border-color: var(--primary-accent);
+    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.15);
+}
+
+.vault-cause {
+    margin-top: 15px;
+    padding: 12px;
+    background: rgba(239, 68, 68, 0.05); /* Very light red tint */
+    border-radius: 8px;
+    border-left: 3px solid #ef4444;
+    font-size: 0.9rem;
+    color: var(--text-main);
+    line-height: 1.5;
+    display: none; /* Hidden by default */
+    animation: fadeIn 0.4s ease;
+}
+
+.vault-card.expanded .vault-cause {
+    display: block; /* Shows only when expanded */
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 @media (hover: hover) {
     /* This only runs on computers with a mouse */
     .persona-btn:hover, .status-toggle:hover {
