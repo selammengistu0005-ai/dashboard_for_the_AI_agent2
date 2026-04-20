@@ -702,7 +702,7 @@ async function loadPhoneVault(agentId) {
             card.innerHTML = `
                 <div class="user-q">
                     <i class="fa-solid fa-user-doctor" style="color: var(--primary-accent)"></i>
-                    <span><strong>${data.name || 'Anonymous Patient'}</strong></span>
+                    <span><strong>${data.patientName || 'Anonymous Patient'}</strong></span>
                 </div>
                 <div class="ai-a">
                     <i class="fa-solid fa-phone"></i> ${data.phone || 'N/A'}
