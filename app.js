@@ -691,25 +691,27 @@ async function loadPhoneVault(agentId) {
 
         querySnapshot.forEach((doc) => {
             const data = doc.data();
-            
-            // 3. Safety Check: If the random word document (njgkfsj...) doesn't have 
-            // the fields 'name' or 'phone', we skip it or show 'N/A'
+            const dateStr = data.timestamp?.toDate().toLocaleString() || "Recent";
             const card = document.createElement("div");
-            card.className = "log-frame"; 
-            
-            const dateStr = data.timestamp?.toDate ? data.timestamp.toDate().toLocaleDateString() : "Recent";
-            
+            card.className = "log-frame vault-card"; // Added 'vault-card' for easier targeting
+            card.dataset.cause = data.cause || "No symptoms recorded."; // Store the cause here
+            card.dataset.patient = data.patientName || "Anonymous";
+
             card.innerHTML = `
-                <div class="user-q">
-                    <i class="fa-solid fa-user-doctor" style="color: var(--primary-accent)"></i>
-                    <span><strong>${data.patientName || 'Anonymous Patient'}</strong></span>
-                </div>
-                <div class="ai-a">
-                    <i class="fa-solid fa-phone"></i> ${data.phone || 'N/A'}
-                </div>
-                <div class="intent-tag">
-                    <i class="fa-solid fa-clock"></i> Captured: ${dateStr}
-                </div>
+            <div class="user-q">
+            <i class="fa-solid fa-user-doctor" style="color: var(--primary-accent)"></i>
+            <span><strong>${data.patientName || 'Anonymous Patient'}</strong></span>
+            </div>
+            <div class="ai-a">
+            <i class="fa-solid fa-phone"></i> ${data.phone || 'N/A'}
+            </div>
+            <div class="vault-cause">
+            <i class="fa-solid fa-notes-medical" style="color: #ef4444; margin-right: 5px;"></i>
+            ${data.cause || 'No specific cause recorded.'}
+            </div>
+            <div class="intent-tag">
+            <i class="fa-solid fa-clock"></i> Captured: ${dateStr}
+            </div>
             `;
             vaultList.appendChild(card);
         });
@@ -717,4 +719,23 @@ async function loadPhoneVault(agentId) {
         console.error("Vault Error:", e);
         notify("Vault Error", "Could not reach database.", "error");
     }
+}
+
+if (vaultList) {
+    vaultList.addEventListener("click", (e) => {
+        const card = e.target.closest(".vault-card");
+        if (card) {
+            // Toggle the 'expanded' class to show the CSS we wrote earlier
+            card.classList.toggle("expanded");
+
+            // Close other cards for a clean accordion effect
+            document.querySelectorAll('.vault-card').forEach(other => {
+                if (other !== card) other.classList.remove('expanded');
+            });
+            
+            // Subtle haptic-style feedback
+            card.style.transform = "scale(0.98)";
+            setTimeout(() => card.style.transform = "scale(1)", 100);
+        }
+    });
 }
