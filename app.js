@@ -88,6 +88,10 @@ async function validateAndUnlock() {
 
     // CRITICAL: Reset currentAgent so old data doesn't leak if this login fails
     currentAgent = null;
+    if (intentChart) {
+        intentChart.destroy();
+        intentChart = null;
+    }
     authError.innerText = ""; 
     unlockBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Verifying...`;
     
@@ -417,20 +421,27 @@ if (saveKbBtn) saveKbBtn.addEventListener("click", saveKnowledge);
 
 let isInitialLoad = true; // Add this variable above the function
 
+let settingsUnsubscribe = null; // Add this near your other let variables at the top
+
 function listenToSettings(agentId) {
-    onSnapshot(doc(db, "agents", agentId), (docSnap) => {
+    // KILL the previous listener so it stops pushing old data to the inputs
+    if (settingsUnsubscribe) settingsUnsubscribe();
+    
+    settingsUnsubscribe = onSnapshot(doc(db, "agents", agentId), (docSnap) => {
         if (docSnap.exists()) {
             const settings = docSnap.data();
             
-            // Only update inputs if the user isn't currently typing in them
-            if (document.activeElement !== document.getElementById("ai-name-input")) {
-                document.getElementById("ai-name-input").value = settings.aiDisplayName || "";
+            // Only update if the user isn't typing
+            const nameInput = document.getElementById("ai-name-input");
+            const instInput = document.getElementById("ai-instructions");
+
+            if (document.activeElement !== nameInput) {
+                nameInput.value = settings.aiDisplayName || "";
             }
-            if (document.activeElement !== document.getElementById("ai-instructions")) {
-                document.getElementById("ai-instructions").value = settings.systemInstructions || "";
+            if (document.activeElement !== instInput) {
+                instInput.value = settings.systemInstructions || "";
             }
             
-            // CRITICAL FIX: Only reset buttons if the user is NOT in editing mode
             if (!document.body.classList.contains("editing-mode")) {
                 const savedStyles = settings.personas || [];
                 document.querySelectorAll(".persona-btn").forEach(btn => { 
@@ -668,7 +679,7 @@ async function loadPhoneVault(agentId) {
     
     try {
         // 2. This path matches your screenshot: agents -> phone-data -> logs
-        const q = query(collection(db, "agents", "phone-data", "logs"), orderBy("timestamp", "desc"));
+        const q = query(collection(db, "agents", agentId, "logs"), orderBy("timestamp", "desc"));
         const querySnapshot = await getDocs(q);
         
         vaultList.innerHTML = ""; 
