@@ -698,21 +698,28 @@ async function loadPhoneVault(agentId) {
             card.dataset.patient = data.patientName || "Anonymous";
 
             card.innerHTML = `
-            <div class="user-q">
-            <i class="fa-solid fa-user-doctor" style="color: var(--primary-accent)"></i>
-            <span><strong>${data.patientName || 'Anonymous Patient'}</strong></span>
-            </div>
-            <div class="ai-a">
-            <i class="fa-solid fa-phone"></i> ${data.phone || 'N/A'}
-            </div>
-            <div class="vault-cause">
-            <i class="fa-solid fa-notes-medical" style="color: #ef4444; margin-right: 5px;"></i>
-            ${data.cause || 'No specific cause recorded.'}
-            </div>
-            <div class="intent-tag">
-            <i class="fa-solid fa-clock"></i> Captured: ${dateStr}
-            </div>
-            `;
+    <div class="user-q">
+        <i class="fa-solid fa-user-doctor" style="color: var(--primary-accent)"></i>
+        <span><strong>${data.patientName || 'Anonymous Patient'}</strong></span>
+    </div>
+
+    <div class="ai-a">
+        <i class="fa-solid fa-phone"></i> ${data.phone || 'N/A'}
+    </div>
+
+    <div class="ai-a" style="margin-top: -10px; margin-bottom: 10px; opacity: 0.7; font-size: 0.85rem;">
+        <i class="fa-solid fa-envelope"></i> ${data.patientEmail || 'No email provided'}
+    </div>
+
+    <div class="vault-cause">
+        <i class="fa-solid fa-notes-medical" style="color: #ef4444; margin-right: 5px;"></i>
+        ${data.cause || 'No specific cause recorded.'}
+    </div>
+
+    <div class="intent-tag">
+        <i class="fa-solid fa-clock"></i> Captured: ${dateStr}
+    </div>
+`;
             vaultList.appendChild(card);
         });
     } catch (e) {
