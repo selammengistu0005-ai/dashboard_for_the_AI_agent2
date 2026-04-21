@@ -914,6 +914,19 @@ body.editing-mode #editor-view-container {
     to { opacity: 1; transform: translateY(0); }
 }
 
+/* Styles the email line inside the vault card */
+.vault-card .ai-a i.fa-envelope {
+    color: var(--primary-accent); /* Keeps the icon color consistent */
+    width: 18px; /* Matches the width of the phone icon for perfect vertical alignment */
+    text-align: center;
+}
+
+/* Optional: Subtle hover effect for the contact info */
+.vault-card .ai-a:hover {
+    color: var(--primary-accent);
+    transition: 0.2s ease;
+}
+
 @media (hover: hover) {
     /* This only runs on computers with a mouse */
     .persona-btn:hover, .status-toggle:hover {
