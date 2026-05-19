@@ -49,6 +49,9 @@
                 <button id="open-phone-vault-btn" class="sidebar-action-btn secondary-action">
                     <i class="fa-solid fa-address-book"></i> Phone Data Vault
                 </button>
+                <button id="open-post-btn" class="sidebar-action-btn secondary-action">
+                    <i class="fa-solid fa-pen-nib"></i> Post
+                </button>
             </div>
 
             <div class="theme-section">
@@ -90,7 +93,7 @@
                         <span>Encrypted Patient Data</span>
                     </div>
                 </div>
-                <button id="back-to-monitor" class="sidebar-action-btn" style="width: auto; padding: 10px 20px; margin: 0; background: rgba(255,255,255,0.1);">
+                <button id="back-to-monitor" class="sidebar-action-btn">
                     <i class="fa-solid fa-arrow-left"></i> Back to Live
                 </button>
             </div>
@@ -101,6 +104,36 @@
                 </div>
         </div>
     </div>
+
+<div id="post-view" style="display: none;">
+    <header class="dashboard-header">
+        <div class="header-text" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <div>
+                <h1 style="color: var(--primary-accent)">New Post</h1>
+                <div class="live-indicator">
+                    <i class="fa-solid fa-pen-nib" style="font-size: 10px; color: var(--primary-accent);"></i>
+                    <span>Write and publish to your website</span>
+                </div>
+            </div>
+            <button id="back-from-post-btn" class="sidebar-action-btn">
+                <i class="fa-solid fa-arrow-left"></i> Back to Live
+            </button>
+        </div>
+    </header>
+    <div class="logs-wrapper">
+        <div class="kb-container" style="max-width: 700px; margin: 0 auto;">
+            <label class="field-label">Post Title</label>
+            <input type="text" id="post-title-input" class="persona-input" placeholder="Enter post title...">
+            <label class="field-label" style="margin-top: 1.5rem;">Content</label>
+            <textarea id="post-content-input" placeholder="Write your post here..." style="min-height: 220px;"></textarea>
+            <div class="kb-form-actions" style="margin-top: 20px;">
+                <button id="publish-post-btn" class="save-all-btn">
+                    <i class="fa-solid fa-paper-plane"></i> Publish
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
     <div id="editor-view-container">
         <section id="knowledge-base-section">
@@ -158,4 +191,3 @@
     <div id="toast-container" class="toast-container"></div>
 </body>
 </html>
-
