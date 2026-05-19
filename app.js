@@ -43,6 +43,10 @@ const liveMonitorView = document.getElementById("live-monitor-view");
 const backToMonitorBtn = document.getElementById("back-to-monitor");
 const vaultList = document.getElementById("vault-list");
 const editorView = document.getElementById("editor-view-container");
+const postView = document.getElementById("post-view");
+const openPostBtn = document.getElementById("open-post-btn");
+const backFromPostBtn = document.getElementById("back-from-post-btn");
+const publishPostBtn = document.getElementById("publish-post-btn");
 
 // NEW FIXED HISTORY CONTROLS
 if (openHistoryBtn) {
@@ -267,8 +271,10 @@ if (openPhoneVaultBtn) {
         // 1. Enter Vault Mode (UI Swap)
         liveMonitorView.style.display = "none";
         editorView.style.display = "none";
+        postView.style.display = "none";
         document.body.classList.remove("editing-mode");
         phoneVaultView.style.display = "block";
+        
         
         // 2. Load Data
         loadPhoneVault(currentAgent);
@@ -389,15 +395,26 @@ function loadKnowledge(agentId) {
         });
     });
 }
+
 // NEW FIXED KNOWLEDGE BASE CONTROLS
 // --- REPLACED: NEW HORIZONTAL MODE SWITCHER ---
 const scrollBtn = document.getElementById("scroll-to-kb");
 if (scrollBtn) {
     scrollBtn.onclick = () => {
         const isEditing = document.body.classList.toggle("editing-mode");
-        scrollBtn.innerHTML = isEditing 
-            ? `<i class="fa-solid fa-chart-line"></i> View Live Monitor` 
-            : `<i class="fa-solid fa-pen-to-square"></i> Edit Agent Knowledge`;
+
+        postView.style.display = "none";
+        phoneVaultView.style.display = "none";
+
+        if (isEditing) {
+            liveMonitorView.style.display = "none";
+            editorView.style.display = "block";
+            scrollBtn.innerHTML = `<i class="fa-solid fa-chart-line"></i> View Live Monitor`;
+        } else {
+            editorView.style.display = "none";
+            liveMonitorView.style.display = "block";
+            scrollBtn.innerHTML = `<i class="fa-solid fa-pen-to-square"></i> Edit Agent Knowledge`;
+        }
     };
 }
 
@@ -726,6 +743,70 @@ async function loadPhoneVault(agentId) {
         console.error("Vault Error:", e);
         notify("Vault Error", "Could not reach database.", "error");
     }
+}
+
+// --- POST SYSTEM ---
+if (openPostBtn) {
+    openPostBtn.addEventListener("click", () => {
+        if (!currentAgent) {
+            notify("Access Denied", "Please authorize first", "error");
+            return;
+        }
+        liveMonitorView.style.display = "none";   
+        editorView.style.display = "none";
+        phoneVaultView.style.display = "none";
+        document.body.classList.remove("editing-mode");
+        postView.style.display = "flex";
+        postView.style.flexDirection = "column";
+    });
+}
+
+if (backFromPostBtn) {
+    backFromPostBtn.addEventListener("click", () => {
+        postView.style.display = "none";
+        phoneVaultView.style.display = "none";
+        editorView.style.display = "none";
+        liveMonitorView.style.display = "block";
+    });
+}
+
+if (publishPostBtn) {
+    publishPostBtn.addEventListener("click", async () => {
+        if (!currentAgent) {
+            notify("Access Denied", "Please authorize first", "error");
+            return;
+        }
+
+        const title = document.getElementById("post-title-input").value.trim();
+        const content = document.getElementById("post-content-input").value.trim();
+
+        if (!title || !content) {
+            notify("Missing Fields", "Please fill in both title and content", "error");
+            return;
+        }
+
+        const originalContent = publishPostBtn.innerHTML;
+        publishPostBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Publishing...`;
+
+        try {
+            await addDoc(collection(db, "posts"), {
+                title,
+                content,
+                agentId: currentAgent,
+                publishedAt: new Date().toISOString(),
+                status: "published"
+            });
+
+            document.getElementById("post-title-input").value = "";
+            document.getElementById("post-content-input").value = "";
+            notify("Published!", "Your post is now live.", "success");
+        } catch (e) {
+            console.error("Publish error:", e);
+            notify("Publish Failed", "Could not reach database.", "error");
+        } finally {
+            publishPostBtn.innerHTML = originalContent;
+        }
+    });
 }
 
 if (vaultList) {
