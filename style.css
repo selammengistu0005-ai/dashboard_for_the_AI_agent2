@@ -1,22 +1,126 @@
 /* --- Professional Palette --- */
 :root {
-    --primary-accent: #6366f1;
-    --bg-dark: #0f172a;
-    --card-dark: #1e293b;
+
+    /* ===== COLORS ===== */
+    --primary-accent: #7c5cff;
+    --primary-accent-light: #9f7cff;
+
+    --secondary-accent: #00d4ff;
+    --success-accent: #00ffae;
+    --danger-accent: #ff4d8d;
+
+    --bg-dark: #060816;
+    --bg-secondary: #0b1023;
+    --card-dark: rgba(17, 25, 40, 0.72);
+
     --text-main: #f8fafc;
     --text-dim: #94a3b8;
-    --border-color: rgba(255, 255, 255, 0.1);
-    --glass-bg: rgba(255, 255, 255, 0.03);
-    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    --border-color: rgba(255, 255, 255, 0.08);
+
+    /* ===== GLASS ===== */
+    --glass-bg: rgba(255, 255, 255, 0.04);
+    --glass-border: rgba(255, 255, 255, 0.08);
+
+    /* ===== GLOWS ===== */
+    --glow-purple:
+        0 0 12px rgba(124, 92, 255, 0.35),
+        0 0 40px rgba(124, 92, 255, 0.18);
+
+    --glow-blue:
+        0 0 12px rgba(0, 212, 255, 0.35),
+        0 0 40px rgba(0, 212, 255, 0.16);
+
+    --glow-green:
+        0 0 12px rgba(0, 255, 174, 0.30),
+        0 0 40px rgba(0, 255, 174, 0.15);
+
+    /* ===== SHADOWS ===== */
+    --shadow-lg:
+        0 10px 30px rgba(0, 0, 0, 0.35);
+
+    --shadow-card:
+        0 8px 32px rgba(0, 0, 0, 0.28);
+
+    /* ===== RADIUS ===== */
+    --radius-sm: 12px;
+    --radius-md: 18px;
+    --radius-lg: 26px;
+
+    /* ===== TRANSITIONS ===== */
+    --transition:
+        all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* ===== BACKGROUND ===== */
+    --dashboard-gradient:
+        radial-gradient(
+            circle at top left,
+            rgba(124, 92, 255, 0.18),
+            transparent 28%
+        ),
+
+        radial-gradient(
+            circle at top right,
+            rgba(0, 212, 255, 0.12),
+            transparent 30%
+        ),
+
+        radial-gradient(
+            circle at bottom right,
+            rgba(0, 255, 174, 0.08),
+            transparent 25%
+        ),
+
+        linear-gradient(
+            135deg,
+            #050816 0%,
+            #091120 40%,
+            #050816 100%
+        );
 }
 
+
+/* ===== LIGHT MODE ===== */
+
 .light-mode {
-    --bg-dark: #f1f5f9;
-    --card-dark: #ffffff;
-    --text-main: #1e293b;
-    --text-dim: #64748b;
-    --border-color: rgba(0, 0, 0, 0.08);
-    --glass-bg: rgba(0, 0, 0, 0.05);
+
+    --bg-dark: #eef2ff;
+    --bg-secondary: #ffffff;
+
+    --card-dark: rgba(255, 255, 255, 0.78);
+
+    --text-main: #0f172a;
+    --text-dim: #475569;
+
+    --border-color: rgba(15, 23, 42, 0.08);
+
+    --glass-bg: rgba(255, 255, 255, 0.45);
+    --glass-border: rgba(255, 255, 255, 0.55);
+
+    --shadow-lg:
+        0 10px 30px rgba(15, 23, 42, 0.08);
+
+    --shadow-card:
+        0 8px 24px rgba(15, 23, 42, 0.08);
+
+    --dashboard-gradient:
+        radial-gradient(
+            circle at top left,
+            rgba(124, 92, 255, 0.12),
+            transparent 28%
+        ),
+
+        radial-gradient(
+            circle at top right,
+            rgba(0, 212, 255, 0.08),
+            transparent 30%
+        ),
+
+        linear-gradient(
+            135deg,
+            #f8fbff 0%,
+            #eef2ff 100%
+        );
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
@@ -845,23 +949,34 @@ body.editing-mode #editor-view-container {
 
 /* 2. Back Button Glow */
 #back-to-monitor {
-    background: var(--glass-bg) !important;
-    border: 1px solid var(--border-color);
-    color: var(--text-main);
+    background: linear-gradient(135deg, var(--primary-accent), #818cf8) !important;
+    color: white;
+    border: none;
+    padding: 14px 32px;
+    border-radius: 12px;
+    font-size: 1rem;
     font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(124, 92, 255, 0.35);
 }
 
 #back-to-monitor:hover {
-    background: var(--primary-accent) !important;
-    border-color: var(--primary-accent);
-    box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
-    transform: translateX(-5px);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(124, 92, 255, 0.55);
+    filter: brightness(1.15);
 }
 
-/* 3. Patient Card Highlights */
-#vault-list .log-frame {
-    border-left: 4px solid var(--primary-accent);
-    cursor: default;
+#back-to-monitor:active {
+    transform: translateY(0px);
+    filter: brightness(0.95);
+}
+
+#back-to-monitor i {
+    font-size: 1rem;
 }
 
 #vault-list .log-frame:hover {
@@ -934,6 +1049,96 @@ body.editing-mode #editor-view-container {
         filter: brightness(1.2);
         cursor: pointer;
     }
+}
+
+/* --- POST VIEW --- */
+#post-view {
+    animation: vaultSlideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#open-post-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 90%;
+    margin: 10px auto;
+    padding: 12px 15px;
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 8px;
+    color: #f8fafc;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.3s ease;
+    text-align: left;
+}
+
+.light-mode #open-post-btn {
+    color: var(--primary-accent);
+    background: rgba(99, 102, 241, 0.08);
+    border-color: rgba(99, 102, 241, 0.2);
+    font-weight: 600;
+}
+
+#open-post-btn:hover {
+    background: var(--primary-accent);
+    color: white;
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+    transform: translateX(5px);
+}
+
+#open-post-btn i {
+    color: #6366f1;
+    font-size: 16px;
+}
+
+#open-post-btn:hover i {
+    color: white;
+}
+
+#back-from-post-btn {
+    background: var(--glass-bg) !important;
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    font-weight: 700;
+}
+
+#back-from-post-btn:hover {
+    background: var(--primary-accent) !important;
+    border-color: var(--primary-accent);
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+    transform: translateX(-5px);
+}
+
+#publish-post-btn {
+    background: linear-gradient(135deg, var(--primary-accent), #818cf8);
+    color: white;
+    border: none;
+    padding: 14px 32px;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(124, 92, 255, 0.35);
+}
+
+#publish-post-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(124, 92, 255, 0.55);
+    filter: brightness(1.15);
+}
+
+#publish-post-btn:active {
+    transform: translateY(0px);
+    filter: brightness(0.95);
+}
+
+#publish-post-btn i {
+    font-size: 1rem;
 }
 
 /* --- ADD THIS FOR MOBILE TOUCH FEEDBACK --- */
