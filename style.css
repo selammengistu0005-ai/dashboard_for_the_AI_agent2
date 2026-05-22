@@ -1141,6 +1141,60 @@ body.editing-mode #editor-view-container {
     font-size: 1rem;
 }
 
+/* ── Visitor Count Button ── */
+#visitor-count-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    width: 100%;
+    padding: 12px 16px;
+    margin-bottom: 12px;
+
+    background: rgba(99, 102, 241, 0.12);
+    border: 1px solid rgba(99, 102, 241, 0.35);
+    border-radius: 14px;
+
+    color: #ffffff;
+    font-size: 0.95rem;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    backdrop-filter: blur(10px);
+
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+
+    box-shadow:
+        0 0 12px rgba(99, 102, 241, 0.2),
+        0 4px 14px rgba(0, 0, 0, 0.25);
+}
+
+#visitor-count-btn:hover {
+    transform: translateY(-2px);
+    background: rgba(99, 102, 241, 0.25);
+    box-shadow:
+        0 0 20px rgba(99, 102, 241, 0.4),
+        0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+#visitor-count-btn i {
+    color: #818cf8;
+    font-size: 1rem;
+}
+
+#visitor-count-display {
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+}
+
+.light-mode #visitor-count-display {
+    color: #000000;
+}
+
 /* --- ADD THIS FOR MOBILE TOUCH FEEDBACK --- */
 @media (hover: none) {
     /* This runs on phones/tablets */
