@@ -48,6 +48,29 @@ const openPostBtn = document.getElementById("open-post-btn");
 const backFromPostBtn = document.getElementById("back-from-post-btn");
 const publishPostBtn = document.getElementById("publish-post-btn");
 
+// --- Smile Dental Visitor Counter ---
+const visitorCountBtn = document.getElementById("visitor-count-btn");
+const visitorCountDisplay = document.getElementById("visitor-count-display");
+
+if (visitorCountBtn) {
+    visitorCountBtn.addEventListener("click", async () => {
+        visitorCountDisplay.textContent = "...";
+        try {
+            const visitorRef = doc(db, "agents", currentAgent);
+            const visitorSnap = await getDoc(visitorRef);
+            if (visitorSnap.exists()) {
+                const count = visitorSnap.data().count || 0;
+                visitorCountDisplay.textContent = count;
+            } else {
+                visitorCountDisplay.textContent = "0";
+            }
+        } catch (err) {
+            console.error("Visitor count error:", err);
+            visitorCountDisplay.textContent = "!";
+        }
+    });
+}
+
 // NEW FIXED HISTORY CONTROLS
 if (openHistoryBtn) {
     openHistoryBtn.addEventListener("click", () => {
@@ -219,10 +242,6 @@ function updateChart(counts) {
         }
     });
 }
-
-// 6. Events
-// 6. Events (Add these at the bottom of your script)
-// --- REPLACE YOUR SECTION 6 (EVENTS) WITH THIS ---
 
 // Auth Button
 const uBtn = document.getElementById("unlock-btn");
