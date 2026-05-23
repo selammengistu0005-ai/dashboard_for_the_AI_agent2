@@ -808,7 +808,7 @@ if (publishPostBtn) {
         publishPostBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Publishing...`;
 
         try {
-            await addDoc(collection(db, "posts"), {
+            await addDoc(collection(db, "agents", currentAgent, "posts"), {
                 title,
                 content,
                 agentId: currentAgent,
