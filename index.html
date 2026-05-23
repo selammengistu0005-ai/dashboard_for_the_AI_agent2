@@ -1,198 +1,829 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>yuty i
+
+<head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Agent Analytics | Data Center</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Bright White Theme</title>
+
+    <!-- Google Font Optimization -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Premium Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Your CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="dark-mode">
 
-    <div id="key-overlay" class="overlay">
-        <div class="login-box">
-            <div class="lock-shield"><i class="fa-solid fa-shield-halved"></i></div>
-            <h2>Secure Access</h2>
-            <p>Enter your agent's unique access key.</p>
-            <div class="password-wrapper">
-                <input type="password" id="agent-key-input" placeholder="Enter Access Key...">
-                <i id="toggle-password-eye" class="fa-solid fa-eye"></i>
-            </div>
-            <button id="unlock-btn">Authorize Dashboard</button>
-            <p id="auth-error" class="error-msg"></p>
+<body>
+
+    <div class="floating-dock">
+        <button class="how-to-register-btn">
+            <span class="btn-icon">📋</span>
+            <span class="btn-text">How to Book</span>
+        </button>
+    </div>
+
+    <div class="content-wrapper">
+<header>
+    <img src="https://res.cloudinary.com/dza5rdls6/image/upload/v1778526936/smile_dental_clinic_main_logo_gk59ah.png" 
+         class="site-logo" 
+         alt="Smile Dental Clinic Logo">
+
+         <nav class="nav-pill-container">
+        <div class="nav-links">
+            <div class="nav-hover-cloud"></div>
+            <div class="sliding-pill"></div> <a href="#" class="nav-item active" data-index="0">Home</a>
+            <a href="#" class="nav-item" data-index="1">About Us</a>
+            <a href="#" class="nav-item" data-index="2">Service</a>
+            <a href="#" class="nav-item" data-index="3">Our Team</a>
+            <a href="#" class="nav-item" data-index="4">Gallery</a>
+            <a href="#" class="nav-item" data-index="5">Testimonial</a>
+            <a href="#" class="nav-item" data-index="6">Contact</a>
+        </div>
+    </nav>
+    <button class="hamburger" id="hamburger-btn">☰</button>
+</header>
+
+<div class="mobile-nav-drawer" id="mobile-nav-drawer">
+    <a href="#" class="drawer-link active">Home</a>
+    <a href="#" class="drawer-link">About Us</a>
+    <a href="#" class="drawer-link">Service</a>
+    <a href="#" class="drawer-link">Our Team</a>
+    <a href="#" class="drawer-link">Gallery</a>
+    <a href="#" class="drawer-link">Testimonial</a>
+    <a href="#" class="drawer-link">Contact</a>
+</div>
+
+<main>
+    <section class="hero">
+<div class="hero-text-content">
+    <div class="top-slogan-pill">TRUSTED DENTAL EXCELLENCE</div>
+    <h1>Smile Dental Care</h1>
+    <p>
+        Your journey to a <span class="highlight">healthier,</span>
+        <span class="highlight">brighter</span> smile <span class="zigzag-underline">starts here.</span>
+    </p>
+</div> <div class="stats-container">
+    <div class="service-frame">
+        <div class="frame-content">
+            <span class="frame-label">15+</span>
+            <h2 class="frame-title">years of experience</h2>
         </div>
     </div>
 
-    <div class="app-container" id="main-app" style="display: none;">
-        
-        <aside class="sidebar">
-            <div class="logo" id="logo-refresh" title="Refresh Dashboard">
-                <div class="logo-icon"><i class="fa-solid fa-robot"></i></div>
-                <span>AI <span>Data-base</span></span>
-            </div>
+    <div class="service-frame">
+    <div class="frame-content">
+        <span class="frame-label">10k+</span>
+        <h2 class="frame-title">Happy Patients</h2>
+    </div>
+</div>
 
-            <div class="sidebar-chart-container">
-                <div class="card chart-card sidebar-card">
-                    <canvas id="intentChart"></canvas>
+<!-- NEW FRAME GOES HERE -->
+<div class="service-frame opening-hours-frame">
+    <div class="frame-content">
+        <span class="frame-label">Opening Hours</span>
+        <h2 class="frame-title">Mon – Sat</h2>
+        <p class="frame-time">2:00 – 12:00</p>
+    </div>
+</div>
+</div>
+    <div class="image-container orbit-wrapper">
+    <img src="https://res.cloudinary.com/dza5rdls6/image/upload/v1778516934/Owner_smile_dental_photo_r7mlih.png" 
+         alt="Owner Photo" 
+         class="owner-portrait active">
+    <img src="https://res.cloudinary.com/dza5rdls6/image/upload/v1779179165/owner_photo_2_ktvkiv.png" 
+         alt="Owner Photo 2" 
+         class="owner-portrait">
+    <img src="https://res.cloudinary.com/dza5rdls6/image/upload/v1779180520/Owner_photo_3_ij9wau.png" 
+         alt="Owner Photo 3" 
+         class="owner-portrait">
+
+    <div class="orbit-path path-1">
+        <div class="dot"></div>
+    </div>
+</div>
+</section>
+</main>
+
+    <!-- ABOUT SECTION -->
+<section class="about-section" id="about-section" style="display:none;">
+
+    <h1 class="about-title">
+        About<br>Smile Dental Care
+    </h1>
+
+    <div class="about-team-frame">
+
+        <div class="about-team-card">
+            <img 
+                src="https://res.cloudinary.com/dza5rdls6/image/upload/v1778861285/people_iocn_for_about_itwzd6.png"
+                alt="15 years of excellence"
+                class="team-photo"
+            >
+
+            <p class="team-desc">
+                <span class="team-desc-highlight">15 years</span>
+                of excellence
+            </p>
+        </div>
+
+        <div class="about-team-card">
+            <img 
+                src="https://res.cloudinary.com/dza5rdls6/image/upload/v1778861284/tooth_icon_for_about_q8qgga.png"
+                alt="500 tooth replacements"
+                class="team-photo"
+            >
+
+            <p class="team-desc">
+                <span class="team-desc-highlight">500</span>
+                tooth replacements
+            </p>
+        </div>
+
+        <div class="about-team-card">
+            <img 
+                src="https://res.cloudinary.com/dza5rdls6/image/upload/v1778861284/doctor_icon_for_about_bgkeu5.png"
+                alt="20+ professionals"
+                class="team-photo"
+            >
+
+            <p class="team-desc">
+                <span class="team-desc-highlight">20+</span>
+                professionals
+            </p>
+        </div>
+
+        <div class="about-team-card">
+            <img 
+                src="https://res.cloudinary.com/dza5rdls6/image/upload/v1778859995/hospital_icon_for_about_twntix.png"
+                alt="One big place"
+                class="team-photo"
+            >
+
+            <p class="team-desc">
+                <span class="team-desc-highlight">One</span>
+                big place
+            </p>
+        </div>
+
+    </div>
+
+</section>
+
+<!-- NEW SECTION GOES HERE -->
+<section class="services-section">
+    <h2 class="services-title">What do we do</h2>
+
+    <div class="services-grid">
+        <div class="service-frame services-card">
+            <div class="frame-content">
+                <img src="https://res.cloudinary.com/dza5rdls6/image/upload/v1778762202/Tooth_icon_for_what_do_we_do_qrszro.png" 
+                alt="Tooth Service Icon"    
+                class="services-card-icon">
+                <h3 class="services-card-title">Tooth Service</h3>
+                <p class="services-card-desc">Advanced surgical extractions and jaw repairs.</p>
+                <button class="services-learn-btn">Learn More →</button>
+            </div>
+        </div>
+
+        <div class="service-frame services-card">
+            <div class="frame-content">
+                <img src="https://res.cloudinary.com/dza5rdls6/image/upload/v1778764514/allignment_for_what_do_we_do_kechz6.png" 
+                alt="Orthodontics Icon" 
+                class="services-card-icon">
+                <h3 class="services-card-title">Orthodontics</h3>
+                <p class="services-card-desc">Align your smile with braces or clear trays.</p>
+                <button class="services-learn-btn">Learn More →</button>
+            </div>
+        </div>
+
+        <div class="service-frame services-card">
+            <div class="frame-content">
+                <img src="https://res.cloudinary.com/dza5rdls6/image/upload/v1778765560/scalpel_for_what_do_we_do_vztzcp.png" 
+                alt="Oral Surgery Icon" 
+                class="services-card-icon">
+                <h3 class="services-card-title">Oral Surgery</h3>
+                <p class="services-card-desc">Advanced surgical extractions and jaw repairs.</p>
+                <button class="services-learn-btn">Learn More →</button>
+            </div>
+        </div>
+
+        <div class="service-frame services-card">
+            <div class="frame-content">
+                <img src="https://res.cloudinary.com/dza5rdls6/image/upload/v1778766540/water_spray_fro_what_we_do_qjzs7q.png" 
+                alt="Cleanings Icon" 
+                class="services-card-icon">
+                <h3 class="services-card-title">Cleanings</h3>
+                <p class="services-card-desc">Plaque and tartar removal paired with a thorough health check.</p>
+                <button class="services-learn-btn">Learn More →</button>
+            </div>
+        </div>
+
+        <div class="service-frame services-card">
+            <div class="frame-content">
+                <img src="https://res.cloudinary.com/dza5rdls6/image/upload/v1778769100/artificial_tooth_fro_what_do_we_do_asxlvx.png" 
+                alt="Dental Implant Icon" 
+                class="services-card-icon">
+                <h3 class="services-card-title">Dental Implant</h3>
+                <p class="services-card-desc">Surgically placing a metal post in the jaw to act as a permanent root.</p>
+                <button class="services-learn-btn">Learn More →</button>
+            </div>
+        </div>
+
+        <div class="service-frame services-card">
+            <div class="frame-content">
+                <img src="https://res.cloudinary.com/dza5rdls6/image/upload/v1778770375/frocepsxtooth_fro_what_do_we_do_vkm3co.png" 
+                alt="Tooth Extraction Icon" 
+                class="services-card-icon">
+                <h3 class="services-card-title">Tooth Extraction</h3>
+                <p class="services-card-desc">Removing a tooth that is too damaged, infected, or crowded to save.</p>
+                <button class="services-learn-btn">Learn More →</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- BANNER SECTION -->
+<section class="banner-section">
+    <div class="banner-blue">
+        <h2 class="banner-title">Your smile, our priority.</h2>
+        <p class="banner-desc">We combine advanced technology with compassionate care to give you the healthiest, most confident smile.</p>
+        <button class="banner-btn">📅 Book Your Appointment</button>
+    </div>
+    <div class="banner-image">
+        <img src="https://res.cloudinary.com/dza5rdls6/image/upload/v1778846794/images_1_qyajoq.png" alt="Dental Clinic Chair">
+    </div>
+</section>
+
+    <div class="tracker-container"> 
+        <h3>በሳምንት ለምን ያህል ጊዜ ጥርሶን 🦷 ይቦርሻሉ ......❓</h3>
+        <div class="days-wrapper">
+            <div class="day-box" data-day="Mon">Mon</div>
+            <div class="day-box" data-day="Tue">Tue</div>
+            <div class="day-box" data-day="Wed">Wed</div>
+            <div class="day-box" data-day="Thu">Thu</div>
+            <div class="day-box" data-day="Fri">Fri</div>
+            <div class="day-box" data-day="Sat">Sat</div>
+            <div class="day-box" data-day="Sun">Sun</div>
+        </div>
+        <div id="brushing-advice" class="info-box">
+            ቀን ይምረጡ
+        </div>
+    </div>
+
+    <!-- Created By Badge -->
+    <div class="created-by-badge">
+        <div class="creator-icon">
+            <i class="fa-solid fa-code"></i>
+        </div>
+        <div class="creator-text">
+            <h4>Created by Selam</h4>
+            <p>Website Designer & Developer</p>
+        </div>
+    </div>
+
+    </div>
+
+<div class="cta-button-wrapper" id="cta-button-wrapper">
+    <button class="cta-button">Book an Appointment</button>
+</div>
+
+    <div class="spotlight-overlay" id="spotlight-overlay">
+    <div class="spotlight-modal">
+        <div class="post-announcement-tag">📢 Latest Update</div>
+        <h2 class="post-announcement-title" id="post-overlay-title">Loading...</h2>
+        <p class="post-announcement-content" id="post-overlay-content"></p>
+        <button class="spotlight-got-it" id="spotlight-got-it">Got it ✓</button>
+    </div>
+</div>
+    
+    <script type="module" src="script.js"></script>
+
+    <!-- =============================================
+     BOOKING PAGE SECTION (injected, hidden by default)
+============================================= -->
+
+<section class="booking-page" id="booking-page" style="display:none;">
+    <div class="booking-overlay-bg" id="booking-overlay-bg"></div>
+
+    <!-- CENTER DASHBOARD -->
+    <div class="booking-dashboard">
+
+        <div class="booking-dash-header">
+            <h2 class="booking-dash-title">Book an Appointment</h2>
+            <p class="booking-dash-sub">We're here to make you smile</p>
+        </div>
+
+        <div class="booking-dash-body">
+
+            <!-- STEPS SIDEBAR -->
+            <div class="booking-steps">
+                <div class="booking-step active" data-step="1">
+                    <div class="step-indicator">
+                        <span class="step-num">1</span>
+                        <div class="step-line"></div>
+                    </div>
+                    <div class="step-text">
+                        <span class="step-title">Choose Service</span>
+                        <span class="step-sub">Select your treatment</span>
+                    </div>
                 </div>
-                <button id="scroll-to-kb" class="sidebar-action-btn">
-                    <i class="fa-solid fa-pen-to-square"></i> Edit Knowledge database
-                </button>
-                <button id="open-history-btn" class="sidebar-action-btn secondary-action">
-                    <i class="fa-solid fa-clock-rotate-left"></i>History
-                </button>
-                <button id="export-logs-btn" class="sidebar-action-btn secondary-action">
-                    <i class="fa-solid fa-file-export"></i> Export Conversations (CSV)
-                </button>
-                <button id="open-phone-vault-btn" class="sidebar-action-btn secondary-action">
-                    <i class="fa-solid fa-address-book"></i> Phone Data Vault
-                </button>
-                <button id="open-post-btn" class="sidebar-action-btn secondary-action">
-                    <i class="fa-solid fa-pen-nib"></i> Post
-                </button>
+                <div class="booking-step" data-step="2">
+                    <div class="step-indicator">
+                        <span class="step-num">2</span>
+                        <div class="step-line"></div>
+                    </div>
+                    <div class="step-text">
+                        <span class="step-title">Date & Time</span>
+                        <span class="step-sub">Pick your slot</span>
+                    </div>
+                </div>
+                <div class="booking-step" data-step="3">
+                    <div class="step-indicator">
+                        <span class="step-num">3</span>
+                        <div class="step-line"></div>
+                    </div>
+                    <div class="step-text">
+                        <span class="step-title">Your Information</span>
+                        <span class="step-sub">Name & contact</span>
+                    </div>
+                </div>
+                <div class="booking-step" data-step="4">
+                    <div class="step-indicator">
+                        <span class="step-num">4</span>
+                    </div>
+                    <div class="step-text">
+                        <span class="step-title">Confirm Booking</span>
+                        <span class="step-sub">Review & confirm</span>
+                    </div>
+                </div>
             </div>
 
-            <button id="visitor-count-btn" title="Smile Dental Visitors">
-                <i class="fa-solid fa-eye"></i>
-                <span id="visitor-count-display">--</span>
-            </button>
+            <!-- SERVICE CARDS GRID -->
+            <div class="booking-services-grid">
+                <div class="booking-service-card" data-service="General Checkup">
+                    <div class="bsc-icon">🦷</div>
+                    <h3 class="bsc-title">General Checkup</h3>
+                    <p class="bsc-desc">Full oral exam and health assessment.</p>
+                    <span class="bsc-duration">⏱ 30 min</span>
+                </div>
+                <div class="booking-service-card" data-service="Teeth Cleaning">
+                    <div class="bsc-icon">🪥</div>
+                    <h3 class="bsc-title">Teeth Cleaning</h3>
+                    <p class="bsc-desc">Plaque and tartar removal for a fresh smile.</p>
+                    <span class="bsc-duration">⏱ 45 min</span>
+                </div>
+                <div class="booking-service-card" data-service="Teeth Whitening">
+                    <div class="bsc-icon">✨</div>
+                    <h3 class="bsc-title">Teeth Whitening</h3>
+                    <p class="bsc-desc">Advanced whitening for a brighter glow.</p>
+                    <span class="bsc-duration">⏱ 60 min</span>
+                </div>
+                <div class="booking-service-card" data-service="Orthodontics">
+                    <div class="bsc-icon">🔬</div>
+                    <h3 class="bsc-title">Orthodontics</h3>
+                    <p class="bsc-desc">Braces or clear aligners for a perfect bite.</p>
+                    <span class="bsc-duration">⏱ 50 min</span>
+                </div>
+                <div class="booking-service-card" data-service="Dental Implants">
+                    <div class="bsc-icon">🏥</div>
+                    <h3 class="bsc-title">Dental Implants</h3>
+                    <p class="bsc-desc">Permanent titanium tooth replacement.</p>
+                    <span class="bsc-duration">⏱ 90 min</span>
+                </div>
+                <div class="booking-service-card" data-service="Emergency Care">
+                    <div class="bsc-icon">🚨</div>
+                    <h3 class="bsc-title">Emergency Care</h3>
+                    <p class="bsc-desc">Urgent dental relief, same-day slots.</p>
+                    <span class="bsc-duration">⏱ 45 min</span>
+                </div>
+            </div>
+        </div>
 
-            <div class="theme-section">
-                <div class="toggle-container" id="mode-switch">
-                    <div class="toggle-track">
-                        <div class="toggle-knob">
-                            <i class="fa-solid fa-moon moon-icon"></i>
-                            <i class="fa-solid fa-sun sun-icon"></i>
+        <!-- BOTTOM CTA -->
+        <!-- BOTTOM CTA -->
+        <button class="booking-next-btn" id="booking-next-btn">
+            Next: Choose Date &amp; Time &nbsp;→
+        </button>
+
+        <!-- STEP 2 — DATE & TIME (hidden by default) -->
+<div class="booking-step2-panel" id="booking-step2-panel" style="display:none;">
+
+    <div class="step2-header">
+        <h3 class="step2-title">2. Choose Date &amp; Time</h3>
+        <p class="step2-sub">Select your preferred appointment schedule.</p>
+    </div>
+
+    <div class="step2-body">
+
+        <!-- LEFT: CALENDAR -->
+        <div class="step2-calendar">
+
+            <div class="step2-month-nav">
+                <button class="step2-arrow" id="step2-prev-month">&#8592;</button>
+                <span class="step2-month-label" id="step2-month-label">June 2025</span>
+                <button class="step2-arrow" id="step2-next-month">&#8594;</button>
+            </div>
+
+            <div class="step2-weekdays">
+                <span>Sun</span><span>Mon</span><span>Tue</span>
+                <span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+            </div>
+
+            <div class="step2-date-grid" id="step2-date-grid">
+                <!-- Dates injected by JS -->
+            </div>
+
+            <div class="step2-legend">
+                <span class="step2-legend-item"><span class="step2-dot dot-available"></span>Available</span>
+                <span class="step2-legend-item"><span class="step2-dot dot-few"></span>Few Slots</span>
+                <span class="step2-legend-item"><span class="step2-dot dot-full"></span>Fully Booked</span>
+                <span class="step2-legend-item"><span class="step2-dot dot-unavail"></span>Unavailable</span>
+            </div>
+
+        </div>
+
+        <!-- RIGHT: TIME SLOTS -->
+        <div class="step2-timeslots">
+
+            <div class="step2-time-header">
+                <div>
+                    <h4 class="step2-time-title">Choose a Time</h4>
+                    <p class="step2-time-sub" id="step2-time-sub">Select a date first</p>
+                </div>
+                <span class="step2-dentist-pill">✦ Dentist Available</span>
+            </div>
+
+            <div class="step2-time-grid" id="step2-time-grid">
+                <div class="step2-time-card" data-time="09:00 AM"><span class="time-label">09:00 AM</span></div>
+                <div class="step2-time-card" data-time="09:30 AM"><span class="time-label">09:30 AM</span></div>
+                <div class="step2-time-card" data-time="10:00 AM"><span class="time-label">10:00 AM</span></div>
+                <div class="step2-time-card" data-time="10:30 AM"><span class="time-label">10:30 AM</span></div>
+                <div class="step2-time-card" data-time="11:00 AM"><span class="time-label">11:00 AM</span></div>
+                <div class="step2-time-card" data-time="11:30 AM"><span class="time-label">11:30 AM</span></div>
+                <div class="step2-time-card unavailable" data-time="12:00 PM"><span class="time-label">12:00 PM</span><span class="time-x">✕</span></div>
+                <div class="step2-time-card" data-time="01:00 PM"><span class="time-label">01:00 PM</span></div>
+                <div class="step2-time-card unavailable" data-time="01:30 PM"><span class="time-label">01:30 PM</span><span class="time-x">✕</span></div>
+                <div class="step2-time-card" data-time="02:30 PM"><span class="time-label">02:30 PM</span></div>
+            </div>
+
+            <p class="step2-popular-label">⭐ Most Popular Time: <strong>10:00 AM</strong></p>
+
+        </div>
+
+    </div>
+
+    <!-- SUMMARY PANEL -->
+    <div class="step2-summary">
+        <div class="step2-summary-item">
+            <span class="step2-summary-icon">🦷</span>
+            <div>
+                <span class="step2-summary-label">Service</span>
+                <span class="step2-summary-value" id="sum-service">—</span>
+            </div>
+        </div>
+        <div class="step2-summary-item">
+            <span class="step2-summary-icon">📅</span>
+            <div>
+                <span class="step2-summary-label">Date</span>
+                <span class="step2-summary-value" id="sum-date">—</span>
+            </div>
+        </div>
+        <div class="step2-summary-item">
+            <span class="step2-summary-icon">⏰</span>
+            <div>
+                <span class="step2-summary-label">Time</span>
+                <span class="step2-summary-value" id="sum-time">—</span>
+            </div>
+        </div>
+        <div class="step2-summary-item">
+            <span class="step2-summary-icon">⏱</span>
+            <div>
+                <span class="step2-summary-label">Duration</span>
+                <span class="step2-summary-value" id="sum-duration">—</span>
+            </div>
+        </div>
+        <div class="step2-summary-item">
+            <span class="step2-summary-icon">📍</span>
+            <div>
+                <span class="step2-summary-label">Branch</span>
+                <span class="step2-summary-value" id="sum-branch">—</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- STEP 2 ACTION BUTTONS -->
+    <div class="step2-actions">
+        <button class="step2-back-btn" id="step2-back-btn">← Back</button>
+        <button class="step2-continue-btn" id="step2-continue-btn">Continue to Your Information &nbsp;→</button>
+    </div>
+
+</div>
+
+        <!-- STEP 3 — YOUR INFORMATION (hidden by default) -->
+        <div class="booking-step3-panel" id="booking-step3-panel" style="display:none;">
+
+            <div class="step3-header">
+                <h3 class="step3-title">3. Your Information</h3>
+                <p class="step3-sub">Please provide your details to complete the booking.</p>
+            </div>
+
+            <!-- SECTION 1: Personal Information -->
+            <div class="step3-section">
+                <h4 class="step3-section-label">Personal Information</h4>
+                <div class="step3-grid-2">
+                    <div class="step3-field">
+                        <input type="text" id="s3-fullname" class="step3-input" placeholder=" ">
+                        <label for="s3-fullname" class="step3-label">Full Name</label>
+                    </div>
+                    <div class="step3-field">
+                        <input type="number" id="s3-age" class="step3-input" placeholder=" ">
+                        <label for="s3-age" class="step3-label">Age</label>
+                    </div>
+                    <div class="step3-field">
+                        <select id="s3-gender" class="step3-input step3-select">
+                            <option value="" disabled selected hidden></option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                            <option value="prefer-not">Prefer not to say</option>
+                        </select>
+                        <label for="s3-gender" class="step3-label">Gender</label>
+                    </div>
+                    <div class="step3-field">
+                        <input type="email" id="s3-email" class="step3-input" placeholder=" ">
+                        <label for="s3-email" class="step3-label">Email Address</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 2: Contact Information -->
+            <div class="step3-section">
+                <h4 class="step3-section-label">Contact Information</h4>
+                <div class="step3-grid-2">
+                    <div class="step3-field step3-phone-field">
+                        <div class="step3-phone-wrapper">
+                            <span class="step3-country-code">🇪🇹 +251</span>
+                            <input type="tel" id="s3-phone" class="step3-input step3-phone-input" placeholder=" ">
+                        </div>
+                        <label for="s3-phone" class="step3-label step3-phone-label">Phone Number</label>
+                    </div>
+                    <div class="step3-field">
+                        <input type="tel" id="s3-emergency" class="step3-input" placeholder=" ">
+                        <label for="s3-emergency" class="step3-label">Emergency Contact (Optional)</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 3: Preferred Branch -->
+            <div class="step3-section">
+                <h4 class="step3-section-label">Preferred Branch / Location</h4>
+                <div class="step3-grid-1">
+                    <div class="step3-field">
+                        <select id="s3-branch" class="step3-input step3-select">
+                            <option value="" disabled selected hidden></option>
+                            <option value="addis">📍 Addis Ababa</option>
+                            <option value="jimma">📍 Jimma</option>
+                            <option value="bahirdar">📍 Bahir Dar</option>
+                            <option value="hawassa">📍 Hawassa</option>
+                            <option value="adama">📍 Adama</option>
+                        </select>
+                        <label for="s3-branch" class="step3-label">Preferred Branch</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 4: Payment Method -->
+            <div class="step3-section">
+                <h4 class="step3-section-label">Payment Method</h4>
+                <div class="step3-payment-grid">
+                    <div class="step3-payment-card" data-payment="telebirr">
+                        <span class="step3-payment-icon">📱</span>
+                        <span class="step3-payment-label">Telebirr</span>
+                    </div>
+                    <div class="step3-payment-card" data-payment="cbe">
+                        <span class="step3-payment-icon">🏦</span>
+                        <span class="step3-payment-label">CBE Birr</span>
+                    </div>
+                    <div class="step3-payment-card" data-payment="chapa">
+                        <span class="step3-payment-icon">💳</span>
+                        <span class="step3-payment-label">Chapa</span>
+                    </div>
+                    <div class="step3-payment-card" data-payment="clinic">
+                        <span class="step3-payment-icon">🏥</span>
+                        <span class="step3-payment-label">Pay at Clinic</span>
+                    </div>
+                    <div class="step3-payment-card" data-payment="bank">
+                        <span class="step3-payment-icon">🔁</span>
+                        <span class="step3-payment-label">Bank Transfer</span>
+                    </div>
+                </div>
+
+                <!-- Conditional Bank Transfer Fields -->
+                <div class="step3-bank-fields" id="step3-bank-fields" style="display:none;">
+                    <div class="step3-grid-2">
+                        <div class="step3-field">
+                            <input type="text" id="s3-account" class="step3-input" placeholder=" ">
+                            <label for="s3-account" class="step3-label">Account Number</label>
+                        </div>
+                        <div class="step3-field">
+                            <input type="text" id="s3-txid" class="step3-input" placeholder=" ">
+                            <label for="s3-txid" class="step3-label">Transaction ID</label>
                         </div>
                     </div>
                 </div>
             </div>
-        </aside>
 
-        <main class="main-content">
-    <div id="live-monitor-view">
-        <header class="dashboard-header">
-            <div class="header-text">
-                <h1>Live</h1>
-                <div class="live-indicator">
-                    <span class="pulse-dot"></span>
-                    <span>Connected to your agent</span>
+            <!-- SECTION 5: Additional Notes -->
+            <div class="step3-section">
+                <h4 class="step3-section-label">Additional Notes</h4>
+                <div class="step3-field">
+                    <textarea 
+                        id="s3-notes" 
+                        class="step3-input step3-textarea" 
+                        placeholder="Tell us about your dental concerns or special requests…"
+                        rows="4"
+                    ></textarea>
                 </div>
             </div>
-        </header>
 
-        <div class="logs-wrapper">
-            <div id="logs" class="logs-flex-container"></div>
+            <!-- STEP 3 BOTTOM BUTTONS -->
+            <div class="step3-actions">
+                <button class="step3-back-btn" id="step3-back-btn">← Back</button>
+                <button class="step3-continue-btn" id="step3-continue-btn">Continue to Confirmation &nbsp;→</button>
+            </div>
+
         </div>
-    </div>
 
-    <div id="phone-vault-view" style="display: none;">
-        <header class="dashboard-header">
-            <div class="header-text" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                <div>
-                    <h1 style="color: var(--primary-accent)">Phone Vault</h1>
-                    <div class="live-indicator">
-                        <i class="fa-solid fa-shield-halved" style="font-size: 10px; color: #10b981;"></i>
-                        <span>Encrypted Patient Data</span>
+        <!-- STEP 4 — CONFIRM BOOKING (hidden by default) -->
+        <div class="booking-step4-panel" id="booking-step4-panel" style="display:none;">
+
+            <!-- TOP HEADER -->
+            <div class="step4-header">
+                <div class="step4-header-left">
+                    <h3 class="step4-title">4. Confirm Booking</h3>
+                    <p class="step4-sub">Review your appointment details before confirming.</p>
+                </div>
+                <div class="step4-security-pill">
+                    🔒 Your information is 100% secure
+                </div>
+            </div>
+
+            <!-- SECTION 1: APPOINTMENT OVERVIEW -->
+            <div class="step4-overview-panel">
+                <div class="step4-appt-id">APT-2025-0001</div>
+                <div class="step4-overview-grid">
+                    <div class="step4-overview-item">
+                        <span class="step4-ov-icon">🦷</span>
+                        <span class="step4-ov-label">Service</span>
+                        <span class="step4-ov-value" id="s4-service">—</span>
+                    </div>
+                    <div class="step4-divider"></div>
+                    <div class="step4-overview-item">
+                        <span class="step4-ov-icon">📅</span>
+                        <span class="step4-ov-label">Date</span>
+                        <span class="step4-ov-value" id="s4-date">—</span>
+                    </div>
+                    <div class="step4-divider"></div>
+                    <div class="step4-overview-item">
+                        <span class="step4-ov-icon">⏰</span>
+                        <span class="step4-ov-label">Time</span>
+                        <span class="step4-ov-value" id="s4-time">—</span>
+                    </div>
+                    <div class="step4-divider"></div>
+                    <div class="step4-overview-item">
+                        <span class="step4-ov-icon">⏱</span>
+                        <span class="step4-ov-label">Duration</span>
+                        <span class="step4-ov-value" id="s4-duration">—</span>
+                    </div>
+                    <div class="step4-divider"></div>
+                    <div class="step4-overview-item">
+                        <span class="step4-ov-icon">📍</span>
+                        <span class="step4-ov-label">Branch</span>
+                        <span class="step4-ov-value" id="s4-branch">—</span>
+                    </div>
+                    <div class="step4-divider"></div>
+                    <div class="step4-overview-item">
+                        <span class="step4-ov-icon">👨‍⚕️</span>
+                        <span class="step4-ov-label">Dentist</span>
+                        <span class="step4-ov-value">Dr. Selam Tesfaye</span>
                     </div>
                 </div>
-                <button id="back-to-monitor" class="sidebar-action-btn">
-                    <i class="fa-solid fa-arrow-left"></i> Back to Live
-                </button>
             </div>
-        </header>
 
-        <div class="logs-wrapper">
-            <div id="vault-list" class="logs-flex-container">
+            <!-- SECTION 2 + 3: PATIENT INFO + PAYMENT SIDE BY SIDE -->
+            <div class="step4-middle-row">
+
+                <!-- PATIENT INFORMATION -->
+                <div class="step4-patient-panel">
+                    <div class="step4-panel-header">
+                        <h4 class="step4-panel-title">Patient Information</h4>
+                        <button class="step4-edit-btn">✏️ Edit</button>
+                    </div>
+                    <div class="step4-info-rows">
+                        <div class="step4-info-row">
+                            <span class="step4-info-icon">👤</span>
+                            <span class="step4-info-label">Full Name</span>
+                            <span class="step4-info-value" id="s4-name">—</span>
+                        </div>
+                        <div class="step4-info-row">
+                            <span class="step4-info-icon">📱</span>
+                            <span class="step4-info-label">Phone</span>
+                            <span class="step4-info-value" id="s4-phone">—</span>
+                        </div>
+                        <div class="step4-info-row">
+                            <span class="step4-info-icon">📧</span>
+                            <span class="step4-info-label">Email</span>
+                            <span class="step4-info-value" id="s4-email">—</span>
+                        </div>
+                        <div class="step4-info-row">
+                            <span class="step4-info-icon">📍</span>
+                            <span class="step4-info-label">Branch</span>
+                            <span class="step4-info-value" id="s4-pat-branch">—</span>
+                        </div>
+                        <div class="step4-info-row">
+                            <span class="step4-info-icon">💳</span>
+                            <span class="step4-info-label">Payment</span>
+                            <span class="step4-info-value" id="s4-payment">—</span>
+                        </div>
+                        <div class="step4-info-row">
+                            <span class="step4-info-icon">📝</span>
+                            <span class="step4-info-label">Notes</span>
+                            <span class="step4-info-value" id="s4-notes">—</span>
+                        </div>
+                    </div>
                 </div>
-        </div>
-    </div>
 
-<div id="post-view" style="display: none;">
-    <header class="dashboard-header">
-        <div class="header-text" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-            <div>
-                <h1 style="color: var(--primary-accent)">New Post</h1>
-                <div class="live-indicator">
-                    <i class="fa-solid fa-pen-nib" style="font-size: 10px; color: var(--primary-accent);"></i>
-                    <span>Write and publish to your website</span>
+                <!-- PAYMENT CONFIRMATION -->
+                <div class="step4-payment-panel">
+                    <h4 class="step4-panel-title">Payment Confirmation</h4>
+
+                    <div class="step4-payment-method-card">
+                        <span class="step4-pay-icon">📱</span>
+                        <div class="step4-pay-info">
+                            <span class="step4-pay-name" id="s4-pay-name">Telebirr</span>
+                            <span class="step4-pay-type">Mobile Payment</span>
+                        </div>
+                        <span class="step4-pay-status">✦ Ready</span>
+                    </div>
+
+                    <div class="step4-secure-panel">
+                        <span class="step4-lock-icon">🔐</span>
+                        <div>
+                            <span class="step4-secure-title">Secure Payment</span>
+                            <span class="step4-secure-desc">Your payment information is encrypted and safe.</span>
+                        </div>
+                    </div>
+
+                    <div class="step4-pay-notice">
+                        📩 You will receive payment instructions after confirming this appointment.
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- SECTION 4: FINAL CONFIRMATION AREA -->
+            <div class="step4-final-area">
+
+                <!-- LEFT: CHECKMARK -->
+                <div class="step4-checkmark-wrap">
+                    <div class="step4-check-ring">
+                        <span class="step4-check-icon">✓</span>
+                    </div>
+                </div>
+
+                <!-- CENTER: MESSAGE -->
+                <div class="step4-final-message">
+                    <h3 class="step4-final-title">You're one step away from securing your appointment!</h3>
+                    <p class="step4-final-sub">Please review all the details above and confirm your appointment.</p>
+                    <div class="step4-features">
+                        <div class="step4-feature-item">⚡ Instant Confirmation</div>
+                        <div class="step4-feature-item">📲 SMS &amp; Email Reminders</div>
+                        <div class="step4-feature-item">📆 Add to Calendar</div>
+                        <div class="step4-feature-item">🔒 Secure &amp; Private</div>
+                        <div class="step4-feature-item">🕐 24/7 Patient Support</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- BOTTOM ACTION BAR -->
+            <div class="step4-actions">
+                <button class="step4-back-btn" id="step4-back-btn">← Back</button>
+                <div class="step4-cta-wrap">
+                    <button class="step4-confirm-btn" id="step4-confirm-btn">Confirm Appointment</button>
+                    <p class="step4-terms">By confirming, you agree to our terms and privacy policy.</p>
                 </div>
             </div>
-            <button id="back-from-post-btn" class="sidebar-action-btn">
-                <i class="fa-solid fa-arrow-left"></i> Back to Live
-            </button>
+
         </div>
-    </header>
-    <div class="logs-wrapper">
-        <div class="kb-container" style="max-width: 700px; margin: 0 auto;">
-            <label class="field-label">Post Title</label>
-            <input type="text" id="post-title-input" class="persona-input" placeholder="Enter post title...">
-            <label class="field-label" style="margin-top: 1.5rem;">Content</label>
-            <textarea id="post-content-input" placeholder="Write your post here..." style="min-height: 220px;"></textarea>
-            <div class="kb-form-actions" style="margin-top: 20px;">
-                <button id="publish-post-btn" class="save-all-btn">
-                    <i class="fa-solid fa-paper-plane"></i> Publish
-                </button>
-            </div>
-        </div>
+
     </div>
-</div>
 
-    <div id="editor-view-container">
-        <section id="knowledge-base-section">
-            <div class="kb-container">
-                <div class="kb-header">
-                    <h3><i class="fa-solid fa-brain"></i> Agent Personality</h3>
-                    <p>Configure how your AI thinks and speaks.</p>
-                </div>
-                
-                <label class="field-label">AI Display Name</label>
-                <input type="text" id="ai-name-input" class="persona-input" placeholder="e.g. Lumi2">
-
-                <label class="field-label">Instructions</label>
-                <textarea id="ai-instructions" placeholder="Enter master system instructions..."></textarea>
-
-                <label class="field-label">Persona</label>
-                <div class="persona-matrix">
-                    <button class="persona-btn" data-style="Professional">Professional</button>
-                    <button class="persona-btn" data-style="Friendly">Friendly</button>
-                    <button class="persona-btn" data-style="Witty">Witty</button>
-                    <button class="persona-btn" data-style="Aggressive">Aggressive</button>
-                    <button class="persona-btn" data-style="Empathy">Empathy</button>
-                    <button class="persona-btn" data-style="Adaptable">Adaptable</button>
-                    <button class="persona-btn" data-style="Curious">Curious</button>
-                    <button class="persona-btn" data-style="Confident">Confident</button>
-                    <button class="persona-btn" data-style="Patient">Patient</button>
-                    <button class="persona-btn" data-style="Consistent">Consistent</button>
-                </div>
-
-                <div class="kb-form-actions" style="margin-top: 20px;">
-                    <button id="add-kb-item" class="save-all-btn" onclick="saveKnowledge()">
-                        <i class="fa-solid fa-cloud-arrow-up"></i> Commit Changes
-                    </button>
-                </div>
-            </div>
-        </section>
-    </div>
-</main>
-</div> 
-    <div id="history-drawer" class="history-drawer">
-    <div class="drawer-header">
-        <h3><i class="fa-solid fa-clock-rotate-left"></i> Instruction History</h3>
-        <button id="close-history-btn"><i class="fa-solid fa-xmark"></i></button>
-    </div>
-    <div class="drawer-content">
-        <p class="drawer-hint">Select a previous version to restore it to the live agent.</p>
-        <div id="history-list" class="history-list">
-            <div class="history-empty">Loading history...</div>
-        </div>
-    </div>
-</div>
-<div id="drawer-overlay" class="drawer-overlay"></div>
-
-<script type="module" src="app.js"></script>
-    <div id="toast-container" class="toast-container"></div>
+</section>
 </body>
 </html>
