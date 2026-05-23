@@ -777,6 +777,7 @@ if (openPostBtn) {
         document.body.classList.remove("editing-mode");
         postView.style.display = "flex";
         postView.style.flexDirection = "column";
+        loadLivePosts(currentAgent);
     });
 }
 
@@ -819,6 +820,7 @@ if (publishPostBtn) {
             document.getElementById("post-title-input").value = "";
             document.getElementById("post-content-input").value = "";
             notify("Published!", "Your post is now live.", "success");
+            loadLivePosts(currentAgent);
         } catch (e) {
             console.error("Publish error:", e);
             notify("Publish Failed", "Could not reach database.", "error");
@@ -845,4 +847,71 @@ if (vaultList) {
             setTimeout(() => card.style.transform = "scale(1)", 100);
         }
     });
+}
+
+async function loadLivePosts(agentId) {
+    const container = document.getElementById("live-posts-container");
+    if (!container) return;
+
+    container.innerHTML = `<p style="color: var(--text-dim); font-size:0.85rem;">Loading posts...</p>`;
+
+    try {
+        const q = query(
+            collection(db, "agents", agentId, "posts"),
+            orderBy("publishedAt", "desc")
+        );
+        const snapshot = await getDocs(q);
+
+        container.innerHTML = "";
+
+        if (snapshot.empty) {
+            container.innerHTML = `<p style="color: var(--text-dim); font-size:0.85rem;">No posts yet.</p>`;
+            return;
+        }
+
+        snapshot.forEach((docSnap) => {
+            const post = docSnap.data();
+            const isLive = post.status === "published";
+
+            const card = document.createElement("div");
+            card.className = `live-post-card ${isLive ? "live-post-active" : "live-post-stopped"}`;
+
+            card.innerHTML = `
+                <div class="live-post-header">
+                    <div class="live-post-status">
+                        <span class="live-post-dot ${isLive ? "dot-live" : "dot-stopped"}"></span>
+                        <span>${isLive ? "Live" : "Stopped"}</span>
+                    </div>
+                    <span class="live-post-date">${new Date(post.publishedAt).toLocaleDateString()}</span>
+                </div>
+                <h4 class="live-post-title">${post.title}</h4>
+                <p class="live-post-content">${post.content}</p>
+                ${isLive ? `<button class="stop-post-btn" data-id="${docSnap.id}">
+                    <i class="fa-solid fa-circle-stop"></i> Stop Post
+                </button>` : ""}
+            `;
+
+            container.appendChild(card);
+        });
+
+        container.querySelectorAll(".stop-post-btn").forEach(btn => {
+            btn.addEventListener("click", async () => {
+                const postId = btn.dataset.id;
+                btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Stopping...`;
+                try {
+                    await updateDoc(
+                        doc(db, "agents", agentId, "posts", postId),
+                        { status: "stopped" }
+                    );
+                    notify("Post Stopped", "Post hidden from website.", "success");
+                    loadLivePosts(agentId);
+                } catch (e) {
+                    notify("Error", "Could not stop post.", "error");
+                }
+            });
+        });
+
+    } catch (e) {
+        console.error("Load posts error:", e);
+    }
 }
