@@ -1195,14 +1195,143 @@ body.editing-mode #editor-view-container {
     color: #000000;
 }
 
-/* --- ADD THIS FOR MOBILE TOUCH FEEDBACK --- */
-@media (hover: none) {
-    /* This runs on phones/tablets */
-    .persona-btn:active, .status-toggle:active {
-        transform: scale(0.95); /* Shrinks slightly when pressed */
-        background: var(--primary-accent);
-        transition: 0.1s;
-    }
+/* --- LIVE POST CARDS --- */
+.live-post-card {
+    border-radius: 16px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border-color);
+    background: var(--card-dark);
+    transition: var(--transition);
+}
+
+.live-post-active {
+    border-color: #10b981;
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.15);
+}
+
+.live-post-stopped {
+    opacity: 0.5;
+    filter: grayscale(1);
+}
+
+.live-post-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.live-post-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #10b981;
+}
+
+.live-post-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.dot-live {
+    background: #10b981;
+    box-shadow: 0 0 6px #10b981;
+    animation: pulse 1.5s infinite;
+}
+
+.dot-stopped {
+    background: #ef4444;
+}
+
+.live-post-date {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+}
+
+.live-post-title {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--text-main);
+}
+
+.live-post-content {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    line-height: 1.5;
+    margin-bottom: 1rem;
+}
+
+.stop-post-btn {
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    color: #ef4444;
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: var(--transition);
+}
+
+.stop-post-btn:hover {
+    background: #ef4444;
+    color: white;
+    box-shadow: 0 0 16px rgba(239, 68, 68, 0.4);
+}
+
+.post-view-layout {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.post-form-panel {
+    flex: 1;
+    max-width: 600px;
+}
+
+.post-history-panel {
+    width: 320px;
+    flex-shrink: 0;
+}
+
+.post-history-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-dim);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.publish-btn-rect {
+    background: linear-gradient(135deg, var(--primary-accent), #818cf8);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: var(--transition);
+}
+
+.publish-btn-rect:hover {
+    filter: brightness(1.15);
+    transform: translateY(-2px);
 }
 
 /* Final Mobile Table Polish */
