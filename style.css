@@ -1096,6 +1096,50 @@ body.editing-mode #editor-view-container {
     color: white;
 }
 
+/* =============================================
+   LIVE ACTIVITY — SIDEBAR BUTTON
+============================================= */
+
+#open-activity-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 90%;
+    margin: 10px auto;
+    padding: 12px 15px;
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 8px;
+    color: #f8fafc;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.3s ease;
+    text-align: left;
+}
+
+.light-mode #open-activity-btn {
+    color: var(--primary-accent);
+    background: rgba(99, 102, 241, 0.08);
+    border-color: rgba(99, 102, 241, 0.2);
+    font-weight: 600;
+}
+
+#open-activity-btn:hover {
+    background: var(--primary-accent);
+    color: white;
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+    transform: translateX(5px);
+}
+
+#open-activity-btn i {
+    color: #6366f1;
+    font-size: 16px;
+}
+
+#open-activity-btn:hover i {
+    color: white;
+}
+
 #back-from-post-btn {
     background: var(--glass-bg) !important;
     border: 1px solid var(--border-color);
@@ -1332,6 +1376,220 @@ body.editing-mode #editor-view-container {
 .publish-btn-rect:hover {
     filter: brightness(1.15);
     transform: translateY(-2px);
+}
+
+/* =============================================
+   LIVE ACTIVITY — SIDEBAR BADGE
+============================================= */
+
+.live-badge {
+    margin-left: auto;
+    background: rgba(124, 92, 255, 0.2);
+    border: 1px solid rgba(124, 92, 255, 0.5);
+    color: #a78bfa;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    animation: livePulse 2s ease-in-out infinite;
+}
+
+@keyframes livePulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 6px rgba(124, 92, 255, 0.4); }
+    50%       { opacity: 0.6; box-shadow: 0 0 14px rgba(124, 92, 255, 0.8); }
+}
+
+/* =============================================
+   LIVE ACTIVITY — STATUS PILL (top right)
+============================================= */
+
+.live-status-pill {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(34, 197, 94, 0.08);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    color: #22c55e;
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 5px 14px;
+    border-radius: 999px;
+    letter-spacing: 0.5px;
+}
+
+.live-pill-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 8px rgba(34, 197, 94, 0.8);
+    animation: livePulse 1.5s ease-in-out infinite;
+}
+
+/* =============================================
+   LIVE ACTIVITY — STAT CARDS ROW
+============================================= */
+
+.activity-stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.activity-stat-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: #0b1120;
+    border: 1px solid rgba(124, 92, 255, 0.3);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    box-shadow: 0 0 18px rgba(124, 92, 255, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.activity-stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0 28px rgba(124, 92, 255, 0.22);
+}
+
+.activity-stat-card i {
+    font-size: 1.5rem;
+    color: var(--primary-accent);
+    opacity: 0.85;
+}
+
+.stat-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text-main);
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+
+/* =============================================
+   LIVE ACTIVITY — TABLE CARD
+============================================= */
+
+.activity-table-card {
+    background: #0b1120;
+    border: 1px solid rgba(124, 92, 255, 0.3);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: 0 0 24px rgba(124, 92, 255, 0.08);
+}
+
+.activity-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.activity-table thead tr {
+    background: rgba(124, 92, 255, 0.1);
+    border-bottom: 1px solid rgba(124, 92, 255, 0.25);
+}
+
+.activity-table th {
+    padding: 14px 20px;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #a78bfa;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+
+.activity-table tbody tr {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    transition: background 0.2s ease;
+    animation: rowFadeIn 0.4s ease both;
+}
+
+.activity-table tbody tr:nth-child(even) {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.activity-table tbody tr:hover {
+    background: rgba(124, 92, 255, 0.07);
+}
+
+.activity-table td {
+    padding: 14px 20px;
+    font-size: 0.88rem;
+    color: var(--text-main);
+    vertical-align: middle;
+}
+
+.activity-table td.dim {
+    color: var(--text-dim);
+    font-size: 0.82rem;
+}
+
+.click-count-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(124, 92, 255, 0.15);
+    border: 1px solid rgba(124, 92, 255, 0.35);
+    color: #c4b5fd;
+    font-weight: 700;
+    font-size: 0.85rem;
+    padding: 4px 12px;
+    border-radius: 999px;
+}
+
+.btn-name-link {
+    color: #a78bfa;
+    font-weight: 600;
+}
+
+@keyframes rowFadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* =============================================
+   LIVE ACTIVITY — TABLE FOOTER
+============================================= */
+
+.activity-table-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 12px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.auto-refresh-indicator {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    font-weight: 500;
+}
+
+.refresh-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 8px rgba(34, 197, 94, 0.8);
+    animation: livePulse 1.5s ease-in-out infinite;
 }
 
 /* Final Mobile Table Polish */
