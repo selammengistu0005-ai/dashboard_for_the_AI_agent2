@@ -47,8 +47,9 @@ const postView = document.getElementById("post-view");
 const openPostBtn = document.getElementById("open-post-btn");
 const backFromPostBtn = document.getElementById("back-from-post-btn");
 const publishPostBtn = document.getElementById("publish-post-btn");
-
-// --- Smile Dental Visitor Counter ---
+const openActivityBtn = document.getElementById("open-activity-btn");
+const activityView = document.getElementById("activity-view");
+const backFromActivityBtn = document.getElementById("back-from-activity-btn");
 const visitorCountBtn = document.getElementById("visitor-count-btn");
 const visitorCountDisplay = document.getElementById("visitor-count-display");
 
@@ -94,6 +95,7 @@ const closeHistory = () => {
 if (closeHistoryBtn) closeHistoryBtn.addEventListener("click", closeHistory);
 if (drawerOverlay) drawerOverlay.addEventListener("click", closeHistory);
 let currentAgent = null;
+let activityUnsubscribe = null;
 let unsubscribe = null;
 let intentChart = null;
 let knowledgeUnsubscribe = null; // Add this at the top with your other lets
@@ -145,6 +147,9 @@ async function validateAndUnlock() {
             loadLogs(currentAgent);
             loadKnowledge(currentAgent);
             listenToSettings(currentAgent);
+            if (activityView && activityView.style.display !== 'none') {
+                loadClickStats(currentAgent);
+            }
             
             // Use a safe fallback for the name since tori_data is missing the field
             const name = data.aiDisplayName || "Private Agent";
@@ -914,4 +919,106 @@ async function loadLivePosts(agentId) {
     } catch (e) {
         console.error("Load posts error:", e);
     }
+}
+
+// =============================================
+//  LIVE ACTIVITY — CLICK STATS
+// =============================================
+
+if (openActivityBtn) {
+    openActivityBtn.addEventListener("click", () => {
+        if (!currentAgent) {
+            notify("Access Denied", "Authorize an agent first", "error");
+            return;
+        }
+        liveMonitorView.style.display = "none";
+        editorView.style.display = "none";
+        phoneVaultView.style.display = "none";
+        postView.style.display = "none";
+        document.body.classList.remove("editing-mode");
+        activityView.style.display = "flex";
+        activityView.style.flexDirection = "column";
+        loadClickStats(currentAgent);
+    });
+}
+
+if (backFromActivityBtn) {
+    backFromActivityBtn.addEventListener("click", () => {
+        if (activityUnsubscribe) activityUnsubscribe();
+        activityView.style.display = "none";
+        liveMonitorView.style.display = "block";
+    });
+}
+
+function loadClickStats(agentId) {
+    if (activityUnsubscribe) activityUnsubscribe();
+
+    const q = query(
+        collection(db, "agents", agentId, "clicks"),
+        orderBy("count", "desc")
+    );
+
+    activityUnsubscribe = onSnapshot(q, (snapshot) => {
+        const tbody = document.getElementById("activity-table-body");
+        if (!tbody) return;
+
+        tbody.innerHTML = "";
+
+        if (snapshot.empty) {
+            tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color: var(--text-dim); padding: 30px;">No click data yet.</td></tr>`;
+            document.getElementById("stat-total-clicks").textContent = "0";
+            document.getElementById("stat-top-button").textContent = "—";
+            document.getElementById("stat-today-clicks").textContent = "0";
+            document.getElementById("stat-buttons-tracked").textContent = "0";
+            return;
+        }
+
+        let totalClicks = 0;
+        let topButton = { name: "—", count: 0 };
+        let todayClicks = 0;
+        const todayStr = new Date().toDateString();
+        let index = 0;
+
+        snapshot.forEach((docSnap) => {
+            const data = docSnap.data();
+            const name = docSnap.id;
+            const count = data.count || 0;
+            const lastClicked = data.lastClicked?.toDate();
+            const lastClickedStr = lastClicked
+                ? lastClicked.toLocaleString()
+                : "—";
+
+            // Stats calculations
+            totalClicks += count;
+            if (count > topButton.count) {
+                topButton = { name, count };
+            }
+            if (lastClicked && lastClicked.toDateString() === todayStr) {
+                todayClicks += count;
+            }
+
+            // Build row
+            const tr = document.createElement("tr");
+            tr.style.animationDelay = `${index * 0.05}s`;
+            tr.innerHTML = `
+                <td><span class="btn-name-link">${formatButtonName(name)}</span></td>
+                <td><span class="click-count-badge"><i class="fa-solid fa-computer-mouse"></i> ${count}</span></td>
+                <td class="dim">${lastClickedStr}</td>
+            `;
+            tbody.appendChild(tr);
+            index++;
+        });
+
+        // Update stat cards
+        document.getElementById("stat-total-clicks").textContent = totalClicks;
+        document.getElementById("stat-top-button").textContent = formatButtonName(topButton.name);
+        document.getElementById("stat-today-clicks").textContent = todayClicks;
+        document.getElementById("stat-buttons-tracked").textContent = snapshot.size;
+    });
+}
+
+function formatButtonName(id) {
+    return id
+        .replace(/-/g, " ")
+        .replace(/\b\w/g, c => c.toUpperCase());
 }
