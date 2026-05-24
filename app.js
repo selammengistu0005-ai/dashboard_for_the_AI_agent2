@@ -778,6 +778,7 @@ if (openPostBtn) {
         }
         liveMonitorView.style.display = "none";   
         editorView.style.display = "none";
+        activityView.style.display = "none";
         phoneVaultView.style.display = "none";
         document.body.classList.remove("editing-mode");
         postView.style.display = "flex";
