@@ -948,7 +948,10 @@ body.editing-mode #editor-view-container {
 }
 
 /* 2. Back Button Glow */
-#back-to-monitor {
+/* --- Back Buttons: Phone Vault, Post, Live Activity --- */
+#back-to-monitor,
+#back-from-post-btn,
+#back-from-activity-btn {
     background: linear-gradient(135deg, var(--primary-accent), #818cf8) !important;
     color: white;
     border: none;
@@ -964,18 +967,24 @@ body.editing-mode #editor-view-container {
     box-shadow: 0 4px 20px rgba(124, 92, 255, 0.35);
 }
 
-#back-to-monitor:hover {
+#back-to-monitor:hover,
+#back-from-post-btn:hover,
+#back-from-activity-btn:hover {
     transform: translateY(-3px);
     box-shadow: 0 8px 30px rgba(124, 92, 255, 0.55);
     filter: brightness(1.15);
 }
 
-#back-to-monitor:active {
+#back-to-monitor:active,
+#back-from-post-btn:active,
+#back-from-activity-btn:active {
     transform: translateY(0px);
     filter: brightness(0.95);
 }
 
-#back-to-monitor i {
+#back-to-monitor i,
+#back-from-post-btn i,
+#back-from-activity-btn i {
     font-size: 1rem;
 }
 
@@ -1138,20 +1147,6 @@ body.editing-mode #editor-view-container {
 
 #open-activity-btn:hover i {
     color: white;
-}
-
-#back-from-post-btn {
-    background: var(--glass-bg) !important;
-    border: 1px solid var(--border-color);
-    color: var(--text-main);
-    font-weight: 700;
-}
-
-#back-from-post-btn:hover {
-    background: var(--primary-accent) !important;
-    border-color: var(--primary-accent);
-    box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
-    transform: translateX(-5px);
 }
 
 #publish-post-btn {
@@ -1592,42 +1587,97 @@ body.editing-mode #editor-view-container {
     animation: livePulse 1.5s ease-in-out infinite;
 }
 
-/* Final Mobile Table Polish */
-@media (max-width: 600px) {
-    #kb-items-list tr {
-        display: flex;
-        flex-direction: column;
-        border-bottom: 1px solid var(--border-color);
-        padding: 15px 10px;
-        background: var(--glass-bg);
-        margin-bottom: 10px;
-        border-radius: 12px;
+/* =============================================
+   LIVE ACTIVITY — MOBILE (768px)
+============================================= */
+
+@media (max-width: 768px) {
+
+    /* HEADER */
+    .header-text {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 18px;
     }
-    #kb-items-list td {
-        border: none;
-        padding: 4px 0;
+
+    .header-text > div:last-child {
+        width: 100%;
         display: flex;
         justify-content: space-between;
-    }
-    /* Adds labels before data so you know what is what */
-    #kb-items-list td::before {
-        content: attr(data-label);
-        font-weight: 700;
-        color: var(--primary-accent);
-        font-size: 0.75rem;
-    }
-
-    .post-view-layout {
-        flex-direction: column;
         align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
     }
 
-    .post-form-panel {
-        width: 100%;
-        max-width: 100%;
+    .live-status-pill {
+        font-size: 0.72rem;
+        padding: 5px 12px;
     }
 
-    .post-history-panel {
-        width: 100%;
+    #back-from-activity-btn {
+        flex: 1;
+        justify-content: center;
+        min-width: 160px;
+    }
+
+    /* STATS GRID */
+    .activity-stats-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .activity-stat-card {
+        padding: 16px;
+        gap: 12px;
+    }
+
+    .activity-stat-card i {
+        font-size: 1.2rem;
+    }
+
+    .stat-value {
+        font-size: 1.2rem;
+    }
+
+    .stat-label {
+        font-size: 0.7rem;
+    }
+
+    /* TABLE WRAPPER */
+    .activity-table-card {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .activity-table {
+        min-width: 620px;
+    }
+
+    .activity-table th,
+    .activity-table td {
+        padding: 12px 14px;
+        white-space: nowrap;
+    }
+
+    .activity-table th {
+        font-size: 0.68rem;
+    }
+
+    .activity-table td {
+        font-size: 0.82rem;
+    }
+
+    .click-count-badge {
+        font-size: 0.78rem;
+        padding: 4px 10px;
+    }
+
+    /* FOOTER */
+    .activity-table-footer {
+        padding: 10px 14px;
+    }
+
+    .auto-refresh-indicator {
+        font-size: 0.72rem;
     }
 }
