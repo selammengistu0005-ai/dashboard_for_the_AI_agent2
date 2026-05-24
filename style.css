@@ -1680,4 +1680,84 @@ body.editing-mode #editor-view-container {
     .auto-refresh-indicator {
         font-size: 0.72rem;
     }
+
+    #post-view .dashboard-header {
+        padding-bottom: 1rem;
+    }
+
+    #post-view .header-text {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 1rem;
+    }
+
+    #back-from-post-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .post-view-layout {
+        flex-direction: column;
+        gap: 1.5rem;
+        width: 100%;
+        align-items: stretch;
+    }
+
+    .post-form-panel,
+    .post-history-panel {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .post-history-panel {
+        margin-top: 0.25rem;
+    }
+
+    .kb-container.post-form-panel {
+        padding: 1.2rem;
+    }
+
+    #post-title-input,
+    #post-content-input {
+        width: 100%;
+    }
+
+    #post-content-input {
+        min-height: 180px !important;
+    }
+
+    .kb-form-actions {
+        width: 100%;
+    }
+
+    #publish-post-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 14px 18px;
+    }
+
+    .live-post-card {
+        padding: 1rem;
+    }
+
+    .live-post-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.6rem;
+    }
+
+    .live-post-title {
+        font-size: 0.95rem;
+        line-height: 1.4;
+    }
+
+    .live-post-content {
+        font-size: 0.82rem;
+        line-height: 1.6;
+    }
+
+    .stop-post-btn {
+        width: 100%;
+        justify-content: center;
+    }
 }
