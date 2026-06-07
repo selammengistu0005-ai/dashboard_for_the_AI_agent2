@@ -27,32 +27,24 @@ const db = getFirestore(app);
 
 // 2. Elements
 const logsContainer = document.getElementById("logs");
-const chartCanvas = document.getElementById("intentChart");
 const modeSwitch = document.getElementById("mode-switch");
-const logoRefresh = document.getElementById("logo-refresh");
-const togglePasswordEye = document.getElementById("toggle-password-eye");
-// History Drawer Controls
 const historyDrawer = document.getElementById("history-drawer");
 const drawerOverlay = document.getElementById("drawer-overlay");
 const openHistoryBtn = document.getElementById("open-history-btn");
 const closeHistoryBtn = document.getElementById("close-history-btn");
 const exportBtn = document.getElementById("export-logs-btn");
-const openPhoneVaultBtn = document.getElementById("open-phone-vault-btn");
-const phoneVaultView = document.getElementById("phone-vault-view");
 const liveMonitorView = document.getElementById("live-monitor-view");
-const backToMonitorBtn = document.getElementById("back-to-monitor");
-const vaultList = document.getElementById("vault-list");
-const editorView = document.getElementById("editor-view-container");
-const postView = document.getElementById("post-view");
-const openPostBtn = document.getElementById("open-post-btn");
-const backFromPostBtn = document.getElementById("back-from-post-btn");
-const publishPostBtn = document.getElementById("publish-post-btn");
 const openActivityBtn = document.getElementById("open-activity-btn");
 const activityView = document.getElementById("activity-view");
 const backFromActivityBtn = document.getElementById("back-from-activity-btn");
 const visitorCountBtn = document.getElementById("visitor-count-btn");
 const visitorCountDisplay = document.getElementById("visitor-count-display");
 
+let currentAgent = null;
+let activityUnsubscribe = null;
+let unsubscribe = null;
+
+// 3. Visitor Count Button
 if (visitorCountBtn) {
     visitorCountBtn.addEventListener("click", async () => {
         visitorCountDisplay.textContent = "...";
@@ -72,7 +64,7 @@ if (visitorCountBtn) {
     });
 }
 
-// NEW FIXED HISTORY CONTROLS
+// 4. History Drawer Controls
 if (openHistoryBtn) {
     openHistoryBtn.addEventListener("click", () => {
         if (!currentAgent) {
@@ -81,7 +73,7 @@ if (openHistoryBtn) {
         }
         historyDrawer.classList.add("open");
         drawerOverlay.classList.add("active");
-        loadHistory(currentAgent); 
+        loadHistory(currentAgent);
     });
 }
 
@@ -94,14 +86,8 @@ const closeHistory = () => {
 
 if (closeHistoryBtn) closeHistoryBtn.addEventListener("click", closeHistory);
 if (drawerOverlay) drawerOverlay.addEventListener("click", closeHistory);
-let currentAgent = null;
-let activityUnsubscribe = null;
-let unsubscribe = null;
-let intentChart = null;
-let knowledgeUnsubscribe = null; // Add this at the top with your other lets
 
-// 3. Auth Logic
-// --- REPLACE YOUR EXISTING validateAndUnlock FUNCTION ---
+// 5. Auth Logic
 async function validateAndUnlock() {
     const keyInput = document.getElementById("agent-key-input");
     const unlockBtn = document.getElementById("unlock-btn");
@@ -115,43 +101,29 @@ async function validateAndUnlock() {
         return;
     }
 
-    // CRITICAL: Reset currentAgent so old data doesn't leak if this login fails
     currentAgent = null;
-    if (intentChart) {
-        intentChart.destroy();
-        intentChart = null;
-    }
-    authError.innerText = ""; 
+    authError.innerText = "";
     unlockBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Verifying...`;
-    
+
     try {
         const q = query(collection(db, "agents"), where("accessKey", "==", inputKey));
         const querySnapshot = await getDocs(q);
 
         if (!querySnapshot.empty) {
-            // Found the agent
-            const docSnap = querySnapshot.docs[0]; 
+            const docSnap = querySnapshot.docs[0];
             const data = docSnap.data();
-            
-            // Set the global ID to the actual Document ID (e.g., "tori_data")
-            currentAgent = docSnap.id; 
-            
-            // UI Transition
+            currentAgent = docSnap.id;
+
             keyOverlay.style.display = "none";
             mainApp.style.display = "flex";
-            
-            // Wipe old UI content before loading new data
+
             logsContainer.innerHTML = '<div class="loading-state">Initialising Logs...</div>';
-            
-            // Initialize the dashboard
+
             loadLogs(currentAgent);
-            loadKnowledge(currentAgent);
-            listenToSettings(currentAgent);
             if (activityView && activityView.style.display !== 'none') {
                 loadClickStats(currentAgent);
             }
-            
-            // Use a safe fallback for the name since tori_data is missing the field
+
             const name = data.aiDisplayName || "Private Agent";
             notify("Welcome Back", `Authorized as ${name}`, "success");
         } else {
@@ -164,91 +136,47 @@ async function validateAndUnlock() {
         notify("Auth Failed", "Key not recognized", "error");
     }
 }
-// 4. Load Logs
+
+// 6. Load Logs
 function loadLogs(agentId) {
     if (unsubscribe) unsubscribe();
-    
+
     const q = query(collection(db, "agents", agentId, "logs"), orderBy("timestamp", "desc"));
-    
+
     unsubscribe = onSnapshot(q, (snapshot) => {
         logsContainer.innerHTML = "";
-        const counts = {};
 
         snapshot.forEach((doc) => {
             const data = doc.data();
             const intent = data.category || "General";
-            counts[intent] = (counts[intent] || 0) + 1;
+            const timestamp = data.timestamp?.toDate().toLocaleString() || "—";
 
             const frame = document.createElement("div");
             frame.className = "log-frame";
             frame.innerHTML = `
-                <div class="user-q">
-                    <i class="fa-solid fa-comment-dots" style="color: var(--primary-accent)"></i>
+                <div class="log-cell">
+                    <i class="fa-solid fa-comment-dots"></i>
                     <span>${data.question}</span>
                 </div>
-                <div class="ai-a">${data.answer}</div>
-                <div class="intent-tag">
-                    <i class="fa-solid fa-tag"></i> ${intent}
+                <div class="log-cell">
+                    <i class="fa-solid fa-robot"></i>
+                    <span>${data.answer}</span>
+                </div>
+                <div class="log-cell">
+                    <i class="fa-solid fa-clock"></i>
+                    <span>${timestamp}</span>
+                </div>
+                <div class="log-cell">
+                    <i class="fa-solid fa-tag"></i>
+                    <span>${intent}</span>
                 </div>
             `;
             logsContainer.appendChild(frame);
         });
-        updateChart(counts);
     });
 }
 
-// 5. Chart
-function updateChart(counts) {
-    if (!chartCanvas) return;
-    const isLight = document.body.classList.contains("light-mode");
-    if (intentChart) intentChart.destroy();
-
-    intentChart = new Chart(chartCanvas.getContext("2d"), {
-        type: 'doughnut',
-        data: {
-            labels: Object.keys(counts),
-            datasets: [{
-                data: Object.values(counts),
-                backgroundColor: ["#6366f1", "#10b981", "#f59e0b", "#ef4444", "#a855f7"],
-                borderWidth: 0,
-                hoverOffset: 10
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            layout: {
-                padding: 0 // Removes wasted space around the ring
-            },
-            plugins: {
-                legend: { 
-                    position: 'bottom',
-                    labels: { 
-                        color: isLight ? '#1e293b' : '#f8fafc',
-                        font: { 
-                            size: 13, // Increased from 10 to 13
-                            weight: '600' // Makes the text bold and easier to read
-                        },
-                        boxWidth: 12,
-                        padding: 15 // Space between the ring and the text
-                    }
-                }
-            },
-            cutout: '75%',
-            onClick: (event, elements) => {
-                if (elements.length > 0) {
-                    const index = elements[0].index;
-                    const clickedIntent = intentChart.data.labels[index];
-                    applyIntentHighlight(clickedIntent);
-                } else {
-                    resetHighlights();
-                }
-            }
-        }
-    });
-}
-
-// Auth Button
+// 7. Auth Button
 const uBtn = document.getElementById("unlock-btn");
 if (uBtn) uBtn.addEventListener("click", validateAndUnlock);
 
@@ -272,346 +200,15 @@ if (eye && kInput) {
 // Logo Refresh
 const lRefresh = document.getElementById("logo-refresh");
 if (lRefresh) lRefresh.addEventListener("click", () => window.location.reload());
-// INSERT THE THEME TOGGLE CODE HERE:
-// Theme Toggle Logic
+
+// Theme Toggle
 if (modeSwitch) {
     modeSwitch.addEventListener("click", () => {
         document.body.classList.toggle("light-mode");
-        const isLight = document.body.classList.contains("light-mode");
-        if (intentChart) {
-            intentChart.options.plugins.legend.labels.color = isLight ? '#1e293b' : '#f8fafc';
-            intentChart.update();
-        }
     });
 }
 
-if (openPhoneVaultBtn) {
-    openPhoneVaultBtn.addEventListener("click", () => {
-        if (!currentAgent) {
-            notify("Access Denied", "Authorize an agent first", "error");
-            return;
-        }
-
-        // 1. Enter Vault Mode (UI Swap)
-        liveMonitorView.style.display = "none";
-        editorView.style.display = "none";
-        postView.style.display = "none";
-        document.body.classList.remove("editing-mode");
-        phoneVaultView.style.display = "block";
-        
-        
-        // 2. Load Data
-        loadPhoneVault(currentAgent);
-        notify("Vault Synced", "Records decrypted successfully.", "success");
-    });
-}
-
-// Back Button Controller
-if (backToMonitorBtn) {
-    backToMonitorBtn.addEventListener("click", () => {
-        phoneVaultView.style.display = "none";
-        liveMonitorView.style.display = "block";
-    });
-}
-
-// --- KNOWLEDGE BASE ENGINE ---
-
-async function saveKnowledge() {
-    const saveBtn = document.getElementById("add-kb-item");
-    const aiName = document.getElementById("ai-name-input").value.trim();
-    const systemInstructions = document.getElementById("ai-instructions").value.trim();
-    const activePersonas = Array.from(document.querySelectorAll(".persona-btn.active")).map(btn => btn.dataset.style);
-    const branches = document.querySelectorAll(".kb-branch-row");
-    
-    if (!currentAgent) return;
-
-    saveBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Syncing Brain...`;
-    saveBtn.disabled = true;
-
-    try {
-        const batch = writeBatch(db);
-
-        // 1. Update Main Settings & Tree Structure
-        const agentRef = doc(db, "agents", currentAgent);
-        
-        batch.update(agentRef, {
-            aiDisplayName: aiName,
-            personas: activePersonas,
-            systemInstructions: systemInstructions,
-            lastConfigUpdate: new Date()
-        });
-
-        // 2. Archive to History
-        if (systemInstructions) {
-            const historyRef = doc(collection(db, "agents", currentAgent, "history"));
-            batch.set(historyRef, {
-                text: systemInstructions,
-                timestamp: new Date(),
-                author: "Admin" 
-            });
-        }
-
-        // 3. Save New Inventory Items (from the list rows)
-        branches.forEach((branch) => {
-            const name = branch.querySelector(".kb-name").value.trim();
-            const price = branch.querySelector(".kb-price").value;
-            const desc = branch.querySelector(".kb-desc").value.trim();
-
-            if (name && price) {
-                const newKbRef = doc(collection(db, "agents", currentAgent, "knowledge"));
-                batch.set(newKbRef, {
-                    name: name,
-                    price: Number(price),
-                    description: desc,
-                    inStock: true,
-                    timestamp: new Date()
-                });
-            }
-        });
-
-        await batch.commit();
-        notify("Sync Complete", "Agent brain updated.", "success");
-        
-        // Reset branches UI
-        document.getElementById("kb-branches-container").innerHTML = `
-            <div class="kb-branch-row">
-                <input type="text" class="kb-name" placeholder="Item Name">
-                <input type="number" class="kb-price" placeholder="Price (ETB)">
-                <input type="text" class="kb-desc" placeholder="Details/Description">
-                <button class="remove-branch-btn" onclick="this.parentElement.remove()"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-        `;
-    } catch (error) {
-        console.error("Save Error:", error);
-        notify("Sync Failed", "Check your connection and try again.", "error");
-    } finally {
-        saveBtn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Commit All to Memory`;
-        saveBtn.disabled = false;
-    }
-    
-}
-
-function loadKnowledge(agentId) {
-    // 1. Kill the old listener if it exists before starting a new one
-    if (knowledgeUnsubscribe) knowledgeUnsubscribe(); 
-    
-    const q = query(collection(db, "agents", agentId, "knowledge"), orderBy("timestamp", "desc"));
-    
-    knowledgeUnsubscribe = onSnapshot(q, (snapshot) => {
-        const list = document.getElementById("kb-items-list");
-        list.innerHTML = "";
-        snapshot.forEach((snap) => {
-            const data = snap.data();
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td><strong>${data.name}</strong></td>
-                <td>${data.price} ETB</td>
-                <td style="color: var(--text-dim)">${data.description}</td>
-                <td>
-                    <button class="status-toggle ${data.inStock ? 'status-in' : 'status-out'}" 
-                        onclick="toggleStock('${snap.id}', ${data.inStock})">
-                        ${data.inStock ? 'In Stock' : 'Out of Stock'}
-                    </button>
-                    <i class="fa-solid fa-trash" style="margin-left:15px; cursor:pointer; color:#ef4444" 
-                        onclick="deleteKBItem('${snap.id}')"></i>
-                </td>`;
-            list.appendChild(row);
-        });
-    });
-}
-
-// NEW FIXED KNOWLEDGE BASE CONTROLS
-// --- REPLACED: NEW HORIZONTAL MODE SWITCHER ---
-const scrollBtn = document.getElementById("scroll-to-kb");
-if (scrollBtn) {
-    scrollBtn.onclick = () => {
-        const isEditing = document.body.classList.toggle("editing-mode");
-
-        postView.style.display = "none";
-        phoneVaultView.style.display = "none";
-
-        if (isEditing) {
-            liveMonitorView.style.display = "none";
-            editorView.style.display = "block";
-            scrollBtn.innerHTML = `<i class="fa-solid fa-chart-line"></i> View Live Monitor`;
-        } else {
-            editorView.style.display = "none";
-            liveMonitorView.style.display = "block";
-            scrollBtn.innerHTML = `<i class="fa-solid fa-pen-to-square"></i> Edit Agent Knowledge`;
-        }
-    };
-}
-
-const addBranchBtn = document.getElementById("add-branch-btn");
-if (addBranchBtn) {
-    addBranchBtn.onclick = () => {
-        const container = document.getElementById("kb-branches-container");
-        if (!container) return;
-        const newBranch = document.createElement("div");
-        newBranch.className = "kb-branch-row";
-        newBranch.innerHTML = `
-            <input type="text" class="kb-name" placeholder="Item Name">
-            <input type="number" class="kb-price" placeholder="Price (ETB)">
-            <input type="text" class="kb-desc" placeholder="Details/Description">
-            <button class="remove-branch-btn" onclick="this.parentElement.remove()"><i class="fa-solid fa-xmark"></i></button>`;
-        container.appendChild(newBranch);
-    };
-}
-const saveKbBtn = document.getElementById("add-kb-item");
-if (saveKbBtn) saveKbBtn.addEventListener("click", saveKnowledge);
-
-let isInitialLoad = true; // Add this variable above the function
-
-let settingsUnsubscribe = null; // Add this near your other let variables at the top
-
-function listenToSettings(agentId) {
-    // KILL the previous listener so it stops pushing old data to the inputs
-    if (settingsUnsubscribe) settingsUnsubscribe();
-    
-    settingsUnsubscribe = onSnapshot(doc(db, "agents", agentId), (docSnap) => {
-        if (docSnap.exists()) {
-            const settings = docSnap.data();
-            
-            // Only update if the user isn't typing
-            const nameInput = document.getElementById("ai-name-input");
-            const instInput = document.getElementById("ai-instructions");
-
-            if (document.activeElement !== nameInput) {
-                nameInput.value = settings.aiDisplayName || "";
-            }
-            if (document.activeElement !== instInput) {
-                instInput.value = settings.systemInstructions || "";
-            }
-            
-            if (!document.body.classList.contains("editing-mode")) {
-                const savedStyles = settings.personas || [];
-                document.querySelectorAll(".persona-btn").forEach(btn => { 
-                    btn.classList.toggle("active", savedStyles.includes(btn.dataset.style));
-                });
-            }
-        }
-    });
-}
-
-window.toggleStock = async (id, currentStatus) => {
-    try {
-        const itemRef = doc(db, "agents", currentAgent, "knowledge", id);
-        await updateDoc(itemRef, { inStock: !currentStatus });
-        notify("Inventory Updated", "Stock status synced.", "success");
-    } catch (e) {
-        notify("Error", "Could not update stock.", "error");
-    }
-};
-
-window.deleteKBItem = async (id) => {
-    if (confirm("Permanently delete this item from AI memory?")) {
-        try {
-            await deleteDoc(doc(db, "agents", currentAgent, "knowledge", id));
-            notify("Deleted", "Item removed from memory.", "success");
-        } catch (e) {
-            notify("Error", "Failed to delete.", "error");
-        }
-    }
-};
-
-function notify(title, message, type = "success") {
-    const container = document.getElementById("toast-container");
-    const toast = document.createElement("div");
-    toast.className = `toast ${type}`;
-    
-    const icon = type === "success" ? "fa-circle-check" : "fa-triangle-exclamation";
-    const duration = 4000; // 4 seconds
-
-    toast.innerHTML = `
-        <div class="toast-icon"><i class="fa-solid ${icon}"></i></div>
-        <div class="toast-content">
-            <span class="toast-title">${title.toUpperCase()}</span>
-            <span class="toast-msg">${message}</span>
-        </div>
-        <div class="toast-progress">
-            <div class="toast-progress-fill" style="width: 100%;"></div>
-        </div>
-    `;
-    
-    container.appendChild(toast);
-
-    // Animate progress bar
-    const fill = toast.querySelector(".toast-progress-fill");
-    setTimeout(() => {
-        fill.style.transition = `width ${duration}ms linear`;
-        fill.style.width = "0%";
-    }, 10);
-    
-    // Remove toast
-    setTimeout(() => {
-        toast.classList.add("fade-out");
-        setTimeout(() => toast.remove(), 400);
-    }, duration);
-}
-
-
-async function loadHistory(agentId) {
-    const historyList = document.getElementById("history-list");
-    const hQuery = query(collection(db, "agents", agentId, "history"), orderBy("timestamp", "desc"));
-    
-    onSnapshot(hQuery, (snapshot) => {
-        historyList.innerHTML = "";
-        if (snapshot.empty) {
-            historyList.innerHTML = '<div class="history-empty">No snapshots found.</div>';
-            return;
-        }
-
-        snapshot.forEach((snap) => {
-            const data = snap.data();
-            const date = data.timestamp?.toDate().toLocaleString() || "Recent";
-            
-            // Clean the text to prevent it from breaking the HTML attribute
-            const safeText = data.text.replace(/`/g, '\\`').replace(/\$/g, '\\$');
-
-            const card = document.createElement("div");
-            card.className = "history-card";
-            card.innerHTML = `
-                <span class="history-time">${date}</span>
-                <p class="history-snippet">${data.text}</p>
-                <button class="restore-btn" id="btn-${snap.id}">
-                    <i class="fa-solid fa-rotate-left"></i> Set as Main
-                </button>
-            `;
-            historyList.appendChild(card);
-
-            // Safer way to attach the event than 'onclick' in HTML
-            document.getElementById(`btn-${snap.id}`).addEventListener('click', () => {
-                window.restoreInstruction(snap.id, data.text);
-            });
-        });
-    });
-}
-
-// Restore Function (Bridge to window for module support)
-window.restoreInstruction = async (id, text) => {
-    if (confirm("Restore this version to the live editor?")) {
-        document.getElementById("ai-instructions").value = text;
-        closeHistory();
-        notify("Version Restored", "Instruction moved to editor. Click 'Commit' to go live.", "success");
-        
-        // Auto-scroll to textarea so user sees it
-        document.getElementById("ai-instructions").scrollIntoView({ behavior: 'smooth' });
-    }
-};
-
-// Persona Matrix Toggle Logic
-document.addEventListener('click', (e) => {
-    if (e.target.classList.contains('persona-btn')) {
-        // .toggle() allows multiple buttons to be active at once
-        e.target.classList.toggle('active');
-        
-        // Optional: Add a subtle click sound or haptic feedback feel
-        const isActive = e.target.classList.contains('active');
-        console.log(`${e.target.dataset.style} is now ${isActive ? 'selected' : 'unselected'}`);
-    }
-});
-
-// --- LOG EXPORT SYSTEM ---
+// 8. Log Export
 if (exportBtn) {
     exportBtn.addEventListener("click", async () => {
         if (!currentAgent) {
@@ -621,11 +218,11 @@ if (exportBtn) {
 
         const originalContent = exportBtn.innerHTML;
         exportBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Preparing...`;
-        
+
         try {
             const q = query(collection(db, "agents", currentAgent, "logs"), orderBy("timestamp", "desc"));
             const querySnapshot = await getDocs(q);
-            
+
             if (querySnapshot.empty) {
                 notify("No Data", "There are no conversations to export.", "error");
                 exportBtn.innerHTML = originalContent;
@@ -637,8 +234,8 @@ if (exportBtn) {
             querySnapshot.forEach((doc) => {
                 const data = doc.data();
                 const time = data.timestamp?.toDate().toLocaleString().replace(/,/g, "") || "N/A";
-                const question = `"${(data.question || "").replace(/"/g, '""')}"`; 
-                const answer = `"${(data.answer || "").replace(/"/g, '""')}"`;     
+                const question = `"${(data.question || "").replace(/"/g, '""')}"`;
+                const answer = `"${(data.answer || "").replace(/"/g, '""')}"`;
                 const intent = data.category || "General";
                 csvContent += `${time},${question},${answer},${intent}\n`;
             });
@@ -663,269 +260,16 @@ if (exportBtn) {
     });
 }
 
-// Function to make matching cards glow
-function applyIntentHighlight(intentName) {
-    const allLogs = document.querySelectorAll('.log-frame');
-    let firstMatch = null;
-    
-    allLogs.forEach(log => {
-        const logIntent = log.querySelector('.intent-tag').innerText.replace(/\s+/g, ' ').trim();
-        
-        if (logIntent.includes(intentName)) {
-            log.classList.add('highlight-glow');
-            log.classList.remove('dimmed');
-            
-            // Capture the first matching card we find
-            if (!firstMatch) firstMatch = log;
-        } else {
-            log.classList.add('dimmed');
-            log.classList.remove('highlight-glow');
-        }
-    });
-
-    // If we found a match, scroll to it automatically
-    if (firstMatch) {
-        firstMatch.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'center' 
-        });
-    }
-}
-
-// Function to remove the glow
-function resetHighlights() {
-    const allLogs = document.querySelectorAll('.log-frame');
-    allLogs.forEach(log => {
-        log.classList.remove('highlight-glow', 'dimmed');
-    });
-}
-
-// Reset when clicking the background of the live monitor
+// 9. Reset log highlights when clicking background
 document.addEventListener('click', (e) => {
     if (e.target.id === 'live-monitor-view' || e.target.classList.contains('logs-wrapper')) {
-        resetHighlights();
+        document.querySelectorAll('.log-frame').forEach(log => {
+            log.classList.remove('highlight-glow', 'dimmed');
+        });
     }
 });
 
-
-// --- PHONE VAULT DATA ENGINE ---
-async function loadPhoneVault(agentId) {
-    // 1. Always use the variable defined at the top of your app.js (vaultList)
-    if (!vaultList) {
-        console.error("Vault list container not found in DOM");
-        return;
-    }
-    
-    vaultList.innerHTML = `<div class="log-frame">Scanning database for records...</div>`;
-    
-    try {
-        // 2. This path matches your screenshot: agents -> phone-data -> logs
-        const q = query(collection(db, "agents", agentId, "logs"), orderBy("timestamp", "desc"));
-        const querySnapshot = await getDocs(q);
-        
-        vaultList.innerHTML = ""; 
-
-        if (querySnapshot.empty) {
-            vaultList.innerHTML = `<div class="log-frame">No patient records found in this vault.</div>`;
-            return;
-        }
-
-        querySnapshot.forEach((doc) => {
-            const data = doc.data();
-            const dateStr = data.timestamp?.toDate().toLocaleString() || "Recent";
-            const card = document.createElement("div");
-            card.className = "log-frame vault-card"; // Added 'vault-card' for easier targeting
-            card.dataset.cause = data.cause || "No symptoms recorded."; // Store the cause here
-            card.dataset.patient = data.patientName || "Anonymous";
-
-            card.innerHTML = `
-    <div class="user-q">
-        <i class="fa-solid fa-user-doctor" style="color: var(--primary-accent)"></i>
-        <span><strong>${data.patientName || 'Anonymous Patient'}</strong></span>
-    </div>
-
-    <div class="ai-a">
-        <i class="fa-solid fa-phone"></i> ${data.phone || 'N/A'}
-    </div>
-
-    <div class="ai-a" style="margin-top: -10px; margin-bottom: 10px; opacity: 0.7; font-size: 0.85rem;">
-        <i class="fa-solid fa-envelope"></i> ${data.patientEmail || 'No email provided'}
-    </div>
-
-    <div class="vault-cause">
-        <i class="fa-solid fa-notes-medical" style="color: #ef4444; margin-right: 5px;"></i>
-        ${data.cause || 'No specific cause recorded.'}
-    </div>
-
-    <div class="intent-tag">
-        <i class="fa-solid fa-clock"></i> Captured: ${dateStr}
-    </div>
-`;
-            vaultList.appendChild(card);
-        });
-    } catch (e) {
-        console.error("Vault Error:", e);
-        notify("Vault Error", "Could not reach database.", "error");
-    }
-}
-
-// --- POST SYSTEM ---
-if (openPostBtn) {
-    openPostBtn.addEventListener("click", () => {
-        if (!currentAgent) {
-            notify("Access Denied", "Please authorize first", "error");
-            return;
-        }
-        liveMonitorView.style.display = "none";   
-        editorView.style.display = "none";
-        activityView.style.display = "none";
-        phoneVaultView.style.display = "none";
-        document.body.classList.remove("editing-mode");
-        postView.style.display = "flex";
-        postView.style.flexDirection = "column";
-        loadLivePosts(currentAgent);
-    });
-}
-
-if (backFromPostBtn) {
-    backFromPostBtn.addEventListener("click", () => {
-        postView.style.display = "none";
-        phoneVaultView.style.display = "none";
-        editorView.style.display = "none";
-        liveMonitorView.style.display = "block";
-    });
-}
-
-if (publishPostBtn) {
-    publishPostBtn.addEventListener("click", async () => {
-        if (!currentAgent) {
-            notify("Access Denied", "Please authorize first", "error");
-            return;
-        }
-
-        const title = document.getElementById("post-title-input").value.trim();
-        const content = document.getElementById("post-content-input").value.trim();
-
-        if (!title || !content) {
-            notify("Missing Fields", "Please fill in both title and content", "error");
-            return;
-        }
-
-        const originalContent = publishPostBtn.innerHTML;
-        publishPostBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Publishing...`;
-
-        try {
-            await addDoc(collection(db, "agents", currentAgent, "posts"), {
-                title,
-                content,
-                agentId: currentAgent,
-                publishedAt: new Date().toISOString(),
-                status: "published"
-            });
-
-            document.getElementById("post-title-input").value = "";
-            document.getElementById("post-content-input").value = "";
-            notify("Published!", "Your post is now live.", "success");
-            loadLivePosts(currentAgent);
-        } catch (e) {
-            console.error("Publish error:", e);
-            notify("Publish Failed", "Could not reach database.", "error");
-        } finally {
-            publishPostBtn.innerHTML = originalContent;
-        }
-    });
-}
-
-if (vaultList) {
-    vaultList.addEventListener("click", (e) => {
-        const card = e.target.closest(".vault-card");
-        if (card) {
-            // Toggle the 'expanded' class to show the CSS we wrote earlier
-            card.classList.toggle("expanded");
-
-            // Close other cards for a clean accordion effect
-            document.querySelectorAll('.vault-card').forEach(other => {
-                if (other !== card) other.classList.remove('expanded');
-            });
-            
-            // Subtle haptic-style feedback
-            card.style.transform = "scale(0.98)";
-            setTimeout(() => card.style.transform = "scale(1)", 100);
-        }
-    });
-}
-
-async function loadLivePosts(agentId) {
-    const container = document.getElementById("live-posts-container");
-    if (!container) return;
-
-    container.innerHTML = `<p style="color: var(--text-dim); font-size:0.85rem;">Loading posts...</p>`;
-
-    try {
-        const q = query(
-            collection(db, "agents", agentId, "posts"),
-            orderBy("publishedAt", "desc")
-        );
-        const snapshot = await getDocs(q);
-
-        container.innerHTML = "";
-
-        if (snapshot.empty) {
-            container.innerHTML = `<p style="color: var(--text-dim); font-size:0.85rem;">No posts yet.</p>`;
-            return;
-        }
-
-        snapshot.forEach((docSnap) => {
-            const post = docSnap.data();
-            const isLive = post.status === "published";
-
-            const card = document.createElement("div");
-            card.className = `live-post-card ${isLive ? "live-post-active" : "live-post-stopped"}`;
-
-            card.innerHTML = `
-                <div class="live-post-header">
-                    <div class="live-post-status">
-                        <span class="live-post-dot ${isLive ? "dot-live" : "dot-stopped"}"></span>
-                        <span>${isLive ? "Live" : "Stopped"}</span>
-                    </div>
-                    <span class="live-post-date">${new Date(post.publishedAt).toLocaleDateString()}</span>
-                </div>
-                <h4 class="live-post-title">${post.title}</h4>
-                <p class="live-post-content">${post.content}</p>
-                ${isLive ? `<button class="stop-post-btn" data-id="${docSnap.id}">
-                    <i class="fa-solid fa-circle-stop"></i> Stop Post
-                </button>` : ""}
-            `;
-
-            container.appendChild(card);
-        });
-
-        container.querySelectorAll(".stop-post-btn").forEach(btn => {
-            btn.addEventListener("click", async () => {
-                const postId = btn.dataset.id;
-                btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Stopping...`;
-                try {
-                    await updateDoc(
-                        doc(db, "agents", agentId, "posts", postId),
-                        { status: "stopped" }
-                    );
-                    notify("Post Stopped", "Post hidden from website.", "success");
-                    loadLivePosts(agentId);
-                } catch (e) {
-                    notify("Error", "Could not stop post.", "error");
-                }
-            });
-        });
-
-    } catch (e) {
-        console.error("Load posts error:", e);
-    }
-}
-
-// =============================================
-//  LIVE ACTIVITY — CLICK STATS
-// =============================================
-
+// 10. Live Activity View
 if (openActivityBtn) {
     openActivityBtn.addEventListener("click", () => {
         if (!currentAgent) {
@@ -933,10 +277,6 @@ if (openActivityBtn) {
             return;
         }
         liveMonitorView.style.display = "none";
-        editorView.style.display = "none";
-        phoneVaultView.style.display = "none";
-        postView.style.display = "none";
-        document.body.classList.remove("editing-mode");
         activityView.style.display = "flex";
         activityView.style.flexDirection = "column";
         loadClickStats(currentAgent);
@@ -985,11 +325,8 @@ function loadClickStats(agentId) {
             const name = docSnap.id;
             const count = data.count || 0;
             const lastClicked = data.lastClicked?.toDate();
-            const lastClickedStr = lastClicked
-                ? lastClicked.toLocaleString()
-                : "—";
+            const lastClickedStr = lastClicked ? lastClicked.toLocaleString() : "—";
 
-            // Stats calculations
             totalClicks += count;
             if (count > topButton.count) {
                 topButton = { name, count };
@@ -998,7 +335,6 @@ function loadClickStats(agentId) {
                 todayClicks += count;
             }
 
-            // Build row
             const tr = document.createElement("tr");
             tr.style.animationDelay = `${index * 0.05}s`;
             tr.innerHTML = `
@@ -1010,7 +346,6 @@ function loadClickStats(agentId) {
             index++;
         });
 
-        // Update stat cards
         document.getElementById("stat-total-clicks").textContent = totalClicks;
         document.getElementById("stat-top-button").textContent = formatButtonName(topButton.name);
         document.getElementById("stat-today-clicks").textContent = todayClicks;
@@ -1022,4 +357,80 @@ function formatButtonName(id) {
     return id
         .replace(/-/g, " ")
         .replace(/\b\w/g, c => c.toUpperCase());
+}
+
+// 11. History Drawer
+async function loadHistory(agentId) {
+    const historyList = document.getElementById("history-list");
+    const hQuery = query(collection(db, "agents", agentId, "history"), orderBy("timestamp", "desc"));
+
+    onSnapshot(hQuery, (snapshot) => {
+        historyList.innerHTML = "";
+        if (snapshot.empty) {
+            historyList.innerHTML = '<div class="history-empty">No snapshots found.</div>';
+            return;
+        }
+
+        snapshot.forEach((snap) => {
+            const data = snap.data();
+            const date = data.timestamp?.toDate().toLocaleString() || "Recent";
+            const safeText = data.text.replace(/`/g, '\\`').replace(/\$/g, '\\$');
+
+            const card = document.createElement("div");
+            card.className = "history-card";
+            card.innerHTML = `
+                <span class="history-time">${date}</span>
+                <p class="history-snippet">${data.text}</p>
+                <button class="restore-btn" id="btn-${snap.id}">
+                    <i class="fa-solid fa-rotate-left"></i> Set as Main
+                </button>
+            `;
+            historyList.appendChild(card);
+
+            document.getElementById(`btn-${snap.id}`).addEventListener('click', () => {
+                window.restoreInstruction(snap.id, data.text);
+            });
+        });
+    });
+}
+
+window.restoreInstruction = async (id, text) => {
+    if (confirm("Restore this version to the live editor?")) {
+        notify("Version Restored", "Snapshot loaded.", "success");
+        closeHistory();
+    }
+};
+
+// 12. Toast Notifications
+function notify(title, message, type = "success") {
+    const container = document.getElementById("toast-container");
+    const toast = document.createElement("div");
+    toast.className = `toast ${type}`;
+
+    const icon = type === "success" ? "fa-circle-check" : "fa-triangle-exclamation";
+    const duration = 4000;
+
+    toast.innerHTML = `
+        <div class="toast-icon"><i class="fa-solid ${icon}"></i></div>
+        <div class="toast-content">
+            <span class="toast-title">${title.toUpperCase()}</span>
+            <span class="toast-msg">${message}</span>
+        </div>
+        <div class="toast-progress">
+            <div class="toast-progress-fill" style="width: 100%;"></div>
+        </div>
+    `;
+
+    container.appendChild(toast);
+
+    const fill = toast.querySelector(".toast-progress-fill");
+    setTimeout(() => {
+        fill.style.transition = `width ${duration}ms linear`;
+        fill.style.width = "0%";
+    }, 10);
+
+    setTimeout(() => {
+        toast.classList.add("fade-out");
+        setTimeout(() => toast.remove(), 400);
+    }, duration);
 }
