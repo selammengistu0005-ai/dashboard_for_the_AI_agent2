@@ -27,7 +27,7 @@
 
     <div class="app-container" id="main-app" style="display: none;">
         
-        <aside class="sidebar">
+        <aside class="sidebar" id="sidebar">
             <div class="logo" id="logo-refresh" title="Refresh Dashboard">
                 <div class="logo-icon"><i class="fa-solid fa-robot"></i></div>
                 <span>AI <span>Data-base</span></span>
@@ -52,6 +52,10 @@
             </button>
 
             <div class="theme-section">
+                <div class="maker-badge">
+                    <span class="maker-badge-dot"></span>
+                    <span class="maker-badge-text">Made by <strong>Selam Mengistu</strong></span>
+                </div>
                 <div class="toggle-container" id="mode-switch">
                     <div class="toggle-track">
                         <div class="toggle-knob">
@@ -64,7 +68,11 @@
         </aside>
 
         <main class="main-content">
-    <div id="live-monitor-view">
+            <button class="hamburger-btn" id="hamburger-btn">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="sidebar-mobile-overlay" id="sidebar-mobile-overlay"></div>
+            <div id="live-monitor-view">
         <header class="dashboard-header">
             <div class="header-text" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
                 <div>
@@ -181,6 +189,19 @@
 <div id="drawer-overlay" class="drawer-overlay"></div>
 
 <script type="module" src="app.js"></script>
+<script>
+    const hamburgerBtn = document.getElementById('hamburger-btn');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebar-mobile-overlay');
+    hamburgerBtn.addEventListener('click', () => {
+        sidebar.classList.toggle('mobile-open');
+        sidebarOverlay.classList.toggle('active');
+    });
+    sidebarOverlay.addEventListener('click', () => {
+        sidebar.classList.remove('mobile-open');
+        sidebarOverlay.classList.remove('active');
+    });
+</script>
     <div id="toast-container" class="toast-container"></div>
 </body>
 </html>
