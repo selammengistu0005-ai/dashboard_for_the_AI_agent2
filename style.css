@@ -1055,11 +1055,147 @@ textarea:focus {
     animation: livePulse 1.5s ease-in-out infinite;
 }
 
+.hamburger-btn { display: none; }
+
+/* --- MAKER BADGE --- */
+.maker-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: fit-content;
+    margin-bottom: 1rem;
+    padding: 7px 14px 7px 10px;
+    border-radius: 999px;
+    background: linear-gradient(
+        135deg,
+        rgba(124, 92, 255, 0.08) 0%,
+        rgba(0, 212, 255, 0.06) 100%
+    );
+    border: 1px solid rgba(124, 92, 255, 0.22);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow:
+        0 0 12px rgba(124, 92, 255, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.maker-badge:hover {
+    border-color: rgba(124, 92, 255, 0.45);
+    box-shadow:
+        0 0 20px rgba(124, 92, 255, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.maker-badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--primary-accent);
+    box-shadow: 0 0 6px rgba(124, 92, 255, 0.8);
+    flex-shrink: 0;
+    animation: livePulse 2.5s ease-in-out infinite;
+}
+
+.maker-badge-text {
+    font-size: 0.72rem;
+    font-weight: 400;
+    color: var(--text-dim);
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+}
+
+.maker-badge-text strong {
+    font-weight: 700;
+    color: var(--primary-accent-light);
+    letter-spacing: 0.01em;
+}
+
+.light-mode .maker-badge {
+    background: linear-gradient(
+        135deg,
+        rgba(124, 92, 255, 0.06) 0%,
+        rgba(0, 212, 255, 0.04) 100%
+    );
+    border-color: rgba(124, 92, 255, 0.18);
+    box-shadow:
+        0 0 10px rgba(124, 92, 255, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
 /* =============================================
    MOBILE (768px)
 ============================================= */
 
 @media (max-width: 768px) {
+
+    /* ── Sidebar: slide off-screen by default ── */
+    .sidebar {
+        position: fixed;
+        left: -320px;
+        top: 0;
+        height: 100vh;
+        z-index: 500;
+        transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        width: 280px;
+    }
+
+    .sidebar.mobile-open {
+        left: 0;
+    }
+
+    /* ── Main content: full width ── */
+    .main-content {
+        width: 100%;
+        position: relative;
+    }
+
+    /* ── Hamburger button ── */
+    .hamburger-btn {
+        display: flex;
+        position: fixed;
+        top: 14px;
+        left: 14px;
+        z-index: 600;
+        width: 40px;
+        height: 40px;
+        align-items: center;
+        justify-content: center;
+        background: rgba(124, 92, 255, 0.15);
+        border: 1px solid rgba(124, 92, 255, 0.4);
+        border-radius: 10px;
+        color: var(--text-main);
+        font-size: 1rem;
+        cursor: pointer;
+        backdrop-filter: blur(10px);
+        transition: background 0.2s ease, box-shadow 0.2s ease;
+        box-shadow: 0 0 12px rgba(124, 92, 255, 0.2);
+    }
+
+    .hamburger-btn:hover {
+        background: rgba(124, 92, 255, 0.3);
+        box-shadow: 0 0 20px rgba(124, 92, 255, 0.4);
+    }
+
+    /* ── Mobile overlay (dims screen when sidebar is open) ── */
+    .sidebar-mobile-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.65);
+        backdrop-filter: blur(4px);
+        z-index: 499;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .sidebar-mobile-overlay.active {
+        display: block;
+    }
+
+    /* ── Push header down so hamburger doesn't overlap it ── */
+    .dashboard-header {
+        padding: 1.25rem 1.25rem 1.25rem 4rem;
+    }
 
     .header-text {
         flex-direction: column !important;
@@ -1143,5 +1279,19 @@ textarea:focus {
 
     .auto-refresh-indicator {
         font-size: 0.72rem;
+    }
+
+    .maker-badge {
+        margin-bottom: 0.875rem;
+        padding: 6px 12px 6px 9px;
+    }
+
+    .maker-badge-text {
+        font-size: 0.68rem;
+    }
+
+    .maker-badge-dot {
+        width: 5px;
+        height: 5px;
     }
 }
