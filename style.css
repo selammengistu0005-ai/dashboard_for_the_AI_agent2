@@ -1294,4 +1294,52 @@ textarea:focus {
         width: 5px;
         height: 5px;
     }
+
+    /* ── Welcome pill ── */
+    .welcome-user {
+        font-size: 0.75rem;
+        padding: 6px 12px;
+        gap: 7px;
+        white-space: normal;
+        max-width: 100%;
+    }
+
+    .welcome-user i {
+        font-size: 1rem;
+        flex-shrink: 0;
+    }
+
+    /* ── Logs wrapper padding ── */
+    .logs-wrapper {
+        padding: 1rem;
+    }
+
+    /* ── Log frames: stack vertically on mobile ── */
+    .log-frame {
+        flex-direction: column;
+        min-width: unset;
+        width: 100%;
+        flex: 1 1 100%;
+    }
+
+    .log-cell {
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        padding: 0.875rem 1rem;
+        font-size: 0.8rem;
+    }
+
+    .log-cell:last-child {
+        border-bottom: none;
+    }
+
+    .log-cell:nth-child(4) {
+        flex: unset;
+        align-items: flex-start;
+        justify-content: flex-start;
+    }
+
+    .logs-flex-container {
+        gap: 1rem;
+    }
 }
